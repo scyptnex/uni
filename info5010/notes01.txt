@@ -1,0 +1,73 @@
+linear programming
+
+factory programme not program
+
+decision variables
+constraints
+objective function
+
+general:
+	variables: x1 x2 ... xn
+	constraints: sum(j=1) axj Xj (<= | == | >=) Bj  (1...p | p+1...p+q | p+q+1...n)
+	objective: maximise sum(j=1 to n) cj xj
+	
+	LP canonical:  max C.x, Ax <=b, X >= 0
+					A real matrix
+					x real vector
+	note, vars cant be neg, constraints are onle LEQ
+
+employee programming
+	p employees, q tasks
+	Zij [0,1] employee i does Zij fraction of task j
+	Wij time spent by employee i on proj j
+	minimise SUM(i = 0 to p j = 0 to q)(WijZij)
+	C1 for every task j, SUM(i = 1 to p)(Zij) = 1
+	C2 for any employee i, SUM(j=1 to q)(WijZij) <= 80
+
+simple problem (simplex)
+	vars: x1 and x2
+	constraints are areas over x1 x2 plane
+	slide a line up the region until you get to the edge of the region
+	
+	sit ona corner point in the region
+	move to any corner point better
+	to find first corner point must solve limear problem??
+	
+Duality
+	maximise 10x1 + 9x2
+	c1 2x1+4x2 <= 10
+	3x1+3x2 <= 9
+	2x1+x2 <= 5
+	x1, x2 >= 0
+	Note:	mult c3 by 9, no solution can be greater than45
+			mult c2 by 10/3, no solution > 30
+			3c2 + 0.5x3, no solution > 29.5
+	LOL: minimise (10y1+9y2+5y3)
+		y1, y2, y3 >= 0
+		2y1 + 3y2 + 2y3 >= 10
+		4y1+3y2+y3 >= 9
+	tomax: maximise -10y-9y2-5y3
+		y1, y2, y3 >=0
+		-2y1-3y2-2y3 <= -10
+		-4y1-3y-y3 <= -9
+		AndAgain: minimise -10z1-9z2
+			-2z1-4z2 >= -10
+			-3z1-3z2 >= -9
+			-2z1-z2 >= -5
+		switch to max and get the original problem
+		the one we want to solve is called "primal", other is "dual"
+	OBS: let x is primal feasible and y is dual feasible, then x <= b.y
+		if primal is unbounded, dual is unfeasibl, and vice versa
+	Strong Duality proof by picture
+		if primal and dual are feasible then value of primal and dual are same
+		drop a marble in the feasible region, it lands at optimal and gravity pushs it towards c
+		maximise C.x Ax<=b x>=0
+		Cj = Yi1ai1j + Yi2ai2j... for all j=1 to n (flip constraints)
+		yi=0 for rest of coordinates of y 
+		dual: min b.Y ATY>=c y>=0 (AT = A transpose (as many rows as columns))
+		bi1yi1+bi2yi2... <- non zero b values
+		(sum(j 1 to n)(ai1jXj))Y1 + (sum(j 1 to n)(ai2jXj))Y2...
+			= sum(j=1 to n)(Xj(sum(i 1 to m)(aijXi)))
+			= SUM(XjCj)
+		
+		

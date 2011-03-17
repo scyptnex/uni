@@ -1,0 +1,25 @@
+databases fekete 4e
+high performance albert 2w
+information visualisation peter eves, masa 3e
+pattern data mining sanjay 4w
+languages and compilers comp3109 4w
+comp thinking, yokem, bernard 4w
+
+masa.takatsuka@sydney.edu.au
+
+info5993
+
+honours scolarship, all students who complete undergrad, 6k/1year
+scolarship office 6 jan
+
+sit/nicta summer scolarship, $5500 12 weeks, katie yang katie.yang@...
+
+apply: SIT website, lodge application at it office 25 november
+
+n6 - collision avoidance
+n10/11/12 - data mining in football
+n26 - seL4 microkernel
+n31 - huuuge computer
+n37 - sel4 multiserver
+n38 - sel4 java
+

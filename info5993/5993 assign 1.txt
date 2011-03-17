@@ -1,0 +1,46 @@
+Obtaining Fault Tolerance in the Synchronous Dataflow Model
+
+Nic Hollingum
+308193415
+
+INFO 5993
+
+
+Research Groups
+
+Par Lab, Parallel Computing Laboratory - U.C. Berkeley
+Streamit - Massachusetts Institute of Technology
+Scalable Parallel Systems - IBM Research
+Distribted Systems Redmond - Microsoft Research
+The D System, tools for data - parallel programming - Rice University
+Innovative Computing Laboratory - University of Tennessee
+
+
+Journals/Conferences
+
+IEEE Transaction on Parallel and Distributed Systems
+Elsevier Journal of Parallel and Distributed Computing
+Europar
+ASPLOS - Architectural Support for Programming Languages and Operating Systems
+SC-conference
+PACT - Parallel Architecture and Compilation Techniques
+
+
+Papers
+
+S. S. Battacharyya, E.A. Lee and P.K. Murthy, “Software Synthesis from Dataflow Graphs”, Kluwer Academic Publishers; 1996
+E. A. Lee, D. G. Messerschmitt, “Static scheduling of synchronous Data Flow Programs for Digital Signal Processing”, IEEE TOC V.36-1; Jan 1987
+M. Kudlur, S. Mahlke “Orchestrating the Execution of Stream Programs on Multicore Platforms”, PLDI'08; Jun 2008
+S. Amarasinghe, M. Karczmarek, W. Theis “StreamIt: A Language for Streaming Applications”, Massachusetts Institute of Technology; 2002
+S. Amarasinghe, W. Thies “An Empirical Characterization of Stream Programs and its Implications for Language and Compiler Design”, PACT10, Sep 2010
+R. Bodik, R. Gupta, M. L. Soffa "Refining Data Flow Information using Infeasible Paths", 5th ACM SIGSIFT, LNCS 1301 Springer Verlag pp 361-377 Zurich 1997
+V. Turchenko, L. Grandinetti, G. Bosilca, J. Dongarra "Improvement of Parallelization efficiency of batch pattern BP training algorithm using open MPI", Elsevier ICCS 2010
+Fan Wu, Sheng Zhong, Chunming Qiao, "Strong-Incentive, High-Throughput Channel Assignment for Noncooperative Wireless Networks," IEEE Transactions on Parallel and Distributed Systems, vol. 21, no. 12, pp. 1808-1821, Apr. 2010, doi:10.1109/TPDS.2010.71
+Pablo Basanta-Val, Iria Estévez-Ayres, Marisol García-Valls, Luis Almeida, "A Synchronous Scheduling Service for Distributed Real-Time Java," IEEE Transactions on Parallel and Distributed Systems, vol. 21, no. 4, pp. 506-519, Apr. 2010, doi:10.1109/TPDS.2009.95
+Ben Eckart, Xubin He, Qishi Wu, Changsheng Xie, "A Dynamic Performance-Based Flow Control Method for High-Speed Data Transfer," IEEE Transactions on Parallel and Distributed Systems, vol. 21, no. 1, pp. 114-125, Jan. 2010, doi:10.1109/TPDS.2009.37
+H. Pan, B. Hindman, K. Asanovi´c "Composing Parallel Software Ef?ciently with Lithe", PLDI - 2010
+G. Ballard, J. Demmel, O. Holtz, O. Schwartz, "Communication Optimal Parallel and Sequential Cholesky Factorization", Symposium on Parallelism in Algorithms and Architectures, 2009
+Yuan Lin, Yoonseo Choi, Scott A. Mahlke, Trevor N. Mudge, Chaitali Chakrabarti: A parameterized dataflow language extension for embedded streaming systems. ICSAMOS 2008: 10-17
+Manjunath Kudlur, Scott A. Mahlke: Orchestrating the execution of stream programs on multicore platforms. PLDI 2008: 114-124
+V. Adve, A. Carle, E. Granston, S. Hiranandani, K. Kennedy, C. Koelbel, U. Kremer, J. Mellor-Crummey, C.-W. Tseng, and S. Warren, "Requirements for Data-Parallel Programming Environments", IEEE Transactions on Parallel and Distributed Technology, 2(3):48-58, Fall 1994
+U. Kremer, J. Mellor-Crummey, K. Kennedy, and A. Carle. Automatic Data Layout for Distributed-Memory Machines in the D Programming Environment. In C. W. Kessler, editor, Automatic Parallelization _ New Approaches to Code Generation, Data Distribution, and Performance Prediction, pages 136-152. Vieweg Advanced Studies in Computer Science, Verlag Vieweg, Wiesbaden, Germany, 1993

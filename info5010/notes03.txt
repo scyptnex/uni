@@ -1,0 +1,36 @@
+integer programmes
+	LP: max c.x Ax <= b x>= 0
+	IP: max c.x Ax <= b x>= 0; x a vector of integers
+
+toy problem
+	each rail segment is a var,
+	min sum(xi)
+	c1: sum(i in [sp, tp])(xi) > 1 (i.e. each person going from sp to tp is checked by at least one guard
+	c2: xi >= 0 xi an integer
+
+when does an IP and its linear relaxation coincide?
+	when all basic feasible solutions of lp are integral
+	let x~ be non-zero variables, A~ and b~ be the subset of tight constraints
+	every xi that is not in x~ gets 0, remainder: A~x~ = b~
+	Crame's Rule, x~i = (det[A~]i)/(detA~)
+	def: a matrix A is totally unimodular TU if every square submatrix has determinant: 1, -1 or 0
+	Theorem: if A is TU, max c.x Ax<=b x>=0 is integral for any cost vector and RHS b that is integral [Hoffman-Kruskal]
+
+Properties of TU
+	A is TU -> A^T is TU square submats are transposes of A's square submats
+	A is TU -> a_ij in {0,1,-1}
+	A is TU -> [A I]>, [A I]v are TU
+	thus: A is TU if and only if we can colour RED or BLUE the rows of A such that:
+		for every column j: |sum(i is BLUE)(a_ij)-sum(i is RED)(a_ij)| <= 1
+	Toy problem: take first property, colour segments (collumns) alternately
+
+Max flow
+	given a directed graph (V,E), each edge has a capacity (pos integer)
+	LP: x_uv = ammount of flow along edge u-v
+		x_uv <= h_uv for all (u,v) in E
+		x_uv >= 0
+		sum info node a = sum out of node a
+		A= each row a vertex, each column an edge
+		each column has 1 at v and -1 at u
+		Note: dual of this is min cut FTW
+		

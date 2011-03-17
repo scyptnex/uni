@@ -1,0 +1,29 @@
+http://www.cs.usyd.edu.au/~info5993
+
+key components
+	- question
+		concerns of the community, what happens? why? shat should someone do?
+		many questions fit an on-going agenda
+		consult conference calls for papers
+	- claim
+		what i will contribute
+		"when usig weak concurrencyt control, how often is the data corrupted?"
+		"modifying algorithm X in a particular way improvies its performance (speed, accuracy,etc)
+	- evidence
+		empirical evaluation, analysis, mathematical proof, prototype implementation, simulation/model, measurements, observations
+		research methosd define the kinds of evidence they produce
+		each community has its own standards (quality/reasonableness)
+	- argument
+		links evidence to claim
+		deal with natural or obvious objections to correctness/importance
+		'evaluation'
+		note tradeoffs (better cost less efficient), dont use strawmen counterexamples
+Negative results
+	provide something useful to the community, not just successful results
+	
+find a question to seek an answer for
+choose a method and make plans flexible
+gather dta/experiment/prototype
+contribute???
+?????
+

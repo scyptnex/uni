@@ -1,0 +1,32 @@
+Memory bottleneck
+	all processors can only access memory one at a time
+	memory partition - banks, parallel access
+	symmetric/asymmetric shared memory access
+	distributed shared memory, each processor has direct access to its own memory, pass anothe rprocessors meory through it
+	reduce shared variables for communication
+	
+cluster computer
+	midleware makes it appear to be a single virtual system
+	interconnects: fast ethernet gigabit, myrinet, infiniband
+
+grid computer
+	internet instead of loca (WAN vs LAN)
+
+cloud computing
+	X as a Service, everything is on a server
+	pay as you go
+	Virtualisation highly customised user environment, isolation to malicious software, migration of services
+
+cloud vs grid
+	manage large facilities over internet
+	cloud: virtualization, business model, programming model - dynamic scale
+
+interconnection networks
+	carry data between processors
+	static - when machine designed not when connection needed
+	dynamic - connects on the fly
+
+network topologies
+	completely connected, all nodes connect to all other nodes, too hard to connect when many computers
+	star connected, central bottleneck
+	two and 3 dimensional meshes

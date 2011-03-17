@@ -1,0 +1,13 @@
+Parallel Architectures
+
+Superscalar
+	performance suffers if cant keep all units full
+	data dependancy, resource dependancy, branch dependancy
+	Scheduler - hardware looks at large instruction blocks and decides where to put them
+
+Multicore
+	gpu, many small cores, processor made of some large cores
+		GPU: multiple cores utilise multithreading and Single Instruction Multiple Data
+			gtx 280: 8 sp's in a multiprocessor, share some memory/registers, constant cache/texture cache/device memory
+	Flynn's Taxonomy SISD, SIMD, MISD, MIMD
+	Cuda OpenCL

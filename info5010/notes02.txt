@@ -1,0 +1,86 @@
+basis
+	collection of n, linearly independant constraints
+		a1.x <= b1
+		a2.x <= b2
+		an.x <= bn
+	defines a basic solution, unic vector satisfies all constraints with equality
+	not all basic solutions feasible (meets outside region) <- HOW TO FIND
+
+Assumptions
+	linear program is in 'standard form'
+		min c.x, Ax = b, x >= 0 (vs general form, Ax <= b)
+		A in R(m,n), has n linearly independant rows
+	every basic solution is non degenerate (for any n equal constraints, there exists no other set of constraints with the same equallity)
+	we are given an initial feasible basis
+
+A basis is just m equality constraints Ax=b and n-m non-negativity constraints
+basis B: subset of [1...n] size m, variables set using constraints, all others set 0, Call A(b) <- collumns of A in subset B
+	A(b) has Full Rank <- rows are linearly independant or collumns
+	Note: A(b)x(b) = b from above
+		if xj = 0 , j not in B
+		if xj > 0 , j in B <- strictly greater
+
+Simplex (1) (A,b,c)
+	B <- find some feasible basis with magic
+	// B = {b1, b2...bn}
+	repeat
+		for j not in b and bi in b do
+			D <- B-bi+j
+			if D is a feasible basis then
+				A(b)x(b) = b -> x(b) = A(b)^(-1)b
+				A(d)y(d) = b -> y(d) = A(d)^(-1) b
+				if Cd.yd < cb.yb then
+					B <- d exit for loop
+	until B doesnt change
+	return B
+Works only if there is an optimal solution, doesnt terminate if solution infinitely optimal
+
+Simplex (2) (A,b,c)
+	D = B+j-bi
+	B -> D = d, D = B + theta d
+	dj = 1
+	d(B) = ?
+		Ad = (Ay-Ax) / theta = 0
+		[Aj Ab]> [1 d(B)]v = 0
+			Aj+A(B)d(B) = 0  d(B) = -A(B)^-1 Aj
+		X(Bi) +theta d(Bi) >= 0 for all Bi in B
+		X(bi) >= theta d(bi)
+		X(bi)/-d(bi) >= theta <- theta no mroe than smallest of 
+		theta = {min bi in B, d(bi) < 0} > 0
+	C(D)y(D) - C(B)X(B) < 0
+	C(B+j).(X(B+j) + theta d(B+j)) - C(B)x(B)
+	C(B).(X(B)+ theta d(B)) + C(j) theta - C(B)X(B)
+	= theta(C(j) + C(B)d(B)) = theta((Cj) - C(B)A(B)^-1 A(J))
+	Code:
+		for j not in b do
+			d(B) = -A(B)^-1 A(j)
+			if C(j) - C(B)A(B)^-1A(J) < 0
+				if d(B) >= 0 then return "unbounded"
+				choose bi <- index attaining min bi in B d(bi) < 0 ABS(X(bi)/d(bi))
+				B <- B+j-bi
+				exit for loop
+				
+Reduced cost of j
+	C(j) - C(B)A(B)^-1A(j)
+
+theorem
+	let B be a basis such that A(B)^-1b >= 0
+	and cbar^T = C^T - C(B)^T A(B)^-1A >= 0
+	B i an optimal basis
+	
+	B x -> d -> y
+	A(d) = 0
+	A(B)d(B) + sum(j not in B)(A(j)d(j)) = 0
+	-> d(B) = sum(j not in B)(-A(B)^-1A(j)d(j))
+	C.y - C.X = C.d
+	= C(B)+d(B) + sum(j not in B) C(j)d(j)
+	= sum(-C(B)^T A(B)^-1A(J)d(J)) + sum(C(j)d(j))
+	= sum(-C(B)^TA(B)^-1 A(j) + Cj) d(j) >= 0
+
+Dual simplex
+	min C.X : AX=b : x>=0 }{ b.y : y^TA <= c^T : y tree
+	B basis is a set m constraints on n columns
+	y^TA(B) = C(B) -> Y^T = C(B)A(B)^-1
+	C(B)A(B)^-1A <= C^T
+	or
+	C^T - C(B)A(B)^-1 A >= 0

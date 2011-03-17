@@ -1,0 +1,41 @@
+convex set
+a subset S of the plane is a convex set if for an P and Q in S the line between P and Q is completely contained in the set
+convex hull is the smallest 
+
+the Ch of a set of points S in d dimenstions is the union of all convex combinations of d+1 points of s
+
+d=2, convex combination of 3 points, a triangle
+
+a point is in the convex hull if it lies within the triangle of any 3 other points
+inefficient: find a triangle, check if a point is in it, order n^4
+
+the CH of S is the intersection of all halfspaces that contain s
+intersection of two convex sets is a convex set, union is not necessarily
+choose xy such that all points lie on one side of xy, each xy where all other points lie on one side is in CH
+(qx-px)(ry-py) //DO THIS
+
+find lowest y point, presume we have a start edge horizontal on x axis
+for each other point, find one with largest angle, choose it as next point
+
+Sweep line
+	take all pointss sorted left to right
+	put leftmost in convex hull, keep adding
+	if a point forces hull to be reflex, backtrack till the hull is convex
+	computes upper hull, merge with lower hull
+	nlogn (dominated by sort)
+	
+Divide and conquer
+	nlogn
+	T(n) = O(n) + 2T(n/2) + O(n)
+
+lower bound than (n log n)
+	prove a lower bound use a reduction from sorting
+	sorting omega(n log n)
+	SEE SLIDES
+	
+Segment Intersection
+	brute force is optimal if all intersections must be reported
+	
+Sweep line
+	Lt : St:S2 S1 S3 S4
+	

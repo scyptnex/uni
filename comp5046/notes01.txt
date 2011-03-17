@@ -1,0 +1,14 @@
+yo a kim
+
+Computational geometry: Algorithms and Applications 3rd Berg Cheong Kreveld Overmars
+
+20% 4 assignments 20% exam
+
+DO NOT BE FUCKING LATE
+
+big omega notation
+direct proof, contradicion, induction
+
+polygon triangulation
+	art galery problem, no holes, no self intersect
+	why is a triangle easy to guard? convex set defined as 2 points which can be joined without crossing the barrier

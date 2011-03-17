@@ -1,0 +1,85 @@
+CNS
+
+http://cassius.ee.usyd.edu.au/~mattb
+
+you spend x so that your opponent must spend y to defeat you
+	x usually more than y
+
+security systems must work in te face of an extremely well funded malicious agent
+
+all software is buggy
+bigger systems are more buggy
+nothing works in isolation
+humans are most often the weakest link
+its alot easier to break a system than make it secure
+
+Authenticity
+	proof of a message's origin
+	intgrity + freshness
+Confidentiality
+	ability to keep message secret
+Integrity
+	message not modified in transit
+	attackers should not be able to substitute fakes
+Non-repudiation
+	cannot deny a message was sent
+Availability
+	guarantee a quality of service
+Correctness
+	existence of a message is secret
+Secrecy
+	actions limiting access to data
+confidentiality
+	obligation to protect secrets
+privacy
+	privacy personal secrets (companies dont have privacy)
+anonymity
+	ability to keep message source/dest confidential
+
+Passive attack
+	just listening
+Active attack
+	fabrication, interruption, modification
+	
+trust
+	a trusted system is one whos failure can break security
+	trustWORTHY is one that wont failure
+	cannot trust software or vendors, the internet, managers (security costs not profits), the government, employees or users
+	peers, algorithms nor curves, security community, info security, yourself
+
+security through obscurity doesnt work
+	for a system to be truly secure, all secrecy must reside in the key
+
+cryptography study of techniques related to design of cyphers
+cryptanalysis, breaking ^
+cryptology
+
+one way function with trapdoor
+	x easily computes f(x)
+	f(x) is hard to compute f, unless you have a secret piece of information
+hash functions
+	keyed or unkeyed
+	preimage resistance (if you have f(x), you cant get x easily)
+	second preimage resistance (given x, you cant find x` such that f(x) = f(x`))
+	collision resistance (it is hard to find any x and y such that f(x) = f(y))
+	useful to confirm knowledge without revealing what you know
+	sign the hash (faster)
+	password files stored as hashes (must be reversed before used, password cracking)
+	virus protection (tripwire)
+Brute force
+	dictionary (try common)
+	use hashes to attack preimage resistance (i.e. store 2^n-1 plaintexts which hash to each possible hash value)
+	birthday attacks
+
+Merkle Damgard method (MD strengthening
+	variable methods split into fixed blocks
+	hash each block, use output to has next block
+	if hash is collision resistant, hash of entire file is collision resistant
+
+Keyed hash, used for message integrity
+Generating mac
+	MAC1 = h(k | m)
+	MAC2 = h(m | k)
+	Mac4 = h(k|pad1|h(k|pad2|m))
+
+"office space"

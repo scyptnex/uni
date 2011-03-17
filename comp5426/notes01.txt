@@ -1,0 +1,26 @@
+bbz@it.usyd.edu.au (903699112 ?)
+tues 5-6pm
+
+(ref) Introduction to Parallel Computing, Second Edition, Addison Wesley, 2003
+(low) introduction to parallel processing algorithms and architectures 1999
+(low) parallel programming in c with MPI and OpenMP, 2003
+
+http://sydney.edu.au/engineering/it/~comp5426
+
+speed, throughput
+
+implicit parallelism: super-scalar, pipelines
+
+power = voltae^2 x frequecy
+frequency = voltage
+power = frequecy^3
+
+parallel - top down
+distributed - bottom up
+
+cluster computing - group of linked computers working together
+grid computing (cloud computing)
+
+many operations take place at once, complicates reasoning about performance/correctness
+
+

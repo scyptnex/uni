@@ -1,0 +1,53 @@
+Cypher based Mac
+	cypher block chaining
+	turn message into blocks
+	repeated encryption using a block cypher is XORd
+	Secret key = (k, k', IV)
+	
+Cyphers
+	secure communication over an insecure channel
+	symmetric cypher - private key encryption, decrypt and encrypt are same
+		keys must be kept private, anyone with key can pretend to be someone with key
+		a-priori distribution, must be very strong
+	must be computationally hard for eve to decrypt even if has all the message
+	range of possible key values : Key Space K
+	range of possible input messages, message space M
+	Block cypher, chop message into blocks and encrypt blocks
+	Stream cypher: encrypt a bit at a time
+	Attack Model:
+		cyphertext only attack
+		Known plaintext, determine key given known message(s)
+		chosen plaintext attack
+		chosen cyphertext
+		rubber hose attack, break knuckles until they tell you, "purchased key"
+	Severity
+		Total break - find the key decrypt all messages
+		Global deduction - can decrypt messages anyway but dont have key
+		local deduction - can find plaintext of some messages
+		information deduction - a bit of message/key
+	security
+		unconditionally - no matter how much cyphertext we have we cant know the key
+		data requirements, process requirements, memory requirements, speed/data
+	old cyphers
+		rotation cypher - brute force
+		substitution cypher - 26! possible combiations, use frequency analysis
+		permutation cyphers - transpose letters
+		vignere cypher - add message to key, modulo 26, XOR
+		enigma
+		One Time Pad - truly random key as long as message, never reused - highly malleable
+	Perfect secrecy - cyphertext tells you nothing about plaintext
+
+Pseudo Raandom Number Generators
+	nonces?
+	repeatable, statistically random, long period/cycle, insensitive to seeds
+	linear congruential generator: x(n+1) = (ax(n) + b)mod c: you only need 2 values to guess the 3rd
+	rc4, ansi x9.17, dsa prng,
+	stream cypher: xor plaintext with pseadu random number stream, not OTP E(m,k)=DES(seed,k)||m xor RNG(seed)
+	
+DES
+	block cypher, 64 bit
+	feistel network, reversible
+		ladder structure, split message in half, xor each half with each other
+		func first block of left, xor with first of right, put that through function
+	round function need not be invertible but function is still reversible
+	
