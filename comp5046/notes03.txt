@@ -1,0 +1,35 @@
+segment intersection
+	plane sweep, sweep from top to bottom, maintain invariants
+	we know the order of the segments above sweep line
+	we know there is no intersection above the sweepline
+	use a binary tree to store the order of vertices
+	sweep the line:
+		meet a top endpoint, add it in order into the structure
+		meet a bottom endpoint, remove the point from the structure
+		if q (intersect s s`) is the highest intersection, s and s` must have been adjacent at some point
+	algo:
+		store all segments in balanced tree ordered by order along sweep line
+		only check intersections of 'new' adjacents
+	n log n
+	modify to report, add event points for each intersection
+	(n+h)log n for h intersections
+	cant do bettern than nlogn, element uniqueness - sorting
+
+triangulation
+	an l monotone polygon is a polygon where any line perpendicular to l intersects the polyggon exactly once
+	partition a simple polygon into a bunch of y monotone polygons O(nlogn), triangulate each in O(n)
+	visible vertex: lies on correct side
+	each iteration makes at most n edges, pushes at most 2 points to the stack
+	A y monotone polygon can be triangulated in linear time
+	break into monotone parts p is y-monotone if and only if it does not have any cusps
+
+sweep line monotonic partitioning
+	events: vertices of polygon
+	invatiant: tree keeping order of regions intersecting line
+	sweep down, if we meet a split, join to immediately above point
+	split vertex, merge vertex, start vertex, end vertex, left chain vertex, lower chain vertex
+	correctness, no split or merge vertices left
+	time, bounded by sorting O(nlogn)
+
+note: art gallery can be done in linear
+
