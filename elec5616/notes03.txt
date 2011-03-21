@@ -1,0 +1,52 @@
+DES
+	56 bits, 64 bit blocks
+	feistel network
+
+feistel structure
+	close to random
+	stronger under plaintext
+	diffusion: 	makes statistical analysis difficult, P-Box
+	confusion: relationship between cyphertext and key is arbitrary
+	split a block in 2, encrypt one half and xor it with the other
+	each round takes a bit of key and mashes with plaintext, bigger key (AES) means more rounds
+	Round Function:
+		take 1/2 nlock, expand to 48 bits, xor with 48 bits of the key (by sample)
+		break into 8 6-bit blocks, substitute via lookup table, 6 bit lookup has 4 bit output
+		switch around bits with p-box, remap all values to another location
+		finished with 32 bit encryptoid
+	Compared output of 1 bit different plaintext, by round 3 avg change probability is 50% (good)
+	"Avalanche effect"
+
+Des is BROKEN :(
+	brute force
+	6.5x10^10 d-s (dollar seconds)
+
+blocking
+	Electronic code book
+		naively encrypt each block seperately, look at most common 64 bit block
+		identical plaintext blocks result in identical cypertext blocks
+	Cypher block chaining
+		each cypher block is xored with the output of the last block, IV to start
+		recovers from bit errors
+	output feedback mode
+		encrypt iv, xor with plaintext block, use output of iv + encrypt for next encryption
+		precompute keystream ahead of time
+		malleable: flip bits in cyphertext causes flipped bits in output, to stop this use a mac (passworded hash)
+
+evaluating block cyphers and modes
+	key size is an upper bound on security, throughput, randomness
+
+Key Management
+	for symmetric keys, need n c 2 keys for n members of the network
+	Key Distribution center, well defended center, everyone only needs kdc key 
+		bob asks kdc to talk to alice, alice gets session key and blob got bob, forwards blob to bob who decrypts it to find his session key
+		kdc is single point of failure, steal keys from it or bomb it
+	merkle's puzzle
+		alice encrypts a million puzzles and sends them all to bob
+		bob chooses one, breaks it, and uses the key inside to communicate
+		eve must decrypt all/2 puzzles to find which one they are using
+	diffie hellman
+		p, g, g^a, g^b, alice sends bob p, g, and g^a(mod p), bob generates b and sends g^b(mod p)
+		discrete logarithm problem, given p, g and g^a(mod p) it is hard to find a
+		
+	
