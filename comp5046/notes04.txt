@@ -1,0 +1,44 @@
+voronoi diagrams
+	partition the plane into regions closest to the given control point
+	Vor(p) is the division of the plane into n cells 
+	for 2 cells, draw the line between them, mark p as the middle point, the cells bordered by the line perpendicular to the joining segment going through p
+
+properties:
+	a cell is the intersection of one or more halfplanes
+	if p is colinear, the diagram is a set of parallel lines, otherwise the diagram is segments and half-lines
+	the size of vof)p) is at most quadratic, each cell has <= n-1 edges
+	for n >= 3 the number of vertices in Vor(P) is <= 2n - 5 and the number of edges is <3n-6
+	We use euler's formula for conencted plane graphs: v-e+f=2 (faces: regions bounded by an unbroken cycle, including the ourside)
+	bend all infinite edges to meet a new vertex, nv+1 vertices
+	number of edges is unchanged, num faces same as num sites:
+	(nv + 1) - ne + n = 2
+	2ne >= 3.(nv + 1) <- lower bound for number of edges
+
+	let q be a point, , the largest empty with respect to q is a circle with centre q that does not contain any site
+	q is a vertex in the voronoi diagram if it contains 3 or more points in the empty
+	the half-line bisectors emanating from q form edges of vor(p)
+	the bisector between 2 points exists only if there is a q in the line whose largest empty circle has both points on it
+
+Fortune's algorithm (sweep line, O(n log n))
+	cant do better than n log n, reduce sorting to voronoi, which has lower bound n log n
+	problem: when sweeping from top to bottom, the part of vor(p) above the sweep line l depends partially on sides below s
+	solution: we dont keep track of the voronoi diagram so far, only what parts of the diagram can't be changed
+	observation: if the any point q is closer to a site than the sweep line, then q must belong to the cell, since no point added below the line can be closer
+	intersection of parabolic arcs behind the seep line are called break points.  the beach line is x monotone
+	intersection of 2 arcs trace out the edges of the voronoi diagrams
+	Sweep from top to bottom stop at events
+		site events, ordered sites - trace out edges in the voronoi diagram
+		circle events, an existing arc shrinks and disappears from the beachhead
+	the only way a new arc can appear on the sweep line is through a site event
+	each new site can only add 1 arc and can only split 1 arc into 2
+	when 3 arcs coalesce, one gets smaller and smaller until it disappears, we observe the 2 outer arcs cat be from the same parabola
+	the only way ane xisting arc can disappear from the beachead is in a circle event
+	each new site adds up to 3 new consecutive triples
+	false alarm, largest consecutive triple until another site pops up and is inside the triple
+	Every voronoi vertex is detected by a circle event
+
+	use BST to insert, delete, keep ordered
+	priority queue for events, sorted by y coordinate
+	somehow to store the actual voronoi diagram: doubly connected edge list
+
+	when q is empty but Y perhaps not, the remaining arcs form the infinite edges

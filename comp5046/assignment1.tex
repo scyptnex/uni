@@ -1,0 +1,146 @@
+\documentstyle[11pt]{article}
+
+\author{Nic Hollingum - 308193415}
+\title{Computational Geometry - Assignment 1}
+
+\addtolength{\oddsidemargin}{-.875in}
+\addtolength{\evensidemargin}{-.875in}
+\addtolength{\textwidth}{1.75in}
+\addtolength{\topmargin}{-.875in}
+\addtolength{\textheight}{1.75in}
+
+\begin{document}
+\maketitle
+
+\section {Y-Sorted Convex Hull}
+
+First note the similarities between this problem and the regular case of convex hull.
+In the normal case the hull is computed by first sorting the points from left to right, then by sweeping a line accross the plane, adding new edges to the hull on the top and bottom halves.
+It is therefore possible to compose the convex hull of points sorted by increasing y-coordinates in a similar fashion.
+
+We are given the points pre-sorted by height, we can therefore exclude the costly $O(n \log_{2} n)$ sorting algorithm.
+We start out hull at the lowest y-coordinate point, and the sweep-line will move from this point upwards, which is the ordering of the points we were given.
+We move the sweepline upwards, adding points to our 'partial hull' with the following conditions:
+\begin{itemize}
+	\item The newest point is always added to the hull, we maintain a 'linked list' type structure where each point references the point added before it which it has an arc to (though this may not be the point added immediately before it)
+	\item When a point is added ($a$), draw an edge between it and the last added point ($b$).  If the arc between $a$ and $b$ is on the {\em counter-clockwise} side of the arc between $b$ and its predecessor ($c$) then we remove $b$ from the convex hull and add the arc $a \rightarrow c$.  We call an arc {\em counter-clockwise} if (as in the previous example) $ba . cb < 0$ or ``the new arc appears on the left side of the line extending from the old arc''.
+	\item If the above case occurred, repeat the check for the next point down the chain, which may go all the way to the first node added and must necessarily terminate there.
+\end{itemize}
+This procedure has the effect of constructing half a convex hull on the left-side of the points.
+To complete the hull repeat the steps for the more {\em clockwise} arcs.
+The half hulls must necessarily include the lowest and highest points.
+The lowest point cannot be removed, since there is no arc it has to some ``lower point'' which would allow it to be removed.
+As for the highest point, since the newest point is always added, and there exists no ``newer point'' than the highest, it must always be part of the hull.
+
+This algorithm is a simple translation of the known convex-hull problem, and so inherits its correctness and time-complexity proofs:
+\begin{itemize}
+	\item Considder swapping the $x$ and $y$ coordinates of each point.  This has the effect of mirroring the point-set along the line $x = y$.  Clearly we would then have the points sorted by increasing $x$ valyes (i.e. left to right).  Then this is the same problem as the known convex-hull problem.
+	\item A convex hull for the ``mirrored'' pointset must be simply a mirror of the convex hull of the original.  Since by definition a convex hull is a polygon where ``no 2 points in the polygon can be joined by an arc that exits the polygon'' then the mirror is the same where each possible point $(x,y)$ in the original is the point $(y,x)$ in the mirror.
+	\item Each point is added to the ``current convex hull'' list at most once and removed at most once, the complexity is thereofre $O(n)$
+\end{itemize}
+
+\section {Point in a Polygon}
+
+We see the notion of being ``inside'' a polygon as that of being on one side of a barrier that divides the interior and exterior of the polygon, the perimeter.
+We are concerned with the interior region, a necessarily finite subset of the (infinite) plane, and hence smaller than the exterior region.
+Consider a single point moving along some (not necessarily straight) line around the plane.  The point must start outside the polygon.
+When the point reaches the edge of the polygon it crosses the barrer and enters the interior, it may move around and leave the polygon by crossing the barrier again.
+Each time the barrier is crossed, the point can only ever transition from being ``inside'' to being ``outside'' the polygon, or vice-versa.
+
+Now consider a point moving in a straight line from within the polygon in any direction.
+Since the interior region is finite the line must reach the edge of the polygon at some point, and therefore make at least one transition.  If the line happens to re-enter the polygon then by the same logic it must exit once more, in which case an interior point will cross the barrier $2n+1$ times for $n \geq 0$.
+Consider another point, starting outside the polygon and moving in any direction in a straight line.
+Most likely this line will never hit the polygon, and so make 0 crossings.
+In the event it does meet the barrier, the line is then inside the pollygon and must make a further $2n+1$ crossings.
+Hence a point outside the polygon travelling in a straight line must make $2n$ crossings for $n \geq 0$
+
+The problem decomposes to the much simpler one of determining how many of the polygon's ``barriers'' an arbitrary line originating from the given point intersects.
+If it meets an odd number of edges it is inside the polygon.  If it meets an even number of edges (including 0) then it is outside the polygon.
+
+Clearly ``barrier'' can be replaced by the perimeter edges of the polygon.  The intersection of 2 lines can be calculated in $O(1)$ time and in the worst case all (but 2) of the edges can be crossed by the arbitrary line, therefore $O(n)$ edges must be checked for intersection.
+
+This method is robust to polygons with ``holes'' in them, as well as disconnected polygons.
+A polygon with holes is a set of polygons where the main polygon defines the internal region, and the holes negate this part of the region, i.e. a point is inside the polygon if it is inside the ``main'' polygon and {\bf not} inside any of the holes.
+Points in the polygon may move and enter one of the holes, but since the hole is a closed region (much like a polygon itself) that point must inevitably leave the hole again and return to the polygon, until it at some point leaves the polygon proper.  This is the same as the original problem where each entry+exit of (possibly multiple) holes keeps the total number of barrier crossings odd.
+Similarly points in a hole must at some point enter the polygon before they reach the external region proper.  And hence must make one more transition than the (odd) number it takes to leave a n internal region.
+Finally points in the external region proper may intersect a hole on passing through, but must have made the 2 extra transitions to enter the polygon and enter the hole than if the point had started in the hole to begin with.
+
+\section {Convex-Hexagon-Hull}
+
+The convex hull of a set of hexagons is some region of the plane where no two points in any hexagon (possibly the same or different hexagons) can be connected by a segment not entirely in the region.
+This problem is trivially identical to the normal convex hull problem, where we consider each of the 6 points of the hexagons to be a point in the convex hull problem.
+This reduction is accurate so long as there can exist no point inside a hexagon which is outside the convex hull of all points.
+\begin{itemize}
+	\item Firstly a point inside a hexagon must be inside that hexagon's convex hull, by definition of the convex hull.
+	\item Secondly a point inside one (arbitrary) convex hull must be inside the convex hull of that hull and another exterior point.  Therefore any point inside the hull of one hexagon is inside the hull of n hexagons (including the origial)
+	\item Finally, if 2 points lie in a hexagon each, then the arc connecting them must lie in the convex hull of both.  The convex hull of both necessarily contains both sub-regions (the hulls of the 2 hexagons), therefore all points are in the total hull, and the hull must contain the segment(s) between all points, by definition.
+\end{itemize}
+We therefore say that there cannot exist a point that lies both inside a hexagon and outside the convex hull of all hexagons.
+Thus the convex hull of all points of all hexagons contains exactly the convex hull of all hexagons.
+
+Computing the convex hull uses a simple line-sweep algorithm bounded by $O(n \log_{2} n)$ operations as shown in lectures.
+It shall not be reiterated here.
+
+\section {Visible Segments}
+
+A segment that is ``visible'' to a point is one where we are able to construct a line segment from the point to the visible segment without intersecting another sigment.
+Another way to say this is it is the set of segments cyclicly closest to the given point.
+An algorithm to determine this set would rotate a sweep line around the given point ($p$), each segment which at some time was closest to $p$ must be visible to it.
+
+Our problem space is the plane, but we are concerned with cyclic positions, therefore we translate each point $(x,y)$ to some point $(\theta, r)$ for $0 \leq \theta < 3\pi$ which is $O(1)$ for each point, therefore $O(n)$ in total.
+For this problem $\theta$ and $r$ are offsets from the point $p$ rather than the origin.
+First we reorder the points for each segment by lesser counter-clockwise to more, that is for each segment $A \rightarrow B$, $\angle A \theta B \geq \angle B \theta A$.  Again this is $O(1)$ for each segment, hence $O(n)$
+We then order the segments by least starting $\theta$.  A segment $S_1 = A \rightarrow B$ is earlier than $S_2 = C \rightarrow D$ if A's $\theta$ is less or equal to C's.
+Note when segments cross the $\theta = 0^r$ line they are possibly low down the list despite starting at  the origin.
+
+Now we consider the action points.
+The start and end points of each segment are chosen, since if a segment is ``closest'' over any subset of its length
+
+
+\section {Polygon Division}
+\subsection{Motivation}
+First we understand the property that for any triangulated polygon's dual graph there are always exactly n-2 nodes (for a polygon with n edge points).
+Dividing a polygon will cause 2 new edge points to be made (duplicates of the endpoints of the division).
+Similarly if we remove one arc in the dual graph we obtain 2 dual graphs with n-2 nodes, and thus $(n-2)+4$ endpoints when converted back, as expected.
+
+The problem of dividing a polygon can be related to the problem of removing an arc from the dual graph.
+So we must devise a method of selecting an arc in the dual graph to divide the polygon along.
+
+\subsection{Algorithm}
+We shall use a vertex-labelling method, which labels vertices by the number of nodes that have been collapsed into it.
+We maintain a priority queue of leaves in the graph, in the beginning we give all nodes 1, we add all leaves to the priority queue, at each step:
+\begin{itemize}
+	\item we remove the topmost leaf from the priority queue, and add its counter to its parent
+	\item if the removal has made a new leaf, we add the new leaf to the priority queue ordered by counters
+	\item continue until we only have 2 nodes in the dual
+\end{itemize}
+When we only have 2 nodes in the dual, we divide ``split'' the polygon along this diagonal (as each arc in the dual corresponds to a diagonal in the polygon).
+
+\subsection{Correctness}
+This method assumes that arcs in the dual correspond to diagonals in the polygon.  Each node in the dual corresponds to a subtriangle in the polygon.  Since subtriangulation does not generate new points, the 3 points of that subtriangle are all points on the edge of the polygon.
+
+Each arc is an edge that 2 subtriangles share.
+Note these 'edges' are necessarily not edges of the polygon, if one was, there could be no subtriangle on the other side of the edge (outside the polygon) to join an arc to.
+Finally the 2 groups of nodes on either side of an edge are distinct, since if they were joined the dual graph would contain a cycle and thus not be a tree.
+Therefore each arc represents an edge not in the polygon, which divides the polygon into 2 distinct polygons.
+
+\subsection{Optimality}
+This method divides the polygon into 2 sections, along the last remaining arc after executing this algorithm.
+This division occurs along an arc, where each endpoint of the arc is labeled with the number of nodes that have been collapsed into it, we must consider what the greatest disparity between these two numbers can be.
+
+The upper bound for this disparity is $2n+1$.  This is proven by contradiction, one side of an arc has $n$ predecessors, the other has $2n+2$.  The collapse immediately before must have collapsed at most $n$ points into the larger node, it could not have collapsed more otherwise the node with $n$ would have collapsed.
+Now one node has $n+2$ collapsed nodes, to reach that state it must have had $n$ nodes collapse into it as well.  But this means it must have started with 2 nodes (since only 2 collapses are possible before the node becomes a leaf) which is itself impossible, all nodes start with 1.
+
+Hence the greatest possible disparity is $n$ and $2n+1$ on either side of the arc.  Dividing along this ``worst case'' arc causes the smaller subgraph to contain $\lfloor n / 3 \rfloor - 1$ of the total number of nodes in the dual, and hence $\lfloor n / 3 \rfloor + 1$ edge points.
+
+\subsection{Running Time}
+The total algorithm is composed of a few steps:
+\begin{itemize}
+	\item subtriangulate the polygon.  This is shown to be $O(n \log n)$ in lectures.
+	\item convert to the dual.  Simple $O(n)$
+	\item run the node-collapse algorithm.  This requires each node to be added and removed at most once from a priority queue.  With a balanced binary tree as the queue the total time is $O(n \log n)$
+	\item Re-composing the divided polygon is trivial $O(1)$ so long as we noted for each arc which 2 points it divides, this can be done at no overhead during construction of the dual
+\end{itemize}
+Thus the running time is bounded by the subtriangulation and edge collapse steps, for total running complexity of $O(n \log n)$
+
+\end{document}

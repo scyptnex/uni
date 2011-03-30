@@ -1,0 +1,354 @@
+\documentclass[12pt,twoside]{article}\usepackage{amsmath} %% Note that anything in a LaTeX file which is preceded (on the same line)%% by a % is a comment, and is totally ignored by LaTeX.%% Next is the command to input the macro package which we shall use%% for displaying Encapsulated Postscript figures\input BoxedEPS%%%%%%%%%%%%%%%%%%%%%%%% Depending on what operating system you are using, you need to%% use one or other of the following two lines. Keep the one you%% are NOT using ``commented out'', ie preceded by %.%\SetTexturesEPSFSpecial  %% use this for the Mac & Textures\SetRokickiEPSFSpecial  %% use for xdvi, dvips; i.e., for VMS, Unix, Athena%% (These commands tell each computer platform how to invoke the %% TeX ``special'' command; see BoxedEPS.doc for details if you wish,%% but I would not bother if I were you. KR.)%%%%%%%%%%%%%%%%%%%%%\HideDisplacementBoxes%% Hides the rectangular bounding box of the eps file;%% comment this out if you want to see how large%% the figure REALLY is -- i.e., there may be stray points . . .%%%%%%%%%%%%%%%%%%%%%%% The next few lines are formatting commands. You must leave%% these exactly as they are. (For your information, %% when your papers are turned into a book, these formatting%% commands will be changed. The final published version will be in 10pt%% type with somewhat different margins, designed to make it look good%% as a book rather than as a document printed on 8.5 by 11 inch%% paper. The page count will remain approximately the same.)\renewcommand{\baselinestretch}{1.2}\setlength{\topmargin}{-0.2in}\setlength{\textwidth}{6in}\setlength{\textheight}{8.5in}\setlength{\oddsidemargin}{0.25in}\setlength{\evensidemargin}{0.25in}\raggedbottom
+
+%%
+%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%
+%%
+%% The next few lines are definitions of commands used by Prof. Jaffe
+%% when he wrote his paper.  The LaTeX-sophisticated among you
+%% may have defined some labor-saving commands of your own.
+%% If so, they go here.  The LaTeX-unsophisticated among you
+%% may nevertheless want to use some of Prof. Jaffe's commands,
+%% like \bra and \ket and \braket,  as done in the template below.
+%% If you use these commands in your paper, keep their definitions
+%% here.  If you do not use them, you can delete them.
+
+\newcommand{\sech}{\mathop{\rm sech}\nolimits}
+\newcommand{\bra}[1]{\left\langle #1 \right|}
+\newcommand{\ket}[1]{\left|#1\right\rangle}
+\newcommand{\braket}[2]{\left\langle#1 |  #2\right\rangle}
+\newcommand{\rd}[1]{\mathop{\mathrm{d}#1}}
+
+%%
+%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+
+%%%%%%%%%%%%%%
+%%
+%% Now, the document itself begins.  When you are ready to begin writing
+%% your own paper, you will cut content out of the following and
+%% replace it with your own.  Keep an unmodified copy of this
+%% LaTeX file, though, and a hard copy of the paper by Prof.
+%% Jaffe which it produces.  Comparing the template below with
+%% the hard copy it produces will help you see how to handle
+%% titles, sections, figures, equations, references, the bibliography
+%% and much more.  Good luck with your paper. KR.
+%%
+%%%%%%%%%%%%%%
+
+
+\title{An Algebraic Approach to Reflectionless Potentials in One Dimension}
+\author{R.L.~Jaffe\\
+\small Center for Theoretical Physics\\
+\small MIT 6-311, 77 Massachusetts Ave.\\
+\small Cambridge, MA 02139-4307\\[-0.25in]} \date{} %% You could use \date{\small\today\today} to keep track
+%% of preliminary versions
+\maketitle
+
+\pagestyle{myheadings}
+\markboth{R.L. Jaffe}{An Algebraic Approach to Reflectionless Potentials in
+One Dimension}
+\thispagestyle{empty}
+
+\begin{abstract}
+\noindent
+We develop algebraic methods to find the eigenenergies and 	eigenstates of reflectionless potentials in one dimension.  \end{abstract}
+
+\section{Introduction}
+
+A few interesting problems in wave mechanics have exact solutions in terms of simple functions.  The best known examples --  the
+harmonic oscillator and the hydrogen atom -- teach us so much  about the
+structure of quantum systems that they are firmly  established in the syllabi
+of elementary courses.  Another class of  one-dimensional potential problems
+also have exact solutions in terms  of simple functions.  The potentials are
+inverse hyperbolic cosines,
+%
+\begin{equation}     v_\ell (x) = -\ell(\ell+1)\sech^2x     \label{1.1} \end{equation} %
+where $\ell$ is any positive integer ($\ell = 0,1,2,\ldots$).  Both the bound states and scattering states can be found analytically for these potentials in terms of elementary functions.  In fact this is the only example (other than step potentials and $\delta$-functions) I know of where the scattering states can be found by elementary means.
+These potentials have remarkable properties including bound states at zero energy, and reflectionless scattering.  The latter means that a particle incident on the potential is transmitted with unit probability, albeit with an interaction-dependent phase.  As a result they are known as ``reflectionless potentials''.
+
+
+The Schr\"odinger equation for the harmonic oscillator and the Coulomb potential can be \emph{either} by the more-or-less standard analysis of differential equations, \emph{or} by algebraic methods.  The algebraic solution to the harmonic oscillator using raising and lowering operators can be found in any textbook.  The algebraic solution to the hydrogen atom using the commutation relations of the ``Runge-Lenz'' vector and the angular momentum is treated in some texts~\cite{ref:1.1}. 
+Eq.\,(\ref{1.1}) can also be solved by a direct attack on the differential equation.  The approach can be found in Ref.~\cite{ref:1.2}.  The solutions 
+are expressed in terms of confluent hypergeometric functions that reduce to elementary functions when the strength of the potential is $\ell(\ell+1)$.  On the other hand, the eigenstates of reflectionless potentials can be found very easily using operator methods very similar to those that are used to solve the harmonic oscillator in elementary quantum mechanics texts.  This does not appear to be very widely known.  In this short paper, I will develop the operator solution to reflectionless potentials~\cite{ref:1.3}.
+
+\section{General Formalism}\label{s2}
+We begin with the one-dimensional Schr\"odinger equation,
+%
+\begin{equation}
+\Bigl[-\frac{\hbar^2}{2m}\frac{\rd{^2}}{\rd{\xi^2}}-
+  V_0\sech^2(b\xi)\Bigr]\psi(\xi) = E\psi(\xi)\ .
+  \label{2.0}
+\end{equation}
+%
+For convenience we scale out the dimensionful quantities by defining $x=b\xi$, $v_0=2mV_0b^2/\hbar^2$, and $k^2=2mb^2E/\hbar^2$, so for $v_0=\ell(\ell+1)$,
+%
+\begin{equation}
+  {\cal H}_\ell \;\psi(x) = \bigl[p^2 - \ell(\ell+1)\sech^2x\bigr]\psi(x) =
+k^2\psi(x)
+  \label{2.1}
+\end{equation}
+%
+where $p = -i \frac {\rd{}}{\rd{x}}$.  $k^2\le 0$ corresponds to bound
+states and
+$k^2>0$  corresponds to scattering.  Bound states should have normalizable wavefunctions, $\int \rd x \left|\psi(x)\right|^2 < \infty$, and scattering states should be defined in terms of incoming, transmitted, and reflected waves.  I will show that ${\cal H}_\ell $ has $\ell$ bound states and also exhibit explicit wave functions for the bound and scattering states of ${\cal H}_\ell $.
+
+In an analogy to the harmonic oscillator we introduce operators
+%
+\begin{align}
+  a_\ell &=  p-i\ell\tanh x\nonumber\\
+  a_\ell^\dagger &=  p+i\ell\tanh x\ .
+  \label{2.2}
+\end{align}
+%
+Using the canonical commutator between $p$ and $x$, $[x,p]=i$, it is easy to show that
+%
+\begin{align}
+  {\cal A}_\ell  \equiv a_\ell^\dagger a_\ell &=    p^2+\ell^2-\ell(\ell+1)\sech^2x
+  \nonumber\\
+  {\cal B}_\ell  \equiv a_\ell a_\ell^\dagger &=    p^2+\ell^2-\ell(\ell-1)\sech^2x\ .
+  \label{2.3}
+\end{align}
+%
+
+First we look for the ground state -- a normalizable state annihilated by $a_\ell $.  We define the state $\ket0_\ell $ by the equation
+%
+\begin{align}   a_\ell \ket0_\ell &= 0 \nonumber\\
+\llap{\text{or}\qquad} %fussy, to move centering left a little!
+  \bigl(-i\frac{\rd{}}{\rd x}-i\ell\tanh x\bigr)\psi_{0\ell}(x) &=  0
+\nonumber\\
+\text{where}\qquad
+  \psi_{0\ell}(x) &=  %\langle x\ket0_\ell                                 \braket{x}{0}_\ell   \label{2.5}\\
+\intertext{which has the normalizable solution}   \psi_{0\ell}(x) &=  N_\ell  \sech^\ell (x).
+  \label{2.6}
+\end{align}
+%
+Since $\psi_{\ell 0}$ is normalizable\footnote{$\ell=0$ is a special, very simple, case that is treated in the next section.} it is a bound state.  Since it has no nodes, a standard theorem on the one-dimensional Schr\"odinger equation guarantees it is the ground state.
+
+Now consider the relation between the operators ${\cal A}_\ell $, ${\cal B}_\ell $, and ${\cal H}_\ell $.  Comparing eqs.\,(\ref{2.1}) and (\ref{2.3}),
+%
+\begin{align}
+  {\cal A}_\ell  &=  {\cal H}_\ell  + \ell^2\nonumber\\
+  {\cal B}_\ell  &=  {\cal H}_{\ell-1} + \ell^2\ .
+  \label{2.7}
+\end{align}
+%
+Suppose $\psi$ is an eigenstate of ${\cal A}_\ell $, %
+\begin{equation}
+{\cal A}_\ell \ket\psi = \alpha\ket\psi\ .  \label{2.7a}
+\end{equation}
+%
+Then it is also an eigenstate of ${\cal B}_\ell $ \emph{with the same
+eigenvalue}, $\alpha$, as shown by the following  algebra:
+%
+\begin{align}
+  a_\ell \{{\cal A}_\ell \ket\psi\} &= \alpha a_\ell \ket\psi \nonumber\\
+  &=  \{a_\ell a_\ell^\dagger \}a_\ell \ket\psi =
+  {\cal B}_\ell a_\ell \ket\psi\ .   \label{2.8}
+\end{align}
+%
+  The only exception to this is the state $\ket0_\ell $, because $a_\ell \ket0_\ell =0$.  So  $\ket0_\ell $ is an eigenstate of ${\cal A}_\ell $ with eigenvalue $\alpha=0$, which has no corresponding eigenstate of ${\cal B}_\ell $.
+
+Eq.\,(\ref{2.7}) enables us to turn this into a statement about the Hamiltonians, ${\cal H}_\ell $:  ${\cal H}_{\ell-1}$ and ${\cal H}_\ell $
+\emph{must share the same spectrum except for the single state $\ket0_\ell $}.  These simple results allow us to construct the eigenstates and eigenenergies of all the Hamiltonians.
+
+\section{Eigenstates and Eigenenergies}
+
+\noindent
+The easiest way to see how the information of the preceding section enables us to solve for eigenstates and eigenenergies is to start with $\ell=0$, then consider $\ell=1$, and so on until the pattern becomes obvious.
+
+\subsection{\protect\boldmath$\ell=0$}
+ %% If you really must use symbols in headings (better to use words),   %% use bold symbols to match the bold fonts.
+
+\noindent
+For $\ell=0$, ${\cal H}_0=p^2$.  This is a free particle.  We know the eigenstates, $\ket k_0$.  They are labeled by the wave
+number $k$, and the subscript, 0, which refers to $\ell=0$,
+%
+\begin{equation}
+  \psi_0(k,x) \equiv \braket xk_0 = \exp ikx\ .   \label{3.1}
+\end{equation}
+%
+The corresponding eigenenergies are $E(k)=k^2$.  According to our operator analysis, there should be a state, $\ket0_0$, determined by $a_0\ket 0_0=0$, or $\frac{\rd{}}{\rd x}\psi_0(0,x)=0$.  The solution is simply a constant, $\psi_0(0,x)={\rm const}$.
+
+\subsection {\protect\boldmath$\ell=1$}
+
+\noindent
+For $\ell=1$ the results become nontrivial.  The Hamiltonian is
+%
+\begin{equation}
+  {\cal H}_1 = p^2-2\sech^2x\ .   \label{3.2}
+\end{equation}
+%
+According to our work in Section~\ref{s2}, the spectrum of ${\cal H}_1$ is identical to that of ${\cal H}_0$ except for the state $\ket0_1$.  Thus we have established that ${\cal H}_1$ has a continuum of eigenstates with $E=k^2$.  
+The $\ell=1$ ground state is determined by ${\cal A}_1\ket0_1=0$.  Using eq.\,(\ref{2.7}), ${\cal H}_1={\cal A}_1+1$, we find the ground-state energy,
+%
+\begin{equation}
+  {\cal H}_1\ket0_1=-\ket0_1\ .   \label{3.5}
+\end{equation}
+%
+So $\ell=1$ has a bound state with $E^{(0)}_1=-1$.  The spectrum of ${\cal H }_1$ is now complete:  a bound state at $E=-1$ and a continuum $E=k^2$.  It is shown in Fig.~\ref{samplefig1} along with other 
+values of~$\ell$.
+
+\begin{figure}[ht]
+$$\BoxedEPSF{EnergyLevels.eps scaled 900}$$
+\caption{Energy levels in reflectionless potentials.}
+\label{samplefig1}
+\end{figure}
+ %% The double-$ signs center the figure, which is scaled to 90 percent.
+
+The wavefunctions of the eigenstates can be constructed using methods quite similar to those used for the harmonic oscillator.  The ground state is easy; from eq.\,(\ref{2.6}) we have %
+\begin{equation}
+  \psi_1^{(0)}(x) = \braket x0_1 = N_1\sech x\ .   \label{3.6}
+\end{equation}
+%
+
+To construct the continuum eigenstates, consider the state obtained by acting with $a_1^\dagger$ on the continuum eigenstates of ${\cal H}_0$,
+%
+\begin{equation}
+  \ket k_1 \equiv a_1^\dagger \ket k_0\ .   \label{3.3}
+\end{equation}
+%
+The action of ${\cal H}_1$ on these states can be related to the $\ell=0$ problem as follows:
+%
+\begin{align}
+  {\cal H}_1\ket k_1 &=  ({\cal   A}_1-1)a_1^\dagger \ket k_0\nonumber\\
+  &=  a_1^\dagger {\cal   B}_1\ket k_0-a_1^\dagger \ket k_0\nonumber\\
+  &= (k^2+1)a_1^\dagger \ket k_0-a_1^\dagger \ket k_0\nonumber\\
+  &= k^2a_1^\dagger \ket k_0 = k^2\ket k_1 .
+  \label{3.4}
+\end{align}
+%
+Thus $\ket k_1$ is an eigenstate of ${\cal H}_1$ with eigenvalue $k^2$.
+
+The continuum state wavefunctions  are given by
+%
+\begin{align}
+  \psi_1(k,x) &=  \braket xk_1 = \bra x a_1^\dagger \ket k_0\nonumber\\
+  &=  (-i\,\rd{\null} /\rd x + i\tanh x)\exp ikx\nonumber\\
+  &=  (k+i\tanh x) \exp ikx\ .
+  \label{3.7}
+\end{align}
+%
+
+To interpret the continuum states we have to relate them to the usual parameterization of scattering in one dimension,
+%
+\begin{align}
+  \lim_{x\to -\infty}\psi(k,x) &=  e^{ikx} + R(k)e^{-ikx}\nonumber\\
+  \lim_{x\to \infty}\psi(k,x) &=  T(k) e^{ikx} .
+  \label{3.8}
+\end{align}
+%
+When we take the appropriate limits of eq.\,(\ref{3.7}),
+%
+\begin{align}
+  \lim_{x\to -\infty}\psi_1(k,x) &=  (k-i)e^{ikx}\nonumber\\
+  \lim_{x\to \infty}\psi_1(k,x) &=  (k+i)e^{ikx}   \label{3.9}
+\end{align}
+%
+and compare with eq.\,(\ref{3.8}) we find
+%
+\begin{align}
+  R(k)&= 0\nonumber\\
+  T(k)&= \frac{k+i}{k-i}   \label{3.10}
+\end{align}
+As promised, the reflection coefficient vanishes, and the transmission coefficient is a pure phase,
+%
+\begin{equation}
+  T(k) = \exp \bigl(2i\tan^{-1}(1/k)\bigr).
+  \label{3.11}
+\end{equation}
+%
+This completes the construction for $\ell=1$.
+
+\subsection{\protect\boldmath$\ell=2$}
+
+\noindent
+Armed with the methods developed for $\ell=1$, we can construct the solution for $\ell=2$ more quickly.  The Hamiltonian is
+%
+\begin{equation}
+  {\cal H }_2 = p^2 - 6\sech^2x\ .
+  \label{3.12}
+\end{equation}
+%
+According to our general result, the spectrum of ${\cal H }_2$ coincides with that of ${\cal H }_1$ except for the ground state, $\ket0_2$.  So there must be \emph{two} bound states.  One with energy $E=-1$ is obtained by acting with $a_2^\dagger $ on $\ket0_1$, with energy $E=-1$, and wavefunction %
+\begin{align}
+  \psi_2^{(1)}(x) &=  \bra x     a_2^\dagger  \ket0_1\nonumber\\
+  &\propto  (p+2i\tanh x)\sech x\nonumber\\
+  &\propto  \tanh x/\cosh x\ .
+  \label{3.13}
+\end{align}
+%
+Note that this wavefunction is \emph{antisymmetric} in $x\rightarrow -x$ as we would expect for the first excited state in a one-dimensional potential.  The ground-state energy is determined to be $E_2^{(0)} = -4$ by following an argument analogous to eq.\,(\ref{3.7}).  Its wavefunction is given by eq.\,(\ref{2.6}), %
+\begin{equation}
+  \psi_2^{(0)}(x) = \braket x0_2 = N_2 \sech^2x\ .
+  \label{3.14}
+\end{equation}
+
+Finally, the continuum state wavefunctions are constructed by following a procedure analogous to the $\ell=1$ case.  In short,
+%
+\begin{align}
+  \psi_2(k,x) &=  \bra x  a_2^\dagger \ket k_1\nonumber\\
+  &= (p+2i\tanh x)(k+i\tanh x)\exp ikx\nonumber\\
+  &=  (1+k^2 +3ik\tanh x -3\tanh^2x)\exp ikx\ .
+  \label{3.15}
+\end{align}
+%
+Comparison with the definition of transmission and reflection coefficients gives %
+\begin{align}
+  R_2(k) &= 0\nonumber\\
+  T_2(k) &= \frac{(k+i)(k+2i)}{(k-i)(k-2i)}\nonumber\\
+  &=  \exp 2i \bigl(\tan^{-1}(1/k) + \tan^{-1}(2/k)\bigr)\ .
+  \label{3.16}
+\end{align}
+%
+
+Clearly we have outlined a method that can be extended to arbitrary $\ell$.  The explicit expressions for the wavefunctions are not as interesting as the spectrum and the transmission coefficients.
+\begin{itemize}
+  \item
+  A sequence of bound states beginning at $E_\ell ^{(0)} =   -\ell^2$ and continuing with $E_\ell^{(j)}=-(\ell - j)^2$   until $j=\ell$ and $E_\ell^{(\ell)}=0$.
+  \item
+  The scattering is reflectionless, and the transmission coefficient   is given by   %
+  \begin{equation}
+    T_\ell (k) = \exp\Bigl(2i \sum_{j=1}^\ell \tan^{-1}(j/\ell)\Bigr).
+	\label{3.17}
+  \end{equation}
+  %
+\end{itemize}
+
+\section{Discussion}
+
+\noindent
+Many interesting features of scattering theory are nicely illustrated by the bound states and transmission coefficients of reflectionless potentials.  A full discussion would lead us far afield, so we simply quote some of the most important results:
+%
+\begin{enumerate}
+  \item
+    The transmission coefficient, $T_\ell (k)$, has a pole at every     value of $k$ at which the potential $\ell(\ell+1)\sech^2x$ has a bound state.  For $\ell=1$ we see a pole at     $k=i$. For $\ell=2$ we see poles at $k=i$ and $k=2i$.   \item
+    In addition to the bound states at $k=i,2i,3i,\ldots$, the     potential $\ell(\ell+1)\sech^2x$ has a bound state at     zero energy.  The solution to the Schr\"odinger equation at $k^2=0$     must become asymptotic to a straight line, $\psi_\ell (0,x)     \rightarrow A+Bx$ as $x\rightarrow\pm\infty$.  When the slope ($B$) of     the straight line vanishes, the system is said to possess a bound     state at zero energy.  The name is justified by the fact that     making the potential infinitesimally deeper (and the problem no     longer exactly solvable) gives a state bound by an infinitesimal     binding energy.  Bound states at zero energy are very special to     reflectionless potentials.
+  \item
+    If we parameterize $T_\ell (k)$ in terms of a phase shift,     $T_\ell (k)=\exp\bigl(2i\delta_\ell (k)\bigr)$, then it is easy to show     that the difference between the phase shift at $k=0$ and     $k\rightarrow\infty$ counts $\pi$ times the number of bound     states, with the bound state at zero energy counting as $\frac{1}{2}$.  
+    This result, known as Levinson's theorem, holds for arbitrary     potentials in three dimensions as well as one dimension.
+\end{enumerate}
+In summary, reflectionless potentials form a simple and versatile laboratory for studying the properties of bound states and scattering.  
+\subsection*{Acknowledgments}
+ The author is grateful to Jeffrey Goldstone for conversations on reflectionless potentials.  This work is supported in part by funds provided by the U.S. Department of Energy (D.O.E.) under cooperative research agreement \#DF-FC02-94ER40818.
+
+
+\begin{thebibliography} {9}
+\bibitem{ref:1.1} See, for example, R.L.~Liboff, {\sl Introductory Quantum Mechanics, 3rd Ed.} (Addison-Wesley, Reading, MA, 1998) problem 10.58, page 481.
+\bibitem{ref:1.2}P.~Morse and H.~Feshbach, {\sl Methods of Mathematical Physics\/} (McGraw-Hill, New York, 1953), page 1650.
+\bibitem{ref:1.3} I learned these methods in conversation with Jeffrey Goldstone, who claims they are well known.
+
+
+\end{thebibliography}
+
+%\begin{appendix}
+%\section{Supplementary \LaTeX\ Notes}
+%
+%\end{appendix}
+
+\end{document}
