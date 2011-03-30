@@ -1,0 +1,29 @@
+Parallel Algorithms
+	part - lack of parallel programming standards (no portability, no uptake)
+	various levels of granularity - we want high level (processes/threads)
+	multiple threads work independantly and cooperatively Single Program Miltiple Data (variation on MIMD, MPI)
+
+Communication Model
+	accessing a shared data space - Shared Address Space machines, multiprocessors
+		global memory, accessible to all processors, modify objects stored in space
+		uniform memory access: when time taken on local and global data is same
+		non-uniform memory access: may be faster to access local memory than global memory
+		pthreads and OpenMP support synchronization using locks/related mechanisms
+	exchanging messages - message passing paltforms or multicomputers
+
+Primes
+	mark all multiples of k between k^2 and n
+	choose smallest unmarked k until k^2 > n
+
+Designing
+	concurrency considered early, machine specific parts considered late
+	partitioning - decompose computation and data to small tasks - FINE GRAIEND, data or computation (hopefully both)
+		data decomposition - divide and conquer, recursive
+	communication - define all coms and com structures
+		local = each task communicates with a small set of others. global = each task communicates with most others
+	agglomeration - combine tasks into larger ones to improve performance
+	mapping - map tasks/sequence to processors - max utilization min communication
+
+MPI_ANY_SOURCE
+MPI_Recv: &status shows where emssage came from ^
+
