@@ -1,0 +1,48 @@
+linear programing in low dimensions
+	x house requires 10k brick, 4 door 5 window, sells for 200k
+	y house 8k bricks 2 door 10 window, 250k
+	168k bricks, 60 doors, 150 windows, at least 0 of each house type
+
+general case
+	f(x1...xd) = c1x1+c2x2...cdxd
+	intersection of half spaces, convex polyhedron
+	
+runtime
+	simplex - exponentil
+	ellipsoid - O(n^4 L)
+	interior point - O(n^3.5 L)
+	
+	megiddo (3^(d^2) n)
+	(d! n)
+
+geometric interpretation
+	2d: cx cy where f_c (P) = cx.px cy.py
+	linear constraints H = h1 n h2 n h3... hn
+
+4 cases:
+	infeasible (union of halfplanes is empty)
+	unbounded
+	non-unique
+	unique
+
+incremental algorithm
+	bound large region
+	Fi is an i sized subset of H, note F(i+1) is subset of F(i)
+	when we add a halfplane if current best point is in it then no change
+	otherwise it lies on the boundary of the halfspace we just added
+
+	if vi-1 in hi then vi = vi-1
+	else vi is the point in the intersection on the boundary of hi
+	if no such point then report lp infeasible
+
+obs:
+	step i of the optimal point vi can be found in O(i) time
+
+random linear
+	O(1) time if vi-1 in hi
+	O(i) time if vi-1 not in hi
+	let xi be a random variable 0 or 1 (in or out of halfspace)
+	total time n+SUM(O(i).xi)
+	linearity of expectation E[SUM(O(i).xi)] = SUM(O(i).E[xi])
+	at each removal of a halfspace only 2/i probability of changing optimal solution
+	sum(2O(i)/i) = SUM(O(1)) = O(n)
