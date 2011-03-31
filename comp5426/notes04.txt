@@ -1,0 +1,41 @@
+Hypercube
+	special case of d dimensional mesh, for network with p nodes d = log p
+	construction of hypercubes: 0d, 1d, 2d, 3d
+	any point on the hypercube can reach another in log p steps (move 1 unit at a time)
+
+Tree based
+	complete(static) or switching(dynamic)
+	Distance no more than 2log p
+	nodes higher up the tree must deal with moer traffic (consider fat tree [root has more bandwidth])
+
+Buses
+	address and data busses, use cache to speed up lengthy accesses (network accesses very slow)
+	cache coherence, if one processor changes data, dirty cache possibly far over network
+
+Cross bar
+	each processor has its own connection to each memory bank
+	p^2 connections
+	non blocking
+
+omega network
+	logp inputs and outputs
+	pass through and cross over
+	number of network nodes grow p log p (better than cross bar, p^2)
+	binary rep of source and dest, at each stage pass through if bits are same, cross over if not
+	blocking, unlike cross bar
+
+Evaluating
+	Diameter - distance between farthest two nodes (line - p-1, hypercube - logp, completely connected - 1)
+	Arc connectivity - minimum number of links needed to break network in 2
+	bisection width - similar to arc but divide network into 2 equally sized nodes (measures bandwidth, not robustness)
+	cost (number of links and switches, whichever is more) abimity to map out network, length of wires
+
+Message passing cost
+	startup time, per-hop time, per-word-transfer time, per-hop very small so t(comm) = t(start) + t(word)*MESSAGE
+	time must be taken with consideration of delays (saturated network)
+
+Memory wall
+	memory access time stays constant, cpu access time decreases
+	memory heirarchy, on chip cache, secondary cache, main memory, secondary storage, tertiary storage
+	cache coherence, invalidate protocols, use a 'snoopy channel' to broadcast invalidate calls
+

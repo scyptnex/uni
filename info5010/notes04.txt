@@ -1,0 +1,54 @@
+IP
+	max c.x; Ax <= b, x is an integer
+	equivaliently max c-x, x is in S, S={x in an integer, Ax N= b} <- usually finite set
+
+Divide and conquer
+	obs, let S = S1 u S2 u S3...Sk be a decomposition
+	and let z^i = max c.x; x in S_n then z = max_i x^i is optimal value for S
+	look at a variable, which can take up to l values, break S in to S1...Sl, Sj={x in S : X_i = j}
+
+Branch and Bound
+	Obs, Let S=S1 uet S2 u ... u Sk be a composition
+	And let z-^i be upper bound on z^i, and z_^i be lower bound, z_^i < z^i <z-^i
+	Then z- = max z-^i, and z_ = max z_^i.  continue breaking problem until z- = z_
+	pick any solution as a lower bound, as problem is divided this becomes easier
+	to get upper bound, solve to optimality the linear relaxation of the problem (i.e. remove integrality constraint, solve as LP)
+	To break up: start at S, if S's upper bound is integral we stop
+		otherwise, some value of S is fractional, lets say x_30 is 2.3
+		define S1 and S2 wheres S1 contains solutions with x_30 <=2 and S2 has x_30 >= 3
+		lets say we have s1 between 17 and 10, s2 between 18 and 15.  we can modify the constraints of S to between 18 and 15
+		break S1 into s11 and s12.  we say s11 has integral solution 17, so we prune its children
+		if s12's upper bound is 16, it canbe pruned because we know its lower than the root's lower bound
+		if s21 is infeasible, we can prune it by infeasibility (it means this is empty
+	When we add a constraint to split a node, the lp relaxation remains dual feasible
+
+Cutting plane
+	take convex combination of all vector solutions - convex hull in 2d/3d
+	now, max c.x ; x in s == max c.x x in conv(s) (we can use simplex to solve it, which will return an integral soluton on corner of feasible region)
+	II - conv(s) = {x is a real vector, A~x <= b~} note A~ != A
+	A~ is exponantially large and usually we dont know it
+	linear relaxation is usually bigger than problem
+	formulate a new valid constraint that restricts the valid region.  only where it matters (near optimal solution)
+	Keep limiting until we meet optimal ip
+
+
+Facility location
+	bipartite graph maps client to facilities
+	x_i=1 if open fac i
+	y_ij = 1 if fac i services client j
+	min sum(all facs i)(fi.xi) + sum(for all facs i clients j)(cij . yij)
+	sum(all clients j)(yij) <= N.xi (N number of clients) <- xi is 1 if ther are any clients being serviced by fac i
+	sum(all facilities i)(yij >= 1) all clients must be somewhere
+	xi, yij in {0,1}
+	
+	same objective: min sum(all facs i)(fi.xi) + sum(for all facs i clients j)(cij . yij)
+	yij <= xi for all i,j (i.e. if the client wants to be serviced by the facility, it must be open)
+	sum(all facilities i)(yij >= 1) all clients must be somewhere
+	xi, yij in {0,1}
+
+	Mixed Integer problem
+		sum(fi.xi) + sum(cij . yij)
+		yij <= x
+		sum(yij >= 1)
+		xi in {0,1}
+		yij >= 0

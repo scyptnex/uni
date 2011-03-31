@@ -1,0 +1,35 @@
+Attacks on DES
+	Exhaustive search - we know when we have the result because each 7 bit stream has parity, if random, only 1/2 the bytes have correct parity
+	DES (Symmetric) halves space since we know message and its complement, we eliminate both if they dont match
+	2DES - use time space trade off (use 2^56 memory blocks) and decrypt 112 bit key in 1/2 time
+	3DES E1(D2(E1(M))) - dime psace tradeoff 2^(56+64)/s
+	DESX
+
+Sophisticated attacks
+	differential - better than brute force time, looks at difference between 2 inputs and diff between 2 output m1 xor m2 vs c1 xor c2
+		make delta(b) the set of plaintext pairs with same xor'd difference, there are 2^|b| pairs, hence 2^6 = 64 pairs
+		take delta(b), amke delta(e) for the xor differences between e pairs
+		Note distributions of delta(e) are not random (some are more likely)
+		it is mathematically impossible to make an even distribution
+		reduces this to 2^47 operations (instead of 2^56)
+	linear cryptanalysis - linear relationships between cyphertext, plaintext and key
+		des is not linear, but has a lienar approximation
+		rho = Pr[p[] xor c[] xor k[]] -> if |rho - 0.5| is large, thenw e can guess at k[s1,..,sw]
+		for a break rho, = 1.0, or 0.0, for a perfect cipher rho=0.5, again mathematically impossible
+
+comparison
+	precomputation	-			1	2^56	1
+	exhaustive		1			-	-		2^56
+	linear			2^43(85)	-	text	2^43
+	
+Advanced Encryption Standard (AES)
+	arrange 16 ytes in a square, xor the round key
+	shift rows 0, 1, 2, 3
+	change one bit in input changes whole output after 2 rounds
+	
+Rainbow Tables
+	time-space tradeoff, prepare a large lookup table to help crack
+	store strings of hashes of the output of the last, hash the m until we get some value in the table, if we can, we kno by hashing x until we get m, the last hash is the preimage of m
+	must reduce because the preimage may not be a valid password
+	salts are ways to defeat rainbow tables, force system to exhaustively check all salts, a cracker must do same for all passwords, 4 digit salt makes 10000 times harder
+	
