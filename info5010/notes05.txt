@@ -1,0 +1,49 @@
+Proof of max/min set cover
+
+Harmonic Number: H(n) = 1+1/2+1/3 ... + 1/n
+
+for all i= 1...k
+xi >= (OPT-(x1+x2...xi-1))/k
+OPT-(x1...xn) <= (1-1/k)^i OPT	x 1-1/k
+OPT-(x1...xn) <= k xi+1		x 1/k
+OPT-(x1+...xi) <= (1-1/k)^i+1OPT + xi+1
+OPT-GREEDY <= (1-1/k)^k OPT
+OPT-GREEDY <= 1/e OPT
+
+proof greedy is ln n+1 approx for Min Set cover
+	after OPT iterations Greedy leaves at most <=	|u|/e uncovered
+	after 2OPT					|u|/(e^2)
+	after (ln|u| + 1)OPT				|u|/(|u|.e) <-- these are fractions of integers, if x is at most 2.5 it is at most 2
+
+for 2 geometric sets, greedy may cover all but greatest ad optimal covers greatest, since there are ROUGHLY ln elements then greedy covers ln times optimal
+
+Submodular set covver
+	given a set v, w.v -> R^t
+	a submodular monotone function f:2^v -> Z_o^t <- assign every subset of v a positive integer value
+	find a subset S such that f(s) = f(v)
+	minimizing w(S) = SUM(m in s)W(m)
+Def: a subset function f is submodular if (a subset B subset v) and m in V, f(A+m) - f(A) >= f(B+m) - f(B)
+HOW ABSTRACT
+
+v = collection of subsets
+f(T) = number of elements in U covered by T
+find the subset of V which voeres all that V covers while minimising total weight (i.e. set all weights to 1)
+
+GREEDY
+T<- phi
+while f(T) < f(v) let m be in V maximizing (f(T+m)-f(T))/w(m) <- divide by weight because small progress for v cheap is better than more progress for much more
+	add m to T
+return T
+
+Greedu is H(Delta) approx for ssc where Delta = max(m in V) H({m}) <- Delta was max cardinality subset in S in MSC
+
+Wierdness: minimal weight spanning tree
+	V = Edge set of graph (sux to be V)
+	f(T) = n - number of connected components in T <- goal to reach n-1
+	Delta = 1 -> H(1)=1 i.e. optimal PRIMM's
+
+Sensor networks
+	bipartite graph problem (K_sensors_basestation)
+	V = set of BS
+	f(T) = maximum number of sensors that T can service
+	model sensor network as max flow, each sensor can get 1 flow and each bs can output 2 (or whatever)
