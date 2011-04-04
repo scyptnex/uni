@@ -1,0 +1,36 @@
+Number theory problems
+	discrete logarithm problem
+	a^b modulo c
+	shortcuts come in leaps and bounds, it is difficult to say the strength of a key
+	believed to be difficult to find prime factors of large multiple of 2 primes, square root
+
+Public key crypto
+	deals with MUCH larger numbers (2048 bit keys)
+	hybrid: use public keys to exchange, then switch to symmetric for speed
+	able to brute force message space since we have the key
+
+el gamal
+	alice generates g, a nd p
+	alive calculates g^a mod p
+	alice's public key is p, g ad g^a which che can publish
+	the variable a is the private key used to decrypt
+	bob same with q, h, h^b
+	to encrypt, y1 is g^k, y2 = (g^a)^k m mod p
+
+RSA
+	n = pq : phi(n) = (p-1)(q-1)
+	ed = 1 mod phi(n)
+	public: e, n
+	private, d, p, q
+	chinese remainder theorem - solve rsa by simultaneous equations
+	factoring attack:
+		c = m^e mod n
+		if we can factor phi(n) we can break n
+	small encryption exponent attack:
+		choose 3 as the exponent, send 3 messages to different people with same exponent
+		same for small decryption
+	brute force message space
+	homomorphic properties: c1c2 - (m1m2)^e mod n
+		trick alice into decrypting double encrypted message, we can decrypt it if she sends it back unencrypted
+	1039 bit prime was factored in 2007
+	square and multiply, break g^23 into g^16.g^4.g^2.g^1
