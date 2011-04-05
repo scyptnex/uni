@@ -1,0 +1,11 @@
+authorship
+	people who contribute to the work
+	not people who help to get funding
+	not supervisor of research group
+	not people who collect/contribute data
+	anyone qualified to be an author should be included (be on safe side)
+	co authorship - acknowledge people
+
+plagarism
+	self plagarism - you cant publish multiple papers on same topic
+	
