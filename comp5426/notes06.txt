@@ -1,0 +1,12 @@
+partitioning and communication
+	identify maximum degree of parallelism
+	Agglomeration - partitioning phase where we group tasks, simplify program, improve performance, maintain scalability
+	block cyclic distribution:
+		partition into more blocks than processors
+		round robin assign blocks to processors
+
+Reduction
+	given associative operator (xor)
+	add, multiply, and or, min max
+	parallel reduction: divide and conquer
+	binomial tree of computation nodes, agglomeration is mip-mapped

@@ -1,4 +1,4 @@
-EXECUTES=tut1 tut2 tut3 tut4
+EXECUTES=tut1 tut2 tut3 tut4 tut5
 
 all: $(EXECUTES)
 
@@ -13,6 +13,9 @@ tut3: tutorial03.c
 
 tut4: tutorial04.c
 	mpicc tutorial04.c -o tut4
+
+tut5: tutorial05.c
+	mpicc tutorial05.c -o tut5
 
 clean:
 	rm -f $(EXECUTES)
