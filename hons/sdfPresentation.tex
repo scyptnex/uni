@@ -1,7 +1,7 @@
 \documentclass{beamer}
 \usepackage[latin1]{inputenc}
-\usetheme{Boadilla}
-\title[Make a LaTeX presentation using Beamer]{Introduction  to Beamer\\How to make a presentation with LaTeX?}
+\usetheme{Goettingen}
+\title[SDF Crash Course]{Synchronous Dataflow\\A Crash Course in Infinite Programs}
 \author{Nic Hollingum}
 \institute{USYD}
 \date{7 Apr, 2011}
@@ -12,15 +12,12 @@
 \end{frame}
 
 
-\begin{frame}{Contents}
-\begin{itemize}
-	\item Background
-	\item Representation
-	\item Topologies - Properties
-	\item Scheduling
-	\item My Research
-\end{itemize}
+\begin{frame}
+
 \end{frame}
+
+%BACKGROUND INFO
+\section{Background}
 
 \begin{frame}{Background}
 \begin{itemize}
@@ -28,30 +25,47 @@
 \end{itemize}
 \end{frame}
 
+%REPRESENTING A STREAM GRAPH
+\section{Representation}
+
 \begin{frame}{Representation}
 \begin{itemize}
 	\item somedata\cite{lee87}
 \end{itemize}
 \end{frame}
 
+%TOPOLOGY MATRIX AND ITS PROPERTIES
+\section{Tolopogies - Properties}
+
 \begin{frame}{Topologies - Properties}
 \begin{itemize}
-	\item somedata
+	\item somedata\cite{sdfBook, lee87}
 \end{itemize}
 \end{frame}
+
+%SOME NAIVE SCHEDULING
+\section{Scheduling}
 
 \begin{frame}{Scheduling}
 \begin{itemize}
-	\item somedata
+	\item somedata\cite{mal08}
 \end{itemize}
 \end{frame}
+
+%MY RESEARCH FOCUS
+\section{My Research}
 
 \begin{frame}{My Research}
 \begin{itemize}
-	\item somedata
+	\item somedata\cite{sih91, thi10}
 \end{itemize}
 \end{frame}
 
-\bibliographystyle{wmaainf}	% (uses file "plain.bst")
-\bibliography{biblio}		% expects file "myrefs.bib"
+%TIDYING UP
+\section{References}
+\begin{frame}[allowframebreaks]{References}
+\bibliographystyle{wmaainf}
+\bibliography{biblio}
+\end{frame}
+
 \end{document}
