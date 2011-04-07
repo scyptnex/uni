@@ -1,0 +1,36 @@
+Local search
+	Set of feasible solutions F
+	cost function c.F -> Real
+	Neighbourhood phi : F -> 2^F
+	LSA:
+		start with x, afeasible solution in F
+		if ther is a better y in neighbourhood of x, x <- y
+	Examples
+		Simplex: F = set of basic feasible solutions, c = sum(c_i x_i), neighbourhood = all adjacent basic feasible solutions
+		Max cut, flip heuristic: F = set of all partitions (A,B) of vertex set, c = sum of weights along cut W(E(A,B)), neighbourhood = transfer vertex from a to b or vice versa
+
+locality ratio
+	LSA A : max x : c(x)/c(x*) where x is Local optimal x* is Global (max:  min x c(c)/c(x*))
+	obs: 	locality ratio of simplex 1
+	theorem: locality ratio of flip H is 1/2 w(E(u, B) >= w(E(u, A))
+		sum all, W(E(A,B)) >= 2W(E(A,A))
+		other side W(E(A,B)) >= 2(W(E(B,B))
+		W(E(A,B) >= W(E(A,A)) + W(E(B, B))
+		W(E(A,B)) >= W(E)/2 >= OPT/2
+
+PLS - polynomial local search
+	complexity class that captures how hard it is to find a locally optimal solution
+	optimisation problem defined by a seto of instances I
+	for each instance i in I set of feasible solutions F(i)
+	algorithms (all are p)
+		A(i) returns some x in F(i)
+		B(i, x) -> if x in F(i) returns c(x)
+		C(i, x) -> if there is a y in neighbourhood of x, and c(y) < c(x) returns y (for minimise problem)
+	problem: given (I,F,A,B,C) find a locally optimal solution
+	theorem: finding the output of standard LSA for some problem in PLS can be NP-hard
+	take SAT on n variables:
+		F = {0,...,2^(n-1)}
+		phi(x) = x-1
+		c(x) = 0 if x satisfies SAT formula, x otherwise
+	theorem: if there is a problem in PLS that is NP hard, then NP = co-NP, i,e, it is VASTLY UNLIKELY that PLS cant be done in p
+	theorem: flip h for MAX Cut is PLS Complete, note its v difficult to map problems to PLS class

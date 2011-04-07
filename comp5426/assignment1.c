@@ -1,10 +1,17 @@
+#include <mpi.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-...
+#define BUF_SIZE 256
 
-#define BUF_SIZE 1024
-
-
-
+int buf_read(char * buf, const char * end) {
+    int count;
+    count = fread(buf, 1, end - buf, stdin);
+    if (count > 0 && i[count - 1] == '\n') {
+        --count;
+    }
+    return count;
+}
 
 int main(int argc, char **argv) {
 
@@ -100,12 +107,3 @@ int main(int argc, char **argv) {
 
 }
 
-
-int buf_read(char * buf, const char * end) {
-    int count;
-    count = fread(buf, 1, end - buf, stdin);
-    if (count > 0 && i[count - 1] == '\n') {
-        --count;
-    }
-    return count;
-}
