@@ -1,0 +1,19 @@
+Range Query
+	S - set of n poins in d dimensional plane
+	we must beat linear naive algorithm
+	1d query, pre-sort then search for bounds O((log n) + k)
+	build balanced binary tree, largest of left subtree is at node
+	when doing range query, split node is point where left and right boundaries differ, report everything on the inside of the range, O(k) time for k reports ?? NOT SURE
+	pre-processed in O(n log n), space: O(n), query time: O(log n + k)
+	2d: at odd levels split on x coord, at even split on y
+		problems where decision overlaps query range
+		pre-process O(n log n), space: O(n), queryO(k + sqrt(n))
+	higher dimensions:
+		same pre-processing and space:
+		Q(n) = 4 + 4Q(n/8) -> O(n^(2/3)) 3 Dimensions
+		O(n^(1-1/d)) d Dimensions <- tight bound
+	Can we improve by using different structure:
+		lots of x query thn lots of y
+		for every node in x tree create associative data structure on y
+		n log n space since each node is in its log n predecessor's associative trees
+		when we have a whole subtree, do search on assoc structure
