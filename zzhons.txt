@@ -23,3 +23,8 @@ n31 - huuuge computer
 n37 - sel4 multiserver
 n38 - sel4 java
 
+
+research poster (10-2)
+thesis (14-2)
+presentation Q/A (14-2)
+
