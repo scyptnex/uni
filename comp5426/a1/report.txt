@@ -1,0 +1,36 @@
+COMP5426 - Assignment 1
+
+Nic Hollingum
+
+308193415
+
+Reasoning
+	First, we note that ther may be a variable number of workers for any execution, therefore we cannot statically know how parallel our program will be.
+	We also note in tests that executions with a single processor are faster (due to communication overheads) so it is useful to reduce communication to large blocks rather than many small ones.
+	Finally, we note that after a single collapse of a large number, the size of the new integer is at most 9 times the length of the large one.  Therefore it is safe to represent the collapse of extremely large inputs with a single unsigned long, as  sumber taking up 1.820 Femtobytes (2^60) would be required to risk exceeding the maximum capacity of an unsigned long.  This data-volume is significantly larger than the largest databases in the world (roughly 2 million home-computers) and so accomodating such a number is outside the scope of the assignment.
+
+Algorithm
+	The program performs the following steps:
+		1. read a block of data 256 bytes from input
+		2. If there are no workers, sum the block and add it to my running sum
+			if there are, send the data to a worker in round-robin format
+			if the worker already has a block, first blocking-wait for them to reply, then send them the new block
+		3. When all blocks are read, read the replies of all currently occupied workers in reverse order
+		4. send all workers a termination signal
+		5. finish summation on the master machine
+		6. print output
+	This procedure works for any number of actors from 1 to n, however no advantage is gained when n > B/256 for B bytes of input data
+
+Compilation
+	This code is compiled using the provided makefile, to produce an executable called collapse which must be run with mpicc.
+	Of possible use are the make commands 'run' and 'short' which can be used to make and execute automatic testing.
+	the runtests script has been provided which runs the program with varying processor counts on multiple input-output pairs.  This will only function if the input/output pairs have been extracted into the same directory as the collapse and runtests executables.
+
+Results
+	This algorithm has been tested for all inputs, running 1, 2 and 4 processors.  Time considerations have prevented teting on larger processor numbers however this is not considered a serious limitation to performance
+	The running time is consistantly shorter for less-processors, especially for the 1-procesor case.  This is because the overheads for initialisation and communication significantly outweigh the costs of network communication.
+
+Late Submission
+	My appologies for my late submission.
+	Whilst i had finished my code before the submissioin deadline (and can prove it using the Github revision control system if needed) the report and actual submission thereof slipped my mind until thismorning.
+	I accept the responsibility of submission is my own and marking penalties would ensue.

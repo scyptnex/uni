@@ -19,3 +19,4 @@ tut5: tutorial05.c
 
 clean:
 	rm -f $(EXECUTES)
+	rm -f *.o
