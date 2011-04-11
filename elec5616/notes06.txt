@@ -1,0 +1,11 @@
+Authentication
+	importsonation, replay, interleaving, forced delays
+	man in the middle: cuban migs pretend to be south-african bombers to AA implacements
+	salting prevents calculation of hashes vs rainbow tables
+	one time passwords: prevent eavesdropping, no passwords stored on server
+	security tokens - challenge response - nonces
+	zero knowledge proofs - if a asks b a question about the secret, b will get it right always if they know, cut and choose protocol
+
+man in the middle
+	needham schroeder
+	kerberos
