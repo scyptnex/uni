@@ -1,0 +1,357 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% A presentation by Gilles Bertrand  %
+% gilles.bertrand at ieee dot org   %
+% December 2006            %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[pdf]{beamer}
+\usetheme{Berkeley}
+
+\usepackage{time}       % date and time
+\usepackage{graphicx}
+\usepackage[T1]{fontenc}    % european characters
+%\usepackage{courier}
+\usepackage{amssymb,amsmath}  % use mathematical symbols
+\usepackage{palatino}                  % use palatino as the default font
+\setbeamercovered{transparent}
+
+\begin{document}
+
+% here you define the information that will be displayed in the title/cover page
+\title[QoS management in IMS]{QoS management in the IP Multimedia Subsystem\\}
+\subtitle {Architecture, protocols and QoS management in IMS}
+\author[Gilles Bertrand]{Gilles Bertrand\\TELECOM Bretagne - RSM Department\\
+\vspace*{0.5cm}    
+\includegraphics[height=0.5cm]{./figures/e-mail}
+}
+\date{11th December 2006}
+
+% this is used in the pdf information
+\subject{QoS management in the IP Multimedia Subsystem (IMS)}
+
+% here you build the title page
+\frame{
+ \titlepage
+}
+
+% outline
+\AtBeginSection[]
+{
+ \begin{frame}
+  \frametitle{Outline}
+  \small
+  \tableofcontents[currentsection,hideothersubsections]
+  \normalsize
+ \end{frame}
+}
+
+
+
+\section*{Introduction}
+\begin{frame}
+    \frametitle{Trends in the Internet}
+    \begin{itemize}
+        \item The IP is ubiquitous
+        \item Services with high QoS requirements   gain momentum
+        \item Value lies in services
+        \pause
+        \item[$\Rightarrow$] Currently deployed networks need to adapt to these tendencies.
+     \item[$\Rightarrow$] The IP multimedia Subsystem is seen as a promising solution for fulfilling these needs.
+    \end{itemize}
+\end{frame}
+
+%\part{Main Talk} % used for two reasons: structuring and decreasing outline granularity
+\begin{frame}
+    \frametitle{The IMS standards}
+     \begin{block}{3GPP}
+      initiated at the work on IMS (Release 5 - March 2003), focused on facilitated service development and deployment.
+      3GPP R7 underway.   
+     \end{block}
+     \pause
+     \begin{block}{ETSI TISPAN}
+        Extended IMS focus for network convergence purposes (Access agnostic) in the scope of the work on Next Generation Networks (NGN).
+        First release available. Second release underway.
+     \end{block}
+     \pause
+     \begin{block}{IETF}
+        In order to facilitate interoperability IMS specifies the use of open Internet protocols standardized at IETF.
+     \end{block}
+\end{frame}
+
+
+\section{Motivation for the use of IMS}
+    \subsection{Basic principles}
+    \begin{frame}
+        \frametitle{Easier network management}
+        \begin{itemize}
+            \item Separated control and bearer functions
+            \item All IP overlay service delivery on top of a packet switched architecture
+            \item Migration of Circuit Switched services to Packet Switched domain
+            \pause
+            \item[$\Rightarrow$] Network management savings
+        \end{itemize}
+    \end{frame} 
+   
+% \textsubrightarrow 
+   
+    \begin{frame}
+        \frametitle{End-to-end architecture}
+        \begin{itemize}
+            \item Service delivery independent of the access technology
+            \item Use of open Internet protocols
+            \item End-to-end QoS management (support for real-time services)
+            \pause
+            \item[$\Rightarrow $] Inherent contradiction: IMS relies on IP technologies allowing free communications but aims at controlling IP service delivery.
+        \end{itemize}
+    \end{frame}
+
+%\begin{itemize}[<+->]  => piecewise undercover
+   
+    \begin{frame}
+        \frametitle{Horizontal architecture}
+        \begin{overprint}
+            \onslide<2->{
+                \begin{itemize}       
+                    \item Horizontal service integration
+                    \item Use of service enablers for several services
+                \end{itemize}
+            }
+            \onslide<1->{
+                \begin{center}
+                    \begin{figure}
+           \scalebox{0.50}{
+            \includegraphics{./figures/horizontal_vs_vertical_services_integration}
+           }
+           \caption{Horizontal vs vertical service integration}
+           \end{figure}
+                \end{center}
+        }
+        \onslide<3->{
+            \begin{itemize}
+                    \item[$\Rightarrow$] A thigh interaction of services is possible
+                    \item[$\Rightarrow$] Easier and faster service development
+                \end{itemize}
+            }        
+        \end{overprint}
+    \end{frame}   
+   
+    \subsection{Business motivation}
+    \begin{frame}
+        \frametitle{IMS: an answer to operators concerns}
+     \begin{block}{Operators concerns and expectations}<1->           
+            \begin{itemize}
+                \item The Average Revenue Per User decreases
+                \item Internet actors take their benefits from the network infrastructure
+                \item[$\Rightarrow$] Operators want to be more than Bitpipes
+            \end{itemize}
+        \end{block}
+     \begin{block}{IMS features}<2->               
+            \begin{itemize}
+                \item Central role of the operators in service delivery
+                \item Network infrastructure and management savings
+                \item Cost effectiveness
+            \end{itemize}
+        \end{block}
+    \end{frame}
+   
+    \begin{frame}
+        \frametitle{IMS: an answer to operators concerns}
+     \begin{block}{Additional expectations of the operators}<1->
+            \begin{itemize} 
+                \item Broaden the commercial offer (Apply suitable billing schemes)
+                \item Decrease the service time-to-market
+                \item Offer innovative and attractive services
+            \end{itemize} 
+        \end{block}
+                       
+     \begin{block}{Additional benefits of IMS}<2->           
+            \begin{itemize}
+                \item Fine knowledge of the services used by a customer
+                \item Easier and faster development/deployment of multimedia services
+                \item Smaller investment threshold for new service deployment             
+                \item Interaction of services
+                \item Several synchronized multimedia services in a single session
+
+            \end{itemize} 
+        \end{block}
+    \end{frame}   
+   \subsection{Business issues}
+    \begin{frame}
+        \frametitle{Business Issues related to IMS}
+        \begin{itemize}
+            \item<+-> New business model (Operators play a central role is service delivery)
+            \item<+->[$\Rightarrow$] Competition with Internet world actors
+            \item<+-> Multimedia service delivery by network operators
+            \item<+->[$\Rightarrow$] Operators have to obtain content
+            \item<+-> When should IMS be deployed? (early $\rightarrow$ high margins but risky, late  $\rightarrow$ established standards but high competition).
+        \end{itemize}         
+    \end{frame}   
+       
+   \subsection{Technical issues}
+        \begin{frame}
+        \frametitle{technical Issues} 
+            \begin{itemize}
+                \item QoS $\rightarrow$ How to provide end-to-end QoS over heterogeneous networks?
+                \item Privacy $\rightarrow$ How should third parties access user profiles?\ldots   
+                \item Interoperability $\rightarrow$ how to manage different access constraints,
+ terminal capabilities\ldots
+                \item Several important subsystems are not part of the IMS (P2P, VPNs, SMS, IPTV\ldots).
+            \end{itemize}
+        \end{frame}     
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Presentation de l'architecture %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{IMS Architecture}
+    \subsection{Overview}
+    \begin{frame}
+        \frametitle{IMS layered model}
+        \begin{overprint}
+            \onslide<2->{
+                \alert{IMS is a \emph{functional} architecture}
+                \begin{itemize}
+                    \item Application layer (HSS, AS)
+                    \item Control layer (IMS core, PSTN emulation, IPTV,\ldots)
+                    \item Transport layer (UE, access network, NGN core, NASS, RACS, \ldots)
+                \end{itemize}
+            }
+            \onslide<1->{         
+                \begin{center}
+                    \begin{figure}
+                \scalebox{0.75}{
+               \includegraphics{./figures/archi_IMS_collapsed.png}
+           }
+           \caption{IMS Architecture, overview}
+           \end{figure}     
+                \end{center}
+            }   
+        \end{overprint} 
+    \end{frame}
+   
+    \subsection{The IMS core}
+    \begin{frame} 
+        \frametitle{The IMS core (TISPAN)}
+     \begin{overprint}     
+         \begin{block}{Function}<1->
+            Session and media control
+         \end{block}                             
+         \begin{block}{Components}
+            \begin{itemize}
+                    \item Call Session Control Function (CSCF)
+                    \item Multimedia Resource Function Controller (MRFC) and Processor (MRFP)
+                    \item Breakout Gateway Control Function (BGCF)
+                    \item Media Gateway Control Function (MGCF)             
+                \end{itemize}
+         \end{block}
+        \end{overprint}
+    \end{frame}       
+    \begin{frame} 
+        \frametitle{The IMS core: CSCFs}
+     \begin{overprint}     
+        \only<1->{
+             \begin{block}{CSCFs}
+                \begin{itemize}
+                        \item Serving CSCF (S-CSCF): controls the communication session, invokes the AS. Located in home network.
+                        \item Proxy CSCF (P-CSCF): IMS contact point for SIP user agents. May include a Policy Decision Function (PDF).
+                        \item Interrogating CSCF (I-CSCF): gateway to other domains. Used for Topology Hiding (THIG) or if several S-CSCF are located in the domain.
+                    \end{itemize}
+             \end{block}                             
+            }   
+     \end{overprint}
+    \end{frame}     
+    \begin{frame} 
+        \frametitle{The IMS core: MRFC, MRFP, MGCF}
+     \begin{overprint}     
+        \only<1->{
+             \begin{block}{MRFC}
+                    Controls the MRFP
+             \end{block}                             
+            }           
+         \begin{block}{MRFP}
+                Provides transcoding and content adaptation functionalities.
+         \end{block}
+         \begin{block}{MGCF}
+                Controls a media gateway.
+         \end{block}               
+     \end{overprint}
+    \end{frame}     
+
+   
+    \begin{frame}
+        \frametitle{The IMS core: functional internal architecture}   
+        \begin{center}
+            \begin{figure}
+        \scalebox{0.75}{
+        \includegraphics{./figures/IMS_core.png}
+    }
+    \caption{IMS core}
+    \end{figure}     
+        \end{center}
+    \end{frame}     
+
+   
+    \subsection[NASS \& RACS]{The NASS and RACS}
+    \begin{frame}
+        \frametitle{NASS internals}
+     \begin{block}{Function}       
+        Provision of IP addresses and network parameters dynamically. Play the role of a DHCP server, a Radius client and provides location management.
+     \end{block}         
+        \begin{center}
+            \begin{figure}
+            \scalebox{0.75}{
+           \includegraphics{./figures/NASS_internal.png}
+       }
+       \caption{NASS internal  }
+        \end{figure}
+        \end{center}         
+    \end{frame}     
+   
+    \begin{frame}
+%        \frametitle[NASS subfunctions]
+     \begin{block}{Network Attachment SubSystem (NASS) subfunctions}       
+            \begin{itemize}
+                \item<+-> Network Access Configuration Function (NACF)
+                \item<+-> Access Management Function (AMF)
+                \item<+-> Connectivity Session Location and Repository Function (CLF)
+                \item<+-> User Access Authorization Function (UAAF)
+                \item<+-> Profile Data Base Function (PDBF)
+                \item<+-> Customer Network Gateway (CNG) Configuration Function (CNGCF).
+            \end{itemize}
+     \end{block}
+     
+     \begin{overprint}
+        \onslide<1>
+             \begin{block}{NACF}
+                    Responsible for IP address allocation to the UE           
+                    May provide additional parameter
+                \end{block}
+        \onslide<2>
+             \begin{block}{AMF}
+                Interface equipment between Access Network and NACF
+                \end{block}             
+        \onslide<3>
+             \begin{block}{CLF}
+                Associates IP address to user location information. It may store further information.
+                \end{block}     
+        \onslide<4>
+             \begin{block}{UAAF}
+                Performs authentication for network access based on the user profile stored in the PDBF
+                \end{block}     
+        \onslide<5>
+             \begin{block}{PDBF}
+             Stores the user profile and authentication data.   
+                \end{block}     
+        \onslide<6>
+             \begin{block}{CNGCF}
+                Controls the Customer Network Gateway when necessary
+                \end{block}                                                                                     
+     \end{overprint}
+    \end{frame}     
+
+
+\section*{Bibliography}
+    \bibliography{./biblio_gilles_bertrand}
+\end{document}

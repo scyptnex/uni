@@ -1,0 +1,16 @@
+#! /bin/sh
+
+tmpfile=temporaryMPIAssignmentFile.txt
+tmpfile2=temporaryDIFFFile.txt
+
+for tzt in `ls | grep "tst$"`
+do
+	for numproc in 1 2 4
+	do
+		mpirun -np $numproc ./collapse < $tzt > $tmpfile
+		diff $tmpfile `echo $tzt | sed 's/\.tst/\.ans/'`
+
+	done
+done
+
+rm -f $tmpfile $tmpfile2

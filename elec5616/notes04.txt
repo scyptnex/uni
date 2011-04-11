@@ -17,10 +17,12 @@ Sophisticated attacks
 		rho = Pr[p[] xor c[] xor k[]] -> if |rho - 0.5| is large, thenw e can guess at k[s1,..,sw]
 		for a break rho, = 1.0, or 0.0, for a perfect cipher rho=0.5, again mathematically impossible
 
-comparison
-	precomputation	-			1	2^56	1
-	exhaustive		1			-	-		2^56
-	linear			2^43(85)	-	text	2^43
+comparison			known		chosen		storage		proc
+	precomputation		-		1		2^56		1
+	exhaustive		1		-		-		2^56
+	linear			2^43(85)	-		text		2^43
+				2^30		-		text		2^50
+	differential		-		2^47		text		2^47
 	
 Advanced Encryption Standard (AES)
 	arrange 16 ytes in a square, xor the round key

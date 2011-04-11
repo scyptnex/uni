@@ -1,0 +1,49 @@
+\documentstyle[11pt]{article}
+
+\author{	Nic Hollingum\\
+			308193415}
+\title{Real World Algorithms - Homework 3}
+
+\addtolength{\oddsidemargin}{-.875in}
+\addtolength{\evensidemargin}{-.875in}
+\addtolength{\textwidth}{1.75in}
+\addtolength{\topmargin}{-1.875in}
+\addtolength{\textheight}{2.75in}
+
+\begin{document}
+\maketitle
+
+\section {Problem 1}
+We are attempting to maximise the number of edges, whilst preventing 2 edges from joining the same node.
+Expressing this as an integer programme is trivial.
+Consider the matrix $A$ which is simply an edge-incidence matrix for the graph $G$, each row represents a vertex, and each column an edge.
+Then for $A \Rightarrow \{ 1, 0\}^{v, e}$, $A_{v, e}$ is 1 if edge e has an endpoint at vertex v, and 0 otherwise.
+Given $c$ a vector of 1's this has exactly the same format as a normal integer programme.
+If some of our $x$'s was chosen such 2 edges met at a node, this would cause $A \times x$ to have at least 1 value in b greater than 1, so long as all $x$'s are positive.
+Therefore clearly b must be a vector of 1's too.
+
+When G is bipartite we note that edges from one vertex 'group' cannot meet vertices in the other.
+A in this case can be rearranged (by re-labelling vertices) into upper and lower groups where each group only has a single 1 per collumn.
+A square submatrix os such a matrix must either have a at most 1 1 per collumn or be situated on the barrier between partitiions and have at most a 1 above the barrier and a 1 below.
+Such determinants can never exceed 1*.
+Hence $A$ is totally unimodular if $G$ is bipartite.
+
+Note that both $c$ and $b$ are vectors of 1's, the dual problem requires only the transposition of A.
+In this dual, each vertex is chosen by assigning the $y$ vector to ${1, 0}$, to minimise the number of vertices chosen such that all rows are greater or equal to the vector of 1's (formerly the cost vector)
+It can be described as ``find the smallest number of vertices needed such that all edges are incident to at least one vertex'', i.e. minimal vertex cover.
+
+This dual problem tells us something interesting about maximal matching.
+The number of edges selected by a mximal matching must be at most equal to the number of vertices selected by a minimal vertex cover.
+This is most notably true of bipartite graphs, where the minimal cover is to simply choose the smaller of the two sides.
+
+As for whether this is true for graphs generally, we consider the properties of the primal and dual formulations.
+The programme is not guaranteed to be integral for arbitrary graphs, and nor its dual, however we do know that integral solutions must be less optimal than their linear relaxations.
+Hence the property that the number of vertices in the minimal covering is equal or greater than the number of edges in the maximal matching still holds.
+
+\section {Problem 2}
+**
+
+* I wrote a program that exhaustively checked all square submatrices for all 20x20 matrices with this property and none were found.  I am unsure why.
+
+** I also have no idea how to do this.  It was quite easy for me to come up with $\tilde{A}$ and $b$ such that they are integral and non unimodular, and where $x$ need not take fractional values.
+\end{document}

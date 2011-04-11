@@ -1,0 +1,82 @@
+\documentclass{beamer}
+\usepackage[latin1]{inputenc}
+\usetheme{Boadilla}
+\title[Make a LaTeX presentation using Beamer]{Introduction  to Beamer\\How to make a presentation with LaTeX?}
+\author{Nic Hollingum}
+\institute{USYD}
+\date{7 Apr, 2011}
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\begin{frame}{Introduction}
+This is a short introduction to Beamer class.
+\end{frame}
+
+\begin{frame}{progressive 1}
+\begin{itemize}
+    \item The IP is ubiquitous
+    \item Services with high QoS requirements   gain momentum
+    \item Value lies in services
+    \pause
+    \item[$\Rightarrow$] Currently deployed networks need to adapt to these tendencies.
+ \item[$\Rightarrow$] The IP multimedia Subsystem is seen as a promising solution for fulfilling these needs.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{progressive 2}
+\begin{itemize}
+	\item<+-> The IP is ubiquitous
+	\item<+-> Services with high QoS requirements   gain momentum
+	\item<+-> Value lies in services
+	\item<+->[$\Rightarrow$] Currently deployed networks need to adapt to these tendencies.
+	\item<+->[$\Rightarrow$] The IP multimedia Subsystem is seen as a promising solution for fulfilling these needs.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{progressive 3}
+	\begin{overprint}
+	\onslide<2->{
+		\begin{itemize}
+			\item Horizontal service integration
+			\item Use of service enablers for several services
+		\end{itemize}
+	}
+	\onslide<1-2>{
+		\begin{center}
+		\begin{enumerate}
+			\item partridge in pear tree
+			\item turtle doves
+			\item french hens
+		\end{enumerate}
+		%\begin{figure}
+		%\scalebox{0.50}{
+		%	\includegraphics{./figures/horizontal_vs_vertical_services_integration}
+		%}
+		%\caption{Horizontal vs vertical service integration}
+		%\end{figure}
+		\end{center}
+	}
+	\onslide<3->{
+		\begin{itemize}
+		\item[$\Rightarrow$] A thigh interaction of services is possible
+		\item[$\Rightarrow$] Easier and faster service development
+		\end{itemize}
+	}
+	\end{overprint}
+\end{frame} 
+
+%\begin{frame}{progressive 2}
+%\end{frame}
+
+%\begin{frame}{progressive 2}
+%\end{frame}
+
+%\begin{frame}{progressive 2}
+%\end{frame}
+
+
+\end{document}
