@@ -1,0 +1,6 @@
+matrix mult
+	for i: for j: for K: cij = cij + aik*bik
+	O(n^3)
+	if matrices are large, may not fit in cache, use block-oriented (even on single machine)
+	assume n is divisible by p, A(i) is then n/p by n block row that process i owns (similar B(i) C(i))
+	A(i,j) n/p by n/p block, c9I0 = c(i) + A(i)*B = C(i)+SUM(A(i,j)*B(j))
