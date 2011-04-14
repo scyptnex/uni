@@ -1,0 +1,34 @@
+RSA
+	enc(m), k -> f(m, k) : dec(f(m, k)), k -> g(f(m, k)) = m
+	choose k as random bit stream of size |m|, one time pad f(m,k) = m xor k : g(x,k) = x xor k
+	g(f(m, p), k) p and k public private pair
+
+	let p and q be primes, N = pq, e be rel prime to (p-1)(q-1) and d be multinv of e mod(p-1)(q-1) then
+	1) x->(x^e mod n) is one to one in [0...N-1]
+	2) its inverse is x ->(x^d mod N)
+
+	gcd e and (p-1)(q-1) is 1, i.e. relative prime
+
+RSA
+	1) Bob picks private and public keys, pick 2 large n-bit random primes
+		e - some relative prime to (p-1)(q-1)
+		d <- mult inv of e mod (p-1)(q-1)
+	2) alice wishes to send m in [0..N-1]
+	3) send m^e mod N = y
+	3) decode m = y^d mod n
+
+Primality
+	pick a random number between 0 and p-1, if gcd is 1 we have some evidence p is prime
+
+euclids
+	a >= b >= 0, if b=0 return a, else return euclid(b, a mod b)
+	obs to divide 2 n-bit integers we need O(n^2) time
+	if a > b, a mod b <= a/2 : every 2 iterations halves value of a, euclid takes O(n^3) time if a and b are n bit integers
+
+multinv e mod (p-1)(q-1)
+	if d divides a and b AND d = ax + by for some ints x, y then d = gcd(a,b)
+	modify euclid to output x, y and GCD(a b): if b is 0 return (1, 0, a) else return (y', x'-floor(a/b)y', d)
+	call euclid (e, (p-1)(q-1)) return xe + y(p-1)(q-1) = 1, xe mod(p-1)(q-1) = 1, x is multinv of (p-1)(q-1)
+
+applying the function
+	turns out we can mod each time to keep number small
