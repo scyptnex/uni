@@ -1,0 +1,25 @@
+orthogonal range searching
+	a 2d query is 2 1d queries, associative data structure
+	Space: O(n log n) (n leaves each in log n data structures, not sure n refers to numer of leaves), can be built in O(n log n) time because they are sortedish
+	must look at log n assoc data struct since at most one right child of left path per level (reverse for right path), O(log^2 n + k)
+	chazelle 1990, if query time remains (log^cn + k) then space cannot be less than (n log n / loglog n)
+	we can save time because queries to assoc structures are same
+		we store pointers in interval 1 to next equal or highest elemnt in interval 2, in linear time
+		after first binary search, we just walk along intervals, k time
+	fractional cascading O(log n + k), nlogn preprocessing, n log n space
+		store array of ordered y sets, point to next highest in child tree's set
+		when break is reached, travel down the ordered sets in log time and crawl along sets
+	d dimensions: O(lod^d-1 n + k), preprocessing O(n log^d-1 n) space O(n log^d-1 n)
+
+Interval trees
+	a set of n axis-parallel line segments
+	entirely in r, one endpoint in r, both endpoints outside r
+	deal with only horiz segments, split wrt median of points, 3 sets (all left, all right, crossing), put crossing segments in assoc structure
+	to answer a query in O(k), pre-sort wrt start and just walk up, we know all will cross midpoint.  backwards in reverse for right side
+	O(n) space, construct in (n log n)
+	BUT we arent given query line, we are given query segment
+		report all points lie in unbounded rect with right side as left boundary of query segment. mlogm space, mlogm time, logm+k query
+		total space O(n log n) - each segment only stored once, each segment has 2 points, construct in O(n log n)
+		O(log^2 n + k) query time, must do a logn+k query for each of the logn assoc structures we see
+		priority search tree O(n) space
+
