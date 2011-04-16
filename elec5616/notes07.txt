@@ -1,0 +1,45 @@
+Secret splitting
+	s = m xor r
+	malleable: part recipients can mess with the data by modifying their bit
+	everyone knows how long the message is, all are required to reassemble the message (bus factor=1)
+	(3,5)-threshold scheme, (bus factor=3) 3/5 ppl needed to reconstruct scheme
+	polynomial of degree n can be completely defined by n+1 points, m = a0 = f(0)
+
+bit commitment
+	bob sens random r, alice sends {r|m}_k
+	also with hash function
+
+Fair coin flip
+	Alice commits to a random bit, hashes with random, bobtries to guess
+	least significant bit of f(x) cant be related to x
+	RSA commutative function: e(e(x, a), b) = e(e(x, b), a)
+	problematic because bob knows first, can use this information while alice waits
+
+poker
+	similar schemes as above
+	quadratic residue: if y^2 = x (mod p) has a solution, then it has a solution when encrypted, make all aces quadratic residues so you know when bob pulls an ace, bob can check they arent QRs
+
+Oblivious transfer
+	bob is trying to factor a 2000 bit number, wants to buy 500 of alice's 1000 bits without alice knowing which bits
+	bob ends a key and a random, alice encrypts with both but bob will only make sense of one, alice wont know which one bob makes sense of.
+	can use zero knowledge proof to determine that n is indeed a factor, this is complicated maths
+
+Subliminal channels
+	messages hidden in the clear - steganography (THERES A CAT IN THIS TREE)
+	write a sentance, if it has even number of words thats 0, otherwise 1
+
+Firesmithing
+	send a request to google to forward your request using http fields, many webservices do this kind of thing
+	pretty much impossible to stop this, there are services that do this for a living
+
+Credit-cards and cheques
+	copy, some people wont cancel, make alot of money	
+	banks closing down branches, online transactions, paypal
+	e-cash not liked by governments, impossible to 'follow the money' makes money alundering redundant
+	identifiable: no tax return
+
+properties
+	independant, private, anonymous, uncheatable
+	offline payment, transferrability, divisibility, security
+	withdrawal, spending, deposit, transfer
+	prevent double spending, double depositing
