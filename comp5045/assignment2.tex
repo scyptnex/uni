@@ -1,0 +1,45 @@
+\documentstyle[11pt]{article}
+
+\author{Nic Hollingum - 308193415}
+\title{Computational Geometry - Assignment 2}
+
+\addtolength{\oddsidemargin}{-.875in}
+\addtolength{\evensidemargin}{-.875in}
+\addtolength{\textwidth}{1.75in}
+\addtolength{\topmargin}{-.875in}
+\addtolength{\textheight}{1.75in}
+
+\begin{document}
+\maketitle
+
+\section {Multi-Range-Query}
+From lectures we learnt that range-queries on 2d points and rectangles could be done in $O(\log n + k)$ time with $O(n \log n)$ pre-processing and $O(n)$ space.
+In this modified version we must determine all points lying outside all n rectangles.
+As it turns out this imposes little extra overhead, given the pre-sorting time.
+
+Sort the points ($O(n \log n$) and add them to a range-tree ($O(n \log n$), note that this must only happen once for all range queries.
+Next, carry out the query for one of the n rectangles, reporting all points inside the range ($O(\log n + k)$).
+Simply repeat this for each rectangle.
+For now we will assume this takes $O(n \log n + nk)$ time.
+We maintain a list of points ``so far outside all rectangles'' which begins full, and we remove the k reported points at each iteration.
+Using a balanced binary tree of points this requires at most n deletions each in $\log n$ time, hence $O(n \log n)$
+
+This procedure reports all points lying inside a range for all ranges, and removes those points from its result.
+It therefore correctly reports only those points not inside any range.
+
+From the above description we have presumed the operation is asymptotically dominated by the $O(n \log n + nk)$ operation.
+However note that the rectangles are non-overlapping.
+This means that over all iterations, each point may only lie inside one rectangle and hence only be reported once.
+Then the worst case for this operation is actually $O(n \log n + n)$ or $O(n \log n)$.
+Reporting all poinnts outside the rectangles can take at most $O(n)$ time if all points are reported, and so is dominated by other components.
+Therefore the entire operation is asymptotically bounded by its $O(n \log n)$ components (sorting, all range queries, removing reported points from result).
+
+\section {Competing Trees}
+
+\section {2 Point Visibility}
+
+\section {Star-Shaped Polygons}
+
+\section {Inverse Range-Queries}
+
+\end{document}

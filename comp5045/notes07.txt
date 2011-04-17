@@ -9,7 +9,7 @@ orthogonal range searching
 	fractional cascading O(log n + k), nlogn preprocessing, n log n space
 		store array of ordered y sets, point to next highest in child tree's set
 		when break is reached, travel down the ordered sets in log time and crawl along sets
-	d dimensions: O(lod^d-1 n + k), preprocessing O(n log^d-1 n) space O(n log^d-1 n)
+	d dimensions: O(log^d-1 n + k), preprocessing O(n log^d-1 n) space O(n log^d-1 n)
 
 Interval trees
 	a set of n axis-parallel line segments
