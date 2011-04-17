@@ -37,6 +37,14 @@ Therefore the entire operation is asymptotically bounded by its $O(n \log n)$ co
 \section {Competing Trees}
 
 \section {2 Point Visibility}
+We first note that we are given a convex polygon.
+This has a special property that a point infinately distant from the polygon will be able to 'see' all edge-points along ``half'' the boundary.
+Note this is not hald the number of boundary points, but rather that between it and another point infinitely distant on the opposite side, all points are visible.
+This is because of the convexity, in order for this property to not hold for all infinitely distant points, a part of the polygon must somehow ``shadow'' other points.
+In other words, the line cast from the infinite point must enter the polygon, traverse it, leave, and re-enter the polygon.
+However convex polygons do not allow this, and hence the property.
+
+ 
 
 \section {Star-Shaped Polygons}
 
