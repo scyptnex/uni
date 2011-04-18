@@ -35,18 +35,14 @@ Reporting all poinnts outside the rectangles can take at most $O(n)$ time if all
 Therefore the entire operation is asymptotically bounded by its $O(n \log n)$ components (sorting, all range queries, removing reported points from result).
 
 \section {Competing Trees}
-\begin{table}
-\caption{Comparison of kd-Trees and Range Trees}
-\centering
-\begin{tabular}{l c c}
-\hline
-& \textbf{kd-Tree} & \textbf{Range Tree} \\
-\textbf{Construction} & $O(n\log n)$ &  $O(n\log^{d-1}n)$ \\
-\textbf{Querying} & $O(n^{1-\frac{1}{d}} + k)$ & $O(n\log^{d-1}n+k)$ \\
-\textbf{Storage} & $O(n)$ & $O(n\log^{d-1}n)$ \\
-\hline
-\end{tabular}
-\end{table}
+This tradeoff must be decided based on the kinds of range-searches being performed, and the limitations of the system.
+Trivially if we cannot spare the space, then the kd-Trees ($O(n)$ space) is the only option.
+However, provided we can afford the extra $O(n\log^{d-1}n)$ space for the Range tree then we must choose based on the tradeoff between pre-processing and query-time.
+
+The query times are $O(n^{1-\frac{1}{d}} + k)$ for kd-Trees and $O(\log^{d-1}n+k)$ for range-trees.
+This shows the significant advantage of rnage-trees for query time, and would be preferable always given enough points and queries.
+Both algorithms have (reasonably) linear-logarithmic complexity for pre-processing.
+This, added to the fact that we are more concerned with query-time than pre-processing time (with fewer than $\log n$ queries, it is better to use naive search with no pre-processing overhead) lead to the chouce of range-trees wherever permitting.
 
 \section {2 Point Visibility}
 We first note that we are given a convex polygon.
