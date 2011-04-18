@@ -17,7 +17,7 @@ From lectures we learnt that range-queries on 2d points and rectangles could be 
 In this modified version we must determine all points lying outside all n rectangles.
 As it turns out this imposes little extra overhead, given the pre-sorting time.
 
-Sort the points ($O(n \log n$) and add them to a range-tree ($O(n \log n$), note that this must only happen once for all range queries.
+Sort the points ($O(n \log n)$) and add them to a range-tree ($O(n \log n)$), note that this must only happen once for all range queries.
 Next, carry out the query for one of the n rectangles, reporting all points inside the range ($O(\log n + k)$).
 Simply repeat this for each rectangle.
 For now we will assume this takes $O(n \log n + nk)$ time.
@@ -35,6 +35,18 @@ Reporting all poinnts outside the rectangles can take at most $O(n)$ time if all
 Therefore the entire operation is asymptotically bounded by its $O(n \log n)$ components (sorting, all range queries, removing reported points from result).
 
 \section {Competing Trees}
+\begin{table}
+\caption{Comparison of kd-Trees and Range Trees}
+\centering
+\begin{tabular}{l c c}
+\hline
+& \textbf{kd-Tree} & \textbf{Range Tree} \\
+\textbf{Construction} & $O(n\log n)$ &  $O(n\log^{d-1}n)$ \\
+\textbf{Querying} & $O(n^{1-\frac{1}{d}} + k)$ & $O(n\log^{d-1}n+k)$ \\
+\textbf{Storage} & $O(n)$ & $O(n\log^{d-1}n)$ \\
+\hline
+\end{tabular}
+\end{table}
 
 \section {2 Point Visibility}
 We first note that we are given a convex polygon.
