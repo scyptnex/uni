@@ -45,14 +45,64 @@ Both algorithms have (reasonably) linear-logarithmic complexity for pre-processi
 This, added to the fact that we are more concerned with query-time than pre-processing time (with fewer than $\log n$ queries, it is better to use naive search with no pre-processing overhead) lead to the chouce of range-trees wherever permitting.
 
 \section {2 Point Visibility}
-We first note that we are given a convex polygon.
-This has a special property that a point infinately distant from the polygon will be able to 'see' all edge-points along ``half'' the boundary.
-Note this is not hald the number of boundary points, but rather that between it and another point infinitely distant on the opposite side, all points are visible.
-This is because of the convexity, in order for this property to not hold for all infinitely distant points, a part of the polygon must somehow ``shadow'' other points.
-In other words, the line cast from the infinite point must enter the polygon, traverse it, leave, and re-enter the polygon.
-However convex polygons do not allow this, and hence the property.
+\subsection{Observations}
+First consider halfplanes defined by the edges of the convex polygon.
+Any point lying strictly within such a halfplane must be able to see all the points along the edge that defined it.
+By contradiction, if there was such a point that lay on the correct side of the line but was blocked from seeing points on the edge, then the ray from that point to the edge must enter the polygon.
+However we know that the halfspace borders the outside of the polygon, so rays reaching it must be outside the polygon immediately before hitting the edge.
+Thus such a ray must be outside the polygon, enter it, leave it, and hit the edge, this violates the convexality constraint.
 
- 
+Now we consider the intersection of 2 half-planes.
+From the above we see that any point an a halfplane must see all the points on that plane's edge, then any point in BOTH half-planes must see all points on both edges.
+We can extend this to n half-planes with the following proof:
+Assume there exists a group of n half-planes which all contain the point p but p cannot see all of them simultaneously.
+Somehow there must be an edge which defines a half-plane containing p but has some or all of it's view blocked by parts of the polygon, again this violates convexality.
+
+Now we consider the intersection of half-planes of adjacent edges.
+AB and BC are adjacent, there always exists some region where the 2 overlap.
+The only way this couldnt be true, is if AB and BC were parallel, but since they are adjacent edges of a polygon this implies the triangle ABC has 0 area, which is invalid for a polygon.
+We add another halfplane defined by the edge CD adjacent to BC.
+If the intersection of all half-planes is non-empty this implies that CD is ``less than parallel'' to AB.
+More formally, viewing edges as vectors, $AB.CD \geq 0$.
+We can keep adding edges in this fashion until we reach an edge which is ``more than parallel'' to AB, the region just before this can see all all points on all edges up to the last edge.
+If we look at the borders of that region we note that one side is defined by the line extended from AB.
+When we only had 2 edges, the other side was defined by the line extending backwards from BC, forming an infinite triangle.
+When we added CD we note that that line must intersect AB's further along than BC did.
+This is because all internal angles of a convex polygon are less than \pi, and hence the 2 angles are less than 2\pi.
+Were the line CD to intersect the line AB sooner than BC's does, this implies that the angle sum of both internal angles is more than 360, and so the polygon is not convex.
+The only alternative is that the CD line intersects in the wrong direction along the AB, in which case the half-plane does not overlap the current intersection.
+Thus after adding the 3rd half-plane the region is defined by it and the 1st.
+Repeating this logic shows that the intersection of half-planes is always an infinite triangle bounded by the first and last half-planes added.
+
+Now we know some important things:
+\begin{itemize}
+	\item 2 edges with an angle difference of less than \pi always have an intersecting region
+	\item the point of this region is where the 2 lines of these edges meet
+\end{itemize}
+It is useful to note that if we tahe the 2 ``furthest'' edges which have an intersecting region, then take the 2 edges ``one before the first'' and ``one after the last'' that these 2 edges form a similar intersecting region on the oposite side of the polygon.
+We call these edges \alpha \beta and \psi \omega.
+We know that $\alpha . \psi$ is less than 0, because \beta\ is the firthest edge before that happens.
+Therefore we know that if \alpha were backwards, $\alpha . \psi$ would be greater than 0.
+And since \omega is not colinear to \alpha it must be more accute towards \psi, thus the same is true for \psi and \omega.
+Given we consider the point where \alpha meets the backwards line of \beta, this is just reversed for the line \psi and the backwards line \omega.
+
+Note that any 2 points in each of these regions can see between them all points along the perimeter of the polygon.
+
+\subsection{Algorithm}
+The above observations, plus the constraint of the circle, leads to the following algorithm:
+\begin{itemize}
+	\item Select a point in the polygon, \alpha is the edge between this point and the next clockwise, and \omega is the edge between the next counter-clockwise point and this point.
+	\item \beta is the reversal of the next 2 clockwise points and \psi is the forwards line of the 2 points after \beta.
+	\item while $\beta . \alpha > 0$
+		\begin{itemize}
+			\item \beta becomes the reversal of \psi
+			\item \psi advances along the polygon
+		\end{itemize}
+	\item correct the overshoot by backtracking \psi and \beta by 1 edge each
+	\item if \alpha is the same edge we began with, return ``no 2 points exist''
+	\item if \alpha intersects \beta strictly within C, and \psi and \omega do, return these points of intersection (or some point within this triangle and the circle) as the points
+	\item else advance \alpha and \omega clockwise by 1, 
+\end{itemize}
 
 \section {Star-Shaped Polygons}
 
