@@ -45,67 +45,139 @@ Both algorithms have (reasonably) linear-logarithmic complexity for pre-processi
 This, added to the fact that we are more concerned with query-time than pre-processing time (with fewer than $\log n$ queries, it is better to use naive search with no pre-processing overhead) lead to the chouce of range-trees wherever permitting.
 
 \section {2 Point Visibility}
-\subsection{Observations}
-First consider halfplanes defined by the edges of the convex polygon.
-Any point lying strictly within such a halfplane must be able to see all the points along the edge that defined it.
-By contradiction, if there was such a point that lay on the correct side of the line but was blocked from seeing points on the edge, then the ray from that point to the edge must enter the polygon.
-However we know that the halfspace borders the outside of the polygon, so rays reaching it must be outside the polygon immediately before hitting the edge.
-Thus such a ray must be outside the polygon, enter it, leave it, and hit the edge, this violates the convexality constraint.
-
-Now we consider the intersection of 2 half-planes.
-From the above we see that any point an a halfplane must see all the points on that plane's edge, then any point in BOTH half-planes must see all points on both edges.
-We can extend this to n half-planes with the following proof:
-Assume there exists a group of n half-planes which all contain the point p but p cannot see all of them simultaneously.
-Somehow there must be an edge which defines a half-plane containing p but has some or all of it's view blocked by parts of the polygon, again this violates convexality.
-
-Now we consider the intersection of half-planes of adjacent edges.
-AB and BC are adjacent, there always exists some region where the 2 overlap.
-The only way this couldnt be true, is if AB and BC were parallel, but since they are adjacent edges of a polygon this implies the triangle ABC has 0 area, which is invalid for a polygon.
-We add another halfplane defined by the edge CD adjacent to BC.
-If the intersection of all half-planes is non-empty this implies that CD is ``less than parallel'' to AB.
-More formally, viewing edges as vectors, $AB.CD \geq 0$.
-We can keep adding edges in this fashion until we reach an edge which is ``more than parallel'' to AB, the region just before this can see all all points on all edges up to the last edge.
-If we look at the borders of that region we note that one side is defined by the line extended from AB.
-When we only had 2 edges, the other side was defined by the line extending backwards from BC, forming an infinite triangle.
-When we added CD we note that that line must intersect AB's further along than BC did.
-This is because all internal angles of a convex polygon are less than \pi, and hence the 2 angles are less than 2\pi.
-Were the line CD to intersect the line AB sooner than BC's does, this implies that the angle sum of both internal angles is more than 360, and so the polygon is not convex.
-The only alternative is that the CD line intersects in the wrong direction along the AB, in which case the half-plane does not overlap the current intersection.
-Thus after adding the 3rd half-plane the region is defined by it and the 1st.
-Repeating this logic shows that the intersection of half-planes is always an infinite triangle bounded by the first and last half-planes added.
-
-Now we know some important things:
-\begin{itemize}
-	\item 2 edges with an angle difference of less than \pi always have an intersecting region
-	\item the point of this region is where the 2 lines of these edges meet
-\end{itemize}
-It is useful to note that if we tahe the 2 ``furthest'' edges which have an intersecting region, then take the 2 edges ``one before the first'' and ``one after the last'' that these 2 edges form a similar intersecting region on the oposite side of the polygon.
-We call these edges \alpha \beta and \psi \omega.
-We know that $\alpha . \psi$ is less than 0, because \beta\ is the firthest edge before that happens.
-Therefore we know that if \alpha were backwards, $\alpha . \psi$ would be greater than 0.
-And since \omega is not colinear to \alpha it must be more accute towards \psi, thus the same is true for \psi and \omega.
-Given we consider the point where \alpha meets the backwards line of \beta, this is just reversed for the line \psi and the backwards line \omega.
-
-Note that any 2 points in each of these regions can see between them all points along the perimeter of the polygon.
 
 \subsection{Algorithm}
-The above observations, plus the constraint of the circle, leads to the following algorithm:
 \begin{itemize}
-	\item Select a point in the polygon, \alpha is the edge between this point and the next clockwise, and \omega is the edge between the next counter-clockwise point and this point.
-	\item \beta is the reversal of the next 2 clockwise points and \psi is the forwards line of the 2 points after \beta.
-	\item while $\beta . \alpha > 0$
-		\begin{itemize}
-			\item \beta becomes the reversal of \psi
-			\item \psi advances along the polygon
-		\end{itemize}
-	\item correct the overshoot by backtracking \psi and \beta by 1 edge each
-	\item if \alpha is the same edge we began with, return ``no 2 points exist''
-	\item if \alpha intersects \beta strictly within C, and \psi and \omega do, return these points of intersection (or some point within this triangle and the circle) as the points
-	\item else advance \alpha and \omega clockwise by 1, 
+	\item we call the next clockwise point from point a $pred(a)$ and the next counter-clockwise $succ(a)$
+	\item Select a point in the polygon \alpha, and $\omega = succ(\alpha)$, remember \alpha as our terminating condition
+	\item (*) While the half-line $\alpha \rightarrow succ(\alpha)$ intersects that half-line $\omega \rightarrow pred(\omega)$ strictly within C: $\omega = succ(\omega)$
+	\item $\omega = pred(\omega)$ for over-shooting the mark
+	\item if the half-line $\alpha \rightarrow pred(\alpha)$ intersects the half-line $\omega \rightarrow succ(\omega)$ strictly within C: return ``success'', and the points infinitely slightly towards the circle's edge from the 2 intersections
+	\item if \alpha is the same point we began with, return ``failure: no 2 points in C can see all the perimeter of P''
+	\item if the second intersection does not exist or is outside C, $\alpha = succ(\alpha)$
+	\item if $\alpha = \omega$ then $\omega = succ(\omega)$
+	\item repeat from *
 \end{itemize}
+
+\subsection{Run-time}
+All steps take constant time:
+\begin{itemize}
+	\item determining the intersection of 2 half-lines
+	\item determining if a point lies inside a circle
+	\item traversing to successor and predecessor points around a polygon
+\end{itemize}
+We begin with \alpha and walk omega along the endpoints in $O(n)$ time once.
+At each iteration, \omega backtracks exactly once for each increment of \alpha, and otherwise only moves forward.
+Also \omega cannot complete multiple circuits of the polygon since this requires (for polygons with more than 2 edges) the 2 half-lines not intersect at some time.
+However \alpha only ever moves forward, and stops when it returns to its starting point.
+Thus the backtracks of \omega are bounded by n ``forward movements'' of \alpha.
+Then \alpha can only move n times and \omega 2n times.
+The total number of movements required is 3n or $O(n)$.
+This asymptotically binds the algorithm's run-time to $O(n)$.
+
+\subsection{correctness}
+This algorithm is best explained from the intersection of halfplanes notion.
+We know that trivially any point away from the polygon can see all edges whos half-plane that point lies in.
+For this not to be true some portion of the polygon must block the vision, i.e. the final edge must face the point, then an edge must face away, and finally a third must face towards because otherwise the point must be inside the polygon.
+This violates convexality.
+
+We can furthur conjecture that if a point lies in m halfplanes, then those m edges must all be joined, and the greates angular difference between any 2 edges must be less than \pi.
+These 2 claims are related, the first from the observation that if they arent joined then there must be some intervening face which tje point does not line in the halfplane of.
+This too violates convexality, since it requires an edge to turn away from the point, then back towards it.
+Given this chain of edges, it is trivial too see that the greatest angular difference cant exceed \pi since if it did, the intersection of one of the edge a and its ``greater than pi'' counterpart b does not overlap the intersection of a and some less than \pi c.
+This is because as \theta aproaches \pi $\tan \theta \rightarrow \infinity$, but as soon as \theta exceeds \pi, it switches to $-\infinity$ (looking at the \tan function).
+Or the intersection of halfplanes swaps direction alonf the line cast by a, and thus cannot intersect the region defined by the intersection of the a and c lines.
+
+The final observation is that any region which defines the intersection of those m halfplanes, is strictly bounded by the 2 greatest angularly different half-planes.
+Consider the location of the intersection as the edges increase in angular difference, namely that it becomes more distant.
+As such the intersection of c along the a line is further than the intersection of b and a if $a.c > a.b$ (until c is more than \pi different, and the intersection reverses direction).
+Therefore we need only concern ourselves with the intersection of the maximally different edges to determine the intersecting region.
+
+The ``diagonal'' as found by the algorithm defines those edges, as the 4 edges bordering maximally distant diagonal points.
+Now the assertion that this algorithm must find points if they exist becomes trivial.
+In other words there exists 2 points which each lie in a reagion defined by the intersection of 2 maximally different edges of the polygon.
+Given that the algorithm exhaustively computes all maximally different diagonals it must discover those 2 regions where the points reside.
 
 \section {Star-Shaped Polygons}
 
+A star shaped polygon has at least one point p where any other point in the polygon qp does not intesect an edge of the polygon.
+In the previous question we dealt with half-planes distant from the polygon, here we deal with the reverse.
+First, for any 2 points p and q, if the line pq exits the polygon then p and q are both on the ``wrong side'' of such a half plane.
+The line pq starts and ends in the polygon, so it must leave at some point.
+Then the line crosses one half-plane to exit the polygon, and at least one mroe to re-enter.
+Thus it had to begin on the wrong side of one of these half-planes, since it crossed both and started and ended on the correct side of one each.
+
+Next, there exists no point p which is on the ``correct'' side of all half-planes which cannot join any other q qithout leaving the polygon.
+Similar to the above proof, the line pq qould have to leave and re-enter the polygon, which means both points p and q are on the wrong side of at least one half plane.
+Thus the question of finding a star shaped polygon is simplified to: can we find a region on the inner side of all half-planes.
+If such a region exists, any point in that can join every other point in the polygon without leaving it, and the polygon is star-shaped.
+If the region doesnt exist, then every point in the polygon is on the wrong side of at least one edge, and there exists no point which can join every other point in the polygon without at some point leaving.
+
+The algorithm for this uses a divide an conquer strategy, it runs on $O(n \log n)$ time.
+Simply recursively split the polygon into 2 groups of edges (they need not be joining) until each group has 2 or fewer edges.
+Calculate the intersection of 2 half-planes in constant time.
+Merge the results up the tree.
+
+It must be shown that the merge operation is linear for the entire algorithm to run in $O(n \log n)$.
+The merge is a calculation of the intersecting region of a convex (possibly unbounded) polygon.
+This operation is linear using a simple sweep-line algorithm.
+We split the 2 polygons into their top-half anf bottom-half each (these may be empty if the polygon is unbounded).
+We know (since the 2 polygons are both convex hulls or unbounded) that at most 4 points cross the sweep-line at once.
+This means adding and subtracting intersections can be done in constant time, the total operation being linear in the number of points.
+When 2 edges intersect, this forms a vertex of the resulting intersection polygon.
+Then simply run along the points until the polygon is closed by a second intersection, or we run out of points and the resulting polygon is unbounded.
+
+Thus the algorithm requires a merge step for each branch of the tree, meaning the total running time is: $T(n) = 2T(n/2) + O(n)$ \cite{hpi}.
+This leads to $O(n \log n)$.
+
 \section {Inverse Range-Queries}
+
+\subsection{Intuition}
+First the obvious notion that low dimensional planar shapes can be represented as points in higher dimensions.
+More simply, a 2D rectangle ABCD can be expressed by 2 2D vectors A and C-A (some corner and width/height), or A and C (2 opposite corners).
+For our representation given a rectangle on the plane with a corner (x,y) and positive width w and height h we represent in the 4D vector (x, y, x+w, y+h).
+
+Second we consider the logic of a range query.
+A 2D range query for points in a rectangle attempts to find all points ``less than the right bound and greaterr than the left bound and lower than the top bound and higher than the low bound''.
+This can also be viewed as 4 half-space queries.
+We must assemble our KD-tree to accomodate meaningful results in these queries.
+Consider the range query imposed by translating the qyery point to 4D space.
+We want to find all rectangles that overlap the point, or all ractangles that ``have greater right sides and lower left sides and greater top sides and lower bottom sides''.
+We see the similar pattern in the 4D case then.
+
+The complication arises becayse in the 4D case we arent running 2 bounding constraints on each coordinate, but rather 1 bound on each coordinate.
+In 2D, we asked for x coordinates ``left of the right edge and right of the left edge'', whereas in 4D we ask for rectangles ``with greater right edge and lesser left edge'', in our representation left and right edges have different coordinates in the 4D vector.
+So we cannot run a search which ``squeezes coordinates from both sides'', instead we run a search that ``splits vertices along a border''.
+
+If we can construct this KD-tree and query it correctly, it will have all the properties of other KD-trees, since we are in 4D that means $O(n \log n)$ preprocessing, $O(n)$ storage and $O(n^{3 \over 4} + k)$ query time.
+
+\subsection{Modification}
+The imposition requires we order our KD-Tree and its levels slightly dirrent to a regular one, using different ordering criteria.
+The ordering is different for each of the levels, for now presume there are at least 4 levels in the tree (i.e. at least 16 rectangles).
+At the topmost levels, order by {\em descending lesser x}.
+At the next level, order by {\em descending lesser y}.
+At the next level, {\em ascending greater x}.
+And finally, {\em ascending greater y}.
+
+The reason we do this is to facilitate the range query at each level, for a query point to be inside a rectangle it must be on the right side (in the tree) of all of these queries.
+The net effect is that we are able to prune every subtree to the left of the query ``boundary''.
+Naturally we must recur this operation for subtrees to the right of the boundary, but therein the same rule applies.
+By the end of the operation, only nodes immediately left of a boundary are valid.
+
+\subsection{correctness and complexity}
+First, the pruning is a valid operation, since the ordering of points at each level places them to the right when their location satisfies a given part of the query.
+When we try to find rectangles with a right edge greater than the query point these appear to thr right (since they are ordered ascending).
+Furthur, a pruning operation is final, no matter what values the other coordinates have, i.e. if a coordinate is on the wrong side of the split, it doesnt matter whether the upper and lower edges of a rectangle alight around the query point.
+
+As stated above, the time and space complexity of this modification draws from proven properties of KD trees as discussed in lectures.
+They will not be reiterated here.
+
+\begin{thebibliography}{9}
+
+\bibitem{hpi}
+  Kavitha Telikepalli,
+  \emph{\LaTeX: Lecture 3: Half-Plane intersections}.
+
+\end{thebibliography}
 
 \end{document}
