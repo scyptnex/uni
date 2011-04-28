@@ -1,0 +1,21 @@
+Planar point location
+	can be done in linear time
+	refine subdivision, cut into vertical slabs
+	we get a linear number of slabs, binary search to find what slab i'm in, pre-process slabs into binary tree of crossing edges
+	n^2 storage, logarithmic query
+	can we do better space with same good time
+	assume bounding box for each face, all points have different x.
+	verrtical slabs which stop at edges in the graph
+	every angle at most 180, every face is convex, has at most 2 vertical sides, exactly 2 non-vertical sides
+	at most 6n+4 vertices.  total 3n+1 faces.  complexity of whole subdiv is n
+	make trapezoidal map, add segments one by one
+	to find all trapezoids which a segment intersects, use the data structure we are halfway through contructing
+	use binary earch to find points in faces
+	hight of tree O(n), preprocessing in (n^2)
+	fix the query and traverse it, xi is number of points on path query created at iteration xi
+	xi is random variable, we know xi <= 3, so path is at most 3 times the level
+	for that to happen, each new segment must intersect the old trapezoid
+	probability si is top segment is 1/i, same for bottom left or right side
+	probability this trapezoid disappears is 4/i
+	total expectation, ln n + 1, expected query in log n
+	n log n preprocessing, on space, logn query time
