@@ -1,3 +1,14 @@
 Metrics
 	total overhead = parallel time * num processes - sequential time
 	Efficiency = fraction of time a processor is doing useful work
+
+Ghost points
+	memory locations used to store redundant copies of data held by neighbouring processes
+	n^2 sequential time complexity
+	n^2/p parallel + n communication
+	sequential O(n^2) Ts parallel O(n^2/p + n) Tp tot parallel O(n^2 + pn) pTp, overhead O(pn) pTp-Ts speedup O(p/(1+p/n)) Ts/Tp efficiency O(1/(1+p/n)) Ts/pTp isoefficiency Ts >= CTo
+	
+	same with square processes
+	sequential O(n^2) parallel O(n^2/p + n/rt(p)) total parallel O(n^2 + rt(p)n) overhead O(rt(p)n)
+
+MATRIX MULT AND ODD-EVEN TRANSPOSITION SORT WILL BE IN THE EXAM
