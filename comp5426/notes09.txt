@@ -12,3 +12,9 @@ Ghost points
 	sequential O(n^2) parallel O(n^2/p + n/rt(p)) total parallel O(n^2 + rt(p)n) overhead O(rt(p)n)
 
 MATRIX MULT AND ODD-EVEN TRANSPOSITION SORT WILL BE IN THE EXAM
+
+Threads
+	shared files, data, code
+	independant registers, stack
+	Synchronisation issues - when multi threads attempt to access same data item <- Race conditions
+	Mutex - Semaphor
