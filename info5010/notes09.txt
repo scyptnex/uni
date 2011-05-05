@@ -1,0 +1,33 @@
+page rank
+	convergence, optimizing backlinks
+	random walk on linked structure to measure some properties
+	an incoming link is a 'vote of importance', outgoing liks from important nodes are more important
+	usually a surfur goes from a page to an outlink (p=a)
+	occasionally a surfur zaps to a distant link (p=1-a)
+	may be biased to centain preferences, walk to links in plaintext, not image links, zap to homepages
+	markov chain P=((1-a, b), (a, 1-b)) Transpose of normal
+	x^i_k+1 = SUM(j)(PijX_k)
+	location at any time computer by powers of matrix by initial state (we start in elem 1, so state is (1, 0)
+	probabilities approach 50/50
+
+	transigion G= ((0,1,0), (1,0,0), (1,0,0))
+	scale all probs by alpha, replace all sinks with 1/n, all non-sinks add an extra (1-a)/n
+	G= ((0,1,0), (1,0,1), (1,0,0)), pow21
+	
+	A = aGD^p
+	markov chain is strongly connected if path from every to every
+	aperiodic
+	if we powr a matrix ad infinitum, all elements fix
+	at each step, minimum elem in row can only increase, max can only decrease
+	m t+1 = min(j)p^(t+1)_ij, M and m converge regardless of starting point, dM_t + (1-d)m_t
+
+	web-like graphs make the computation very easy
+
+Link building
+	we want to add a small k new links, hard to approximate, non polynomial, constant approximation
+	look at greedy lower bound, chookse k highest ranked pages
+	takinga  link lowers the page rank of others
+	naive is at leats 13.8 times worse than optimal for a = .85
+	
+	
+	
