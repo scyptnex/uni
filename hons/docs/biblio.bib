@@ -1,5 +1,5 @@
 %one of the researchers bernhard mentioned
-@article{bodik1997refining,
+@article{bod97,
   title={{Refining data flow information using infeasible paths}},
   author={Bodik, R. and Gupta, R. and Soffa, M.},
   journal={Software Engineering—ESEC/FSE'97},
@@ -17,6 +17,14 @@
   issn={0162-8828},
   year={2001},
   publisher={Published by the IEEE Computer Society}
+}
+
+%for comparison with srreamit
+@conference{cas87,
+  title={{LUSTRE: A declarative language for programming synchronous systems}},
+  author={Caspi, P. and Pilaud, D. and Halbwachs, N. and Plaice, J.A.},
+  booktitle={Conference Record of the 14th Annual ACM Symp. on Principles of Programming Languages},
+  year={1987}
 }
 
 %Dean google mapreduce map reduce
@@ -89,7 +97,20 @@
   publisher={IEEE}
 }
 
-@inproceedings{Li10,
+%the infamous tardos paper...
+@article{len87,
+  title={{Approximation algorithms for scheduling unrelated parallel machines}},
+  author={Lenstra, J.K. and Shmoys, D.B. and Tardos, {\'E}.},
+  journal={Mathematical Programming},
+  volume={46},
+  number={1},
+  pages={259--271},
+  issn={0025-5610},
+  year={1990},
+  publisher={Springer}
+}
+
+@inproceedings{li10,
  author = {Li, Min and Vazhkudai, Sudharshan S. and Butt, Ali R. and Meng, Fei and Ma, Xiaosong and Kim, Youngjae and Engelmann, Christian and Shipman, Galen},
  title = {Functional Partitioning to Optimize End-to-End Performance on Many-core Architectures},
  booktitle = {Proceedings of the 2010 ACM/IEEE International Conference for High Performance Computing, Networking, Storage and Analysis},
@@ -103,6 +124,23 @@
  acmid = {1884686},
  publisher = {IEEE Computer Society},
  address = {Washington, DC, USA},
+}
+
+@article{Lit07,
+title = "Efficient task replication and management for adaptive fault tolerance in Mobile Grid environments",
+journal = "Future Generation Computer Systems",
+volume = "23",
+number = "2",
+pages = "163 - 178",
+year = "2007",
+note = "",
+issn = "0167-739X",
+doi = "DOI: 10.1016/j.future.2006.04.014",
+url = "http://www.sciencedirect.com/science/article/B6V06-4K71622-2/2/a13e3ae209b244dba59fb16a11d52158",
+author = "Antonios Litke and Dimitrios Skoutas and Konstantinos Tserpes and Theodora Varvarigou",
+keywords = "Fault tolerance",
+keywords = "Scheduling",
+keywords = "Grid computing"
 }
 
 %Mahlke paper, multi-platform decomposition, streamit
@@ -138,6 +176,51 @@
   publisher={IEEE Computer Society}
 }
 
+@article{ran75,
+ author = {Randell, B.},
+ title = {System structure for software fault tolerance},
+ journal = {SIGPLAN Not.},
+ volume = {10},
+ issue = {6},
+ month = {April},
+ year = {1975},
+ issn = {0362-1340},
+ pages = {437--449},
+ numpages = {13},
+ url = {http://doi.acm.org/10.1145/390016.808467},
+ doi = {http://doi.acm.org/10.1145/390016.808467},
+ acmid = {808467},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {Acceptance test, Alternate block, Checkpoint, Conversation, Error detection, Error recovery, Recovery block, Recursive cache},
+}
+
+%chronologically not alphabetically
+@conference{ran07,
+  title={{Evaluating mapreduce for multi-core and multiprocessor systems}},
+  author={Ranger, C. and Raghuraman, R. and Penmetsa, A. and Bradski, G. and Kozyrakis, C.},
+  booktitle={Proceedings of the 2007 IEEE 13th International Symposium on High Performance Computer Architecture},
+  pages={13--24},
+  year={2007},
+  organization={Citeseer}
+}
+
+@article{ree06,
+title = "Reliability challenges in large systems",
+journal = "Future Generation Computer Systems",
+volume = "22",
+number = "3",
+pages = "293 - 302",
+year = "2006",
+note = "",
+issn = "0167-739X",
+doi = "DOI: 10.1016/j.future.2004.11.015",
+url = "http://www.sciencedirect.com/science/article/B6V06-4F53N8K-2/2/25cd3ac3b3732edc9d097d5111f9e22d",
+author = "Daniel A. Reed and Charng-da Lu and Celso L. Mendes",
+keywords = "System reliability",
+keywords = "Fault-tolerance",
+keywords = "Adaptive software"
+}
 
 %The SDF Book
 @book{sdfBook,
@@ -158,7 +241,7 @@
 }
 
 %QR Tile multicore, dynamic scheduler
-@inproceedings{Son10,
+@inproceedings{son10,
  author = {Song, Fengguang and Ltaief, Hatem and Hadri, Bilel and Dongarra, Jack},
  title = {Scalable Tile Communication-Avoiding QR Factorization on Multicore Cluster Systems},
  booktitle = {Proceedings of the 2010 ACM/IEEE International Conference for High Performance Computing, Networking, Storage and Analysis},
@@ -172,19 +255,6 @@
  acmid = {1884650},
  publisher = {IEEE Computer Society},
  address = {Washington, DC, USA},
-}
-
-%the infamous tardos paper...
-@article{tardos,
-  title={{Approximation algorithms for scheduling unrelated parallel machines}},
-  author={Lenstra, J.K. and Shmoys, D.B. and Tardos, {\'E}.},
-  journal={Mathematical Programming},
-  volume={46},
-  number={1},
-  pages={259--271},
-  issn={0025-5610},
-  year={1990},
-  publisher={Springer}
 }
 
 %A streamit paper, high level description of language
