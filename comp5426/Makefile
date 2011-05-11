@@ -1,4 +1,4 @@
-EXECUTES=tut1 tut2 tut3 tut4 tut5 tut6 tut8
+EXECUTES=tut1 tut2 tut3 tut4 tut5 tut6 tut8 tut9
 
 all: $(EXECUTES)
 
@@ -22,6 +22,9 @@ tut6: tutorial06.c
 
 tut8: tutorial08.c
 	gcc tutorial08.c -o tut8 -lpthread
+
+tut9: tutorial09.c
+	gcc tutorial09.c -g -o tut9 -lpthread
 
 clean:
 	rm -f $(EXECUTES)

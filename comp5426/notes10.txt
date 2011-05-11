@@ -1,0 +1,12 @@
+mutex
+	mutual exclusion
+	lock, unlock, trylock
+
+Condition variables
+	used to signal mutexes and locks
+	wait, signal, broadcast
+
+locking
+	read, any read thread may hold, read threads can gain this lokc, write lock cant be gained
+	write, if held no read lock may gain lock
+
