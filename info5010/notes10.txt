@@ -1,0 +1,34 @@
+external memory algorithms
+	cpu <-> ram, abstraction not accurate so much anymore
+	cpu <-> l1 <-> l2 <-> ram <-> disk
+	evaluate based on IO count
+	N -> instance size, M -> # elements that fit in main memory, B-> # elements that fit in 1 block (8-16kb)
+	SCAN: mm N, ext N/B
+	SEARCH: mm log_2 N, ext log_b N
+	SORT: mm N log_2 N, ext N/B log_(M/B) N/B
+	PERMUTE: mm N, min{N, Sort(N)}
+
+B Trees
+	input, keys v1...v2...vn
+	query, report all keys between q1 and q2 {vi : q1 <= v1 <= q2}
+	Update, insert/delete vx
+	store each node of a tree in a block
+	just a searchd tree where nodes have between b/2 and b children
+	if a node can add another element, add it, otherwise split the node, recurse up the tree
+	delete: if count falls below b/2, borrow keys from a sibling, if sibling cant lend then we can mege with it
+	space: O(N/B)
+
+Persistant B-Tree
+	input (vi, si, ti) i: 1...N, V(t) = {vi: t in [si,ti]}
+	query: q1, q2 and t.  report {vi: q1 <= vi <= q2 and vi in V(t)}
+	for each vertical slab, segments may start or end, presume no 2 intervals start and end at same point
+	only duplicate part that changes, each new element only modified log_B N blocks, query is same, space: O(N log_B N)
+	idea: augment nodes of tree with time interval: e qith interval [Se, Fe] is alive at t in [se,fe] ow is dead.
+	B-Tree invariant: At any point in time t, nodes that are alive form a B-tree (leaves and internal nodes have B/4 living elements)
+	New-node invariant: when a node is created it must have no dead elements and between 3B/8 and 7B/8 alive elements
+	insert: vi, should go in leaf P, if P has B elements (overflow)
+		let x be live elemnts in P + vi, if |x| has between 3/8 adn 7/8 B elem, declare P dead, make new node Q for x, delete P from parent insert Q
+		if x more than  7B/8, make 2 nodes with 7B/16 alive nodes each.  delete P insert Q and Q'
+		if x < 3/8 B, declare P' dead, take its live elements, if were too big now we split and add ourselves to out parent
+		we can create a new root for the tree.
+	
