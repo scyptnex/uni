@@ -9,21 +9,40 @@
 
 \section*{Literature Review}
 
-this is so much unwin.
+This research area focuses on a combination of several others.
+Foremost it deals with The Synchronous Dataflow paradigm, this model, as well as several implementations and competing models are analysed.
+The major issue facing multiprocessor/computer paradigms is scheduling, which is known to be NP-Hard.
+The scheduling heuristics and approximations proposed in the iterature are examined for their applicability and quality.
+Finally We look at the requirements and implementations of systems calling themselves 'fault tolerant', and we compare the effectiveness of such systems.
 
-OLP \cite{hen99}
+\subsection*{SDF and Parallel Paradigms}
 
-\subsection*{SDF and Other Models}
+The Synchronous Dataflow (SDF) paradigm is just one of many programming paradigms.
+It builds on the more general computation graphs described in \cite{kar66}, 44 years ago.
+At the time that model was only a graph-theoretical representation of parallel computation, and was more of an abstraction rather than a paradigm.
+We compare this with the more fleshed-out description of the fundamentals of the language in \cite{sdfBook}.
+This work is an amalgamation of previous input on the SDF issue, and is considered the defacto description of the paradigm.
+We are particularly interested in the calculation of actor repetitions described first by \cite{lee87} and appearing in \cite{sdfBook}.
+This is important because it is the static calculation of demand and supply by actors (called blocks by Lee) that allows SDF to be optimized statically, giving it advantages over dynamic systems such as S-Net described in \cite{pen09}.
 
-SDF Book \cite{sdfBook}
+Dynamic dataflow systems like S-Net, is deemed necessary for solving certain classes of problems pure SDF cannot.
+This is deemed to be one of the major problems with StreaMIT, as stated by Thies in \cite{thies02}.
+SDF requires static declaration fo actor consumptions and productions on each of its channels, which allows the calculation of Lee's repetitions vector.
+However This added difficulty was presumed to be difficult by Thies and even corroborated by programmers in \cite{thies10}.
+That said systems which allow the same level of abstractions without static IO rates are difficult to optimize for multiprocessor environments.
+Implementations of S-Net described in \cite{pen09} usually involve around a Master-Worker paradigm, which is not sufficiently fault tolerant for our purposes.
 
-Streamit \cite{thies02}
+S-Net and Streamit are not the only dataflow implementations, a much earlier work can be found in \cite{cas87}.
+In this work LUSTRE is presented, which is declarative as opposed to functional (StreaMIT).
+The language presented seems difficult to work with, and implements several novel notions of computation (sequence operators, clocking) that normal declarative languages do not deal with, which is understandable given the stream paradigm.
+However The notion of data-dependant clocks is an important one.
+We contrast this to the distributed clocking system presneted by Lamport in \cite{lam78}.
+Both Lamport and Caspi et al. strike the distinction between physical clocks and logical clocks, so as to be able to deal with the notion of precedence in distributed systems.
+This is a necessary distinction, since it doesnt actually matter the physical time of an execution, but only the time relative to the execution of other distributed components.
+Lamport defines a ``happened before'' relationship among processes which imposes a partial ordering of the system at the level of processes, whereas in LUSTRE data precedence is defined by an incremental counter (called the clock) assigned in a tuple with each data item.
+Both process and data clocking is important in SDF implementations, processes must not execute before they have data to execute on, and data must not be consumed or produced out-of-order.
 
-Static sdf nullspace \cite{lee87}
 
-Lustre \cite{cas87}
-
-Stream characterization \cite{thies10}
 
 Distributed Java \cite{par03}
 
@@ -31,9 +50,11 @@ Google Mapreduce \cite{dea08}
 
 multi-mapreduce \cite{ran07}
 
-\subsection*{Scheduling}
+Distributed Clocks \cite{lam78}
 
 cloud dataflow \cite{tsa09}
+
+\subsection*{Scheduling}
 
 Orchestrating Streamit \cite{mal08}
 
@@ -45,7 +66,7 @@ Energy minimization \cite{boy01}
 
 hetrogeneous scheduling \cite{len87}
 
-Distributed Clocks \cite{lam78}
+OLP \cite{hen99}
 
 \subsection*{Fault Tolerance}
 
