@@ -1,0 +1,45 @@
+point triangulation
+	try to make subtriangles fat
+	triangulation depends on num triangles on conv. hull
+	triangulate n pts, number of tris is m, k edges on c.h, Nf = m+1, Ne = (3m+k)/2
+	Euler's forumula: |V| - |E| + Nf = 2: n-(3m+k)/2+(m+1) = 2 : m = 2n-2-k
+	Ne = 3n - 3 - k
+	for planar graphs k=3, e = 3n-6
+	max the smallest angle in T
+	m triangles, 3m angles, sort all angles a1, a2...a3m, A(t) is sorted all angles vector
+	A(T) > A(T') iff all alphas less thn i are same, and A(T)i > A(T')i
+	thales theoriem for any 4 points, abc lie on circle, abc < arc
+	for any divided quad, edge pipj is illegal if the smallest angle it has is smaller than smallest in flip
+	Angle vector of flipped triangulation always better, not sure how awful running time is
+	
+delauny
+	dual of voronoi - delauny triangulation
+	if we choose a delauny edge pipj and draw a disk,we know disk is empty, tij triangle with point at center of disk
+	if a line pkpl crosses pipj, tkl is tri, but pi must lie inside tkl, then is not delauny, same if short edge intersects, all points on shortedge must belong to narpoint cell, intersection of shortedges
+	therefore is planar graph
+	a triangulation is delauny iff the circumcircle of any triangleis empty, i.e. voronoi
+	a triangulation T is legal iff T is a delauny triangulation
+		delauny is legal by definition
+		find tilj with max angle ilj.  we know it cant be connected to pipj, so pm lies outside disk, mlj is bigger than ilj, contradiction
+	delauny is unique, angle optimal is legal, therefore delauny is angle optimal
+
+Min spanning tree
+	1. compute delauny triangulation T
+	2. compute MST of T
+	prove all edges in mst is edge in delauny tri
+	assume ab in mst not dt, a point c must be in ab disk or ab is delany edge, but if there is a c connected to b subgraph, remove ab, make ac, is smaller
+
+mutual nearest neighbour graph
+	edge ab exists if b is closest to a and a is closest to b
+	mnn sub mst sub delauny
+
+nearest neighbour
+	conect p and q if q is nn of p
+	
+Relative neighbourhood
+	connect edge if the region described by overlap 2 disks is empty
+	mst sub relneigh
+
+Gabriel graph
+	add an edge pq if ther is a disk with diameter pq that is empty
+	relneigh sub BB sub delauny
