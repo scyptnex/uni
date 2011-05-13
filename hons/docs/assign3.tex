@@ -67,7 +67,8 @@ We use te procedure outlined by Lenstra and Tardos in \cite{len87}.
 This paper describes the linear relaxation of an integer programme which computes an exact solution to the makespan problem.
 Whilst the integrality constraint makes the problem NP-Hard, the relaxation is $O(n^2)$ and so computing an actor-processor assignment mapping can be done in a reasonable ammount of time.
 The Heuristic bound for the procedure they describe is 2, with $3/2$ being the absolute heuristic bound, times as bad as the optimal assignment in the worst case.
-This bound is shown by representing the mapping problem as a bipartite graph.
+This bound is shown by representing the mapping problem as a bipartite graph with edges as assignments.
+Although ILP solvers can be used for small instances, this approximation uses an LP formulation, and thus an LP Solver such as CPLEX or GLPK must be used \cite{hen99}.
 
 Whilst this assignment is acceptable for most applications it makes an unreasonable assumption for us and imposes an unreasonable requirement.
 Namely it presumes that processors can communicate with each other instantaneously, and that we are allowd to do as much inter-processor communication as we like.
@@ -75,45 +76,66 @@ However our problem permits neither of these.
 The algorithm described by Boykov et al. in \cite{boy01}, whilst apparently unrelated (image segmentation), allows us to schedule to minimize communication cost.
 This formulation is an ILP once again, however the proof of the approximation bound (again 2 times the optimal) is shown as a multiway cut problem.
 
+These fomulations are suited to heterogeneous gneral architectures, and so more relevant to our problems which only deal with machine abstractions.
+However success has been found using unique partitioning schemes suited to a subset of problems \cite{dea08, li10, tsa09}.
+Li et al. approach the problem with the presumption that the user has oversupplied cores \cite{li10} (which is reasonable in the absence of embarassingly parallel problems).
+With these excess processors the paper describes ``functional partitioning'', which assigns certain tasks to dedicated processors (calld services).
+Namely checkpointing, de-duplication, format translation and adaptive data draining.
+Their results are promising on shared-memory architectures, however it is unclear how well these machanisms may be scaled to cloud-architectures.
+This mechanism is particularly relevant to SDF partitioning, which seeks to assign actors to processors more specifically than the general master-worker paradigms of MapReduce \cite{dea08}, S-Net \cite{pen09} and process networks \cite{par03}.
+Another more specialised strategy is data-dependency partitioning \cite{dea08}.
+This method attempts to address data locality issues expressed by Tsangaris et al. in \cite{tsa09}, namely by assigning workers based on their locality to the data.
 
+These strategies are compared with the heuristic evaluations presented by \cite{len87, boy01} by Khan et al. in \cite{kha94}.
+This paper identifies three archetypical scheduling schemes: critical path, list scheduling and graph decomposition, and compares one or more implementations of each scheme on procedurally generated graph instances.
+It is difficult to evaluate these heuristics against those provided by Tardos \cite{len87} and Boykov et al. \cite{boy01} as the paper does not give solutions to optimality for each graph (some are simply too large) but rather guesses at the optimality using the ``granularity'' of the graph.
+That said The results that graph decomposition algorithms (CLANS) generally provide more reliable speedups \cite{kha94} is used by Mahlke and Kudlur in \cite{mal08} on StreaMIT.
+This implementation demonstrates the effectiveness of a graph-decomposition based heuristic (greedy fissing) with experimental data on several of the StreaMIT benchmarks.
+Though the experimental results are compared with ILP formulations of the scheduling problem, no lower bound is given on the greedy heuristic.
 
-Orchestrating Streamit \cite{mal08}
-
-Scheduling Heuristic comparisaon \cite{Kha94}
-
-Functional partitioning \cite{li10}
-
-Energy minimization \cite{boy01}
-
-hetrogeneous scheduling \cite{len87}
-
-OLP \cite{hen99}
-
-cloud dataflow \cite{tsa09}
+We examine the maximal exploitable parallelism of StreaMIT, MapReduce and S-Net based systems for comparison.
+StreaMIT's parallelism is bounded by factors such as delays and graph structure \cite{thies02}.
+Without intricate fissing operation \cite{mal08} this can mean fixed speedup-factors for certain tasks, that paper describes the maximal theoretical speedup of FFT without fissing is bounded by 17 (the number of actors in the process graph).
+S-Net's implementation is limited only by buffer sizes \cite{pen09} under reasonable assumptions.  However given stateful processes it is just as limited as any SDF implementation for the reasons described in \cite{mal08}.
+Unlike these, MapReduce's scheduling schemes allow for ``embarrasingly parallel'' speedups \cite{dea08} due to enfoced data independancy and stateless processes.
+Instead the speedup is bounded by data ammount and throughput, rather than the number of processes.
+This also leads to the notion of re-scheduling redundant \cite{ran07} jobs in the event of processor or communication issues.
 
 \subsection*{Fault Tolerance}
 
-Byzantine \cite{lam86}
+Fault tolerance is the main focus of our work.
+The notion of fault tolerance is not new \cite[ran75], however it has become absolutely essential in more recent cloud and grid systems.
+Randell's early work focused more on software redundancies in the case of software faults, even going so far as to presume hardware faults would not occur and cause software ones.
+The work did discuss the notion of formal redundancies and checkpointing for fault-tolerance though, which are techniques we shall be employing.
+More to the point the notion of a fault was not clearly defined, we must look to Lamport et al. in \cite{lam86} for that.
 
-software fault-tolerance \cite{ran75}
+Lamport et al. describe the notion of a Byzantine fault, in order to provide tolerance to ``arbitrary'' faults.
+The definition of Fault is discussed in more depth, we presume that each of the processors is malicious (that is, a traitorous general of the Byzantine army), and may act so as to prevent the army from taking action.
+This description accurately captures the nature of faults, that they may cause the computation to halt, to produce incorrect results, or to crash completely.
+The paper deals with assuring fault tolerance in the context of distributed clock synchronisation, however the principles are applicable to our problem of protecting against (specifically) node failure.
+The important observation is that there may be no more than $n/3 - 1$ faulty processors for n total.
+Our problem would be able to implement a voting scheme \cite{lam86} to determine correct computations from incorrect ones, where out commander and lieutennants are the controller and computing nodes respectively.
 
-reliability challenges \cite{ree06}
+The motivation behind this problem was described by Reed et al in \cite{ree06}.
+They point out that even ``under the generous assumption of fault independence'' that systems with $10^4$ nodes each having a lifetime of $10^6$ hours will likely fail in as little as 100 hours.
+This paper demonstrates both software and hardware changes to provide fault-tolerance, specifically dealing with an extension to the MPI framework to allow automatic checkpointing and recovery.
+Though the chance of an individual failure is high, given enough backup processors the time to failure can be made sufficiently long \cite{ree06}.
+Unfortunately this implementation makes extensive use of hardware fault-detection systems, which our project does not presume are available.
+This paper can be seen as presenting the checkpointing method of ensuring fault-tolerance, that is, if a computation fails the computation is backed-up to a checkpoint and re-run, this is one of the fault-tolerance mechanisms we shall be examining.
 
-mobile grid fault tolerance\cite{lit07}
+We also intend to examine static fault-tolerance via task representation.
+An implementation of such a system for mobile grid computing is presented by Litke et al. in \cite{lit07}.
+This paper discusses the mathematics which determine the number of replicas required in order to assure fault tolerance of a system given a certain probability of failure.
+Litke et al. also provide simulated results (just as we intend to) based on a knapsack formulation of the scheduling of such a fault-tolerant system.
+This work is very similar to our goal except it does not deal with the problems unique to SDF, namely actor indivisibility, nor the communication costs of the system.
 
-
-
-We examine the history and implementations of SDF and similar parallel paradigms so as to determine the strengths and weaknesses of these systems.
-We are mainly concerned with fault tolerance.
-The early implementations such as LUSTRE \cite{cas87} do not even mention fault-tolerance, possibly due to a dirth of distributed systems at the time.
-Indeed the notion of fault tolerance was relatively new at the time \cite{ran75}.
-For the modern implementations we look at S-Net, StreaMIT and MapReduce and their descriptionf of ``fault tolerance''.
-In later sections of the literature review we shall specify this concept more formally.
-\begin{itemize}
-	\item S-Net provides little by way of fault tolerance \cite{pen09}.  
-	\item{StreaMIT} ascskdbvksdn.
-	\item{MapReduce}dk dkcnsdk dkjcskdbck.
-\end{itemize}
+Few of the implementations we have seen so far deal explicitly with fault-tolerance.
+Though it does not say so in \cite{pen09}, we can presume that an S-Net program, on detecting failure, would simply dynamically reassign the workload.
+The MapReduce implementations \cite{dea08, ran07} both state their fault-tolerance mechanisms, namely reassigning jobs if a worker is presumed to have failed.
+Google's implementation discusses the master controller pinging each worker and presuming the worker fails if the ping times out.
+However neither system deals with the posibility (more likely in the case of PHOENIX \cite{ran07}) of master-failure.
+Google goes so far as to say ``our current implementation aborts the MapReduce computation of the master fails''.
+Granted master failure is unlikely, however a more desirable fault-tolerance scheme would be more robust to this possibility.
 
 \section*{Research Proposal}
 
