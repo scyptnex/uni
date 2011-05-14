@@ -1,0 +1,38 @@
+Duality
+	point to line, line to point
+	(x,y) primal plane, (a,b)dual plane
+	y=P_x . x - P_y -> y=2x-1
+	l* = (Px,Py)dual -> (2,1) in dual
+	(2,2)p -> b=2a-2
+
+Self inverse: p = (p*)* (obviously)
+Incidence preserving: if P lies on L in primal, L* lies on P* in dual
+	we know Py = La . Px - Lb
+	Lb = Px . La - Py, L* lies on P*
+Order Reversing
+	if P lies below L, then L* will lie below P*
+	as we move a line parallel to L through P towards L, the slope cant change since its parallel, but the line rises and so intersection with y-plane shrinks
+	
+Upper Envolope
+	dual of L is a point, intersection of p and q
+	upper envelope -> lower convex hull (both envelopes -> full hulls)
+	upper hull goes forward, lower hull goes backwards
+	also intersection of halfplanes
+	
+Zone theorem
+	vertex, edge, cell, set of lines
+	(nc2)+n-1 <-> eulers formula
+	zone: union of all cells intersected by L (query line), forms a polygon
+	Complexity of the zone is O(n) -> 3n
+	by induction:
+		n=1, 2 zones, complexity=2
+		for m=n-1 lines complexity of L is 3(n-1)
+		ind.step:
+			consider removing a line, it can only bound a cell to the right once (be a left edge), old left edges split by ln = 2
+	each line takes O(n) time to process, sum is O(n^2)
+
+minimal triangles
+	input, n points in plane, find smallest area triangle with corners as points
+	first point to the right of pair ab is min area triangle with ab as base
+	dual (a,b), a* intersects (a, b)
+	construct arrangement O(n^2), can do sweep line looking for points above below to determine in constant time
