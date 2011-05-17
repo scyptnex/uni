@@ -1,0 +1,61 @@
+\documentstyle{article}
+
+\author{Nic Hollingum - 308193415}
+\title{Research Methods - Assignment 3}
+
+\addtolength{\oddsidemargin}{-.875in}
+\addtolength{\evensidemargin}{-.875in}
+\addtolength{\textwidth}{1.75in}
+\addtolength{\topmargin}{-.875in}
+\addtolength{\textheight}{1.75in}
+
+\begin{document}
+
+\maketitle
+
+\section*{Research Proposal}
+
+\subsection*{Contribution}
+This project intends to determine some of the limitations and costs of implementing fault tolerant protocols for Synchronous Dataflow (SDF) programs in cloud and grid environments.
+Current implementations of SDF systems \cite{mal08, thies02, thies10} do not explicitly guarantee fault tolerance in execution.
+This is an acceptable shortfall in the case of standalone systems, where a 'node failure' means the whole computer dies, and so no mechanisms can exist to recover from such a failure, the computation must be rerun.
+However in the cloud/grid context mean time to failure (MTTF) can be as short as 100h \cite{ree06}.
+As such, mechanisms must be put in place to ensure successful computation given a few node failures.
+
+Large parallel programming tools such as Google's MapReduce \cite{dea08} have fault-tolerance inbuilt.
+In the case of MapReduce this means task-reallocation, though other fault tolerant systems may have software redundancies \cite{ran75}, checkpointing \cite{li10} or process duplication \cite{lit07}.
+
+This research will look at 2 generalizations of fault-tolerance mechanisms, re-computation and task-duplication.
+We examine the effects of ensuring higher levels of fault tolerance (that is, reducing the probability of failure) on the bandwidth and time requirements of systems.
+We formulate this tradeoff as a 3-way optimization problem, and use known heuristics to solve the integer-programming formulations of the scheduling problem.
+Finally we test the predictions of the model experimentally using a simulator, which represents cloud and grid platforms as a generic ``n-process'' machine.
+
+This research aims to formally specify the relationship between fault-tolerance and the makespan/bandwidth of a SDF program.
+
+
+\subsection*{Methodology}
+
+Scheduling heiristics have been used to solve the assignment problem with respect to makespan \cite{len87} or communication \cite{boy01} (or, rarely, both) for some time.
+We first formulate the assignment problem which achieves all 3 constraints, makespan, communication, and fault toelrance.
+Once we have this formulation we examine the approximation bounds for their distance from optimality.
+
+We also compare the conditions under which either one of the fault-tolerance mechanisms may lead to more optimal solutions.
+It is known that both mechanisms necessarily increase the makespan of the problem, and the communication bandwidth.
+However it is unclear which mechanism produces larger overheads, or if ther is some meeting point at which a previously less costly fault-tolerance mechanism becomes more optimal.
+We model the increases in communication bandwidth and makespan for each of the methods to gain an idea of how each affects the result.
+
+\subsection*{Evaluation}
+
+The theoretical data above is corroborated against experimental data using an sdfSimulator.
+Though it is called ``simulator'' the framework is able to perform arbitrary computations in a SDF model, the n-process machine is simulated and makespan/communication costs are determined by examining the simulated network.
+This simulator will also allow for the injection of faults, both intentionally and at random, to test the resiliance of each of the fault-tolerant mechanisms.
+The simulator is used to run real SDF benchmarks (merge-sort), as well as trivial programs, and entirely simulated computational graphs (which do not actually compute anything, just simulate a computation)
+
+We look at the expected results from the model described above, and then we examine the output of the simulator.
+We should see a strong correlation between the simulated results and the expected results.
+
+
+\bibliographystyle{plain}
+\bibliography{biblio}
+
+\end{document}

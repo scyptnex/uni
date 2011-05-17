@@ -10,10 +10,10 @@
 \section*{Literature Review}
 
 This research area focuses on a combination of several others.
-Foremost it deals with The Synchronous Dataflow paradigm, this model, as well as several implementations and competing models are analysed.
-The major issue facing multiprocessor/computer paradigms is scheduling, which is known to be NP-Hard.
+Foremost it deals with the Synchronous Dataflow paradigm; this model and several implementations and competing models, are analysed.
+The major issue facing multiprocessor/computer paradigms is scheduling, which is known to be NP-hard.
 The scheduling heuristics and approximations proposed in the iterature are examined for their applicability and quality.
-Finally We look at the requirements and implementations of systems calling themselves 'fault tolerant', and we compare the effectiveness of such systems.
+Finally We look at the requirements and implementations of systems calling themselves ``fault tolerant'', and we compare the effectiveness of such systems.
 
 \subsection*{SDF and Parallel Paradigms}
 
@@ -21,62 +21,64 @@ The Synchronous Dataflow (SDF) paradigm is just one of many programming paradigm
 It builds on the more general computation graphs described in \cite{kar66}, 44 years ago.
 At the time that model was only a graph-theoretical representation of parallel computation, and was more of an abstraction rather than a paradigm.
 We compare this with the more fleshed-out description of the fundamentals of the language in \cite{sdfBook}.
-This work is an amalgamation of previous input on the SDF issue, and is considered the defacto description of the paradigm.
-We are particularly interested in the calculation of actor repetitions described first by \cite{lee87} and appearing in \cite{sdfBook}.
+Synchronous Dataflow is an amalgamation of previous input on the SDF issue, and is considered the defacto description of the paradigm.
+We are particularly interested in the calculation of actor repetitions described first in Lee and Messerschmitt's \cite{lee87} and appearing in \cite{sdfBook}.
 This is important because it is the static calculation of demand and supply by actors (called blocks by Lee) that allows SDF to be optimized statically, giving it advantages over dynamic systems such as S-Net described in \cite{pen09}.
 
-Dynamic dataflow systems like S-Net, is deemed necessary for solving certain classes of problems pure SDF cannot.
-This is deemed to be one of the major problems with StreaMIT, as stated by Thies in \cite{thies02}.
+Dynamic dataflow systems like S-Net, are deemed necessary for solving certain classes of problems pure SDF cannot.
+This is seen to be one of the major problems with StreaMIT, as stated by Thies et al. in \cite{thies02}.
 SDF requires static declaration fo actor consumptions and productions on each of its channels, which allows the calculation of Lee's repetitions vector.
-However This added difficulty was presumed to be difficult by Thies and even corroborated by programmers in \cite{thies10}.
-That said systems which allow the same level of abstractions without static IO rates are difficult to optimize for multiprocessor environments.
-Implementations of S-Net described in \cite{pen09} usually involve around a Master-Worker paradigm, which is not sufficiently fault tolerant for our purposes.
+However, this added difficulty was presumed to be difficult by Thies and Amarasinghe in \cite{thies10}, despite the genrally positive impression of programming in the language.
+That said, systems which allow the same level of abstractions without static IO rates are difficult to optimize for multiprocessor environments.
+Implementations of S-Net described in \cite{pen09} usually involve a Master-Worker paradigm, which is not sufficiently fault tolerant for our purposes.
+Without knowing these rates it is unable to assign more duplications of certain actors which are known to be in high demand.
 
-S-Net and Streamit are not the only dataflow implementations, a much earlier work can be found in \cite{cas87}.
+S-Net and StreaMIT are not the only dataflow implementations, as a much earlier work can be found in \cite{cas87}.
 In this work LUSTRE is presented, which is declarative as opposed to functional (StreaMIT).
 The language presented seems difficult to work with, and implements several novel notions of computation (sequence operators, clocking) that normal declarative languages do not deal with, which is understandable given the stream paradigm.
 However The notion of data-dependant clocks is an important one.
-We contrast this to the distributed clocking system presneted by Lamport in \cite{lam78}.
+We contrast this to the distributed clocking system presented by Lamport in \cite{lam78}.
 Both Lamport and Caspi et al. strike the distinction between physical clocks and logical clocks, so as to be able to deal with the notion of precedence in distributed systems.
-This is a necessary distinction, since it doesnt actually matter the physical time of an execution, but only the time relative to the execution of other distributed components.
-Lamport defines a ``happened before'' relationship among processes which imposes a partial ordering of the system at the level of processes, whereas in LUSTRE data precedence is defined by an incremental counter (called the clock) assigned in a tuple with each data item.
+This is a necessary distinction, since it doesn't actually matter what the physical time of an execution is, but only the time relative to the execution of other distributed components.
+Lamport defines a {\em happened before} relationship among processes, which imposes a partial ordering of the system at the level of processes, whereas in LUSTRE data precedence is defined by an incremental counter (called the clock) assigned in a tuple with each data item.
 Both process and data clocking is important in SDF implementations, processes must not execute before they have data to execute on, and data must not be consumed or produced out-of-order.
 
 Given a partial ordering of data items and processes on distributed systems in general and SDF-like systems specifically, we are now able to explot the parallelism inherant in SDF.
 A simplistic means of doing this is to assign actors to processors, in a similar fashion to \cite{par03}.
 The distributed process networks described in that paper have the ability to scale well with instance size, given sufficiently good load balancing.
 However that paper only deals with worker count, in the hope of data independance and stateless processes.
-The paper therefore deals more with buffer management and load balancing, in order to achieve ``Embarrasing parallelism''.
+The paper therefore deals more with buffer management and load balancing, in order to achieve {\em Embarrasing parallelism}.
 Embarassingly parallel programs are programs with no data interdependencies (i.e. unordered) and no process states (in our case, statless actors).
 This presumption is not allowed in general for SDF programs, whose actors can have arbitary state and whose tokens are necessarily ordered.
 This is not a problem for the most well known massively-parallel paradigm, MapReduce.
-MapReduce is quite a common industry tool these days for large scale data-crunching, as described in \cite{dea08}.
+MapReduce is a popular tool these days for large scale data-crunching, as described in \cite{dea08}.
 Much of the work goes into distributed-memory grid/cloud systems, however implementations such as PHOENIX \cite{ran07} demonstrate the paradigm's viability for shared-memory multithread systems.
 
 We shall examine these systems with regard to efficiency and fault-tolerance  in later sections of the review.
 
 \subsection*{Scheduling}
 
-Scheduling, especially parallel scheduling, is in the NP-Hard class of problems \cite{len87, kha94}, most intuitively shown by a reduction to multi-knapsack by Litke et al. in \cite{lit07}.
+Scheduling, especially parallel scheduling, is in the NP-hard class of problems \cite{len87, kha94}, most intuitively shown by a reduction to multi-knapsack by Litke et al. in \cite{lit07}.
 We must therefore consider heuristic and approximation approaches to the problem.
 More specifically, our problem involves a 3-way optimization of the scheduling goal: makespan, communication cost and fault tolerance.
 Since fault tolerance is more of a constraint than an optimization goal, we shall ignore it for now.
 
 Optimizing for makespan alone is the simpler of the two remaining issues.
 We use te procedure outlined by Lenstra and Tardos in \cite{len87}.
-This paper describes the linear relaxation of an integer programme which computes an exact solution to the makespan problem.
-Whilst the integrality constraint makes the problem NP-Hard, the relaxation is $O(n^2)$ and so computing an actor-processor assignment mapping can be done in a reasonable ammount of time.
-The Heuristic bound for the procedure they describe is 2, with $3/2$ being the absolute heuristic bound, times as bad as the optimal assignment in the worst case.
+This paper describes an approximation using the linear relaxation of an integer programme which computes an exact solution to the makespan problem.
+Whilst the integrality constraint makes the problem NP-hard, the relaxation is $O(n^2)$ and so computing an actor-processor assignment mapping can be done in a reasonable ammount of time.
+The approximation bound for the procedure they describe is 2, with $3/2$ being the absolute approximation bound, times as bad as the optimal assignment in the worst case.
 This bound is shown by representing the mapping problem as a bipartite graph with edges as assignments.
-Although ILP solvers can be used for small instances, this approximation uses an LP formulation, and thus an LP Solver such as CPLEX or GLPK must be used \cite{hen99}.
+Although ILP solvers can be used for small instances, this approximation uses an LP formulation, and thus an LP Solver such as CPLEX\cite{hen99} or GLPK\cite{glpk} must be used .
 
 Whilst this assignment is acceptable for most applications it makes an unreasonable assumption for us and imposes an unreasonable requirement.
-Namely it presumes that processors can communicate with each other instantaneously, and that we are allowd to do as much inter-processor communication as we like.
+Namely it presumes that processors can communicate with each other instantaneously, and that we are allowed to do as much inter-processor communication as we like.
 However our problem permits neither of these.
 The algorithm described by Boykov et al. in \cite{boy01}, whilst apparently unrelated (image segmentation), allows us to schedule to minimize communication cost.
 This formulation is an ILP once again, however the proof of the approximation bound (again 2 times the optimal) is shown as a multiway cut problem.
+In order to optimize a schedule for both makespan and communication cost, both of these problems must be solved possibly in conflict for the same instance.
 
-These fomulations are suited to heterogeneous gneral architectures, and so more relevant to our problems which only deal with machine abstractions.
+These fomulations are suited to heterogeneous gneral architectures, and so more relevant to our problems which only deals with machine abstractions.
 However success has been found using unique partitioning schemes suited to a subset of problems \cite{dea08, li10, tsa09}.
 Li et al. approach the problem with the presumption that the user has oversupplied cores \cite{li10} (which is reasonable in the absence of embarassingly parallel problems).
 With these excess processors the paper describes ``functional partitioning'', which assigns certain tasks to dedicated processors (calld services).
@@ -95,7 +97,7 @@ Though the experimental results are compared with ILP formulations of the schedu
 
 We examine the maximal exploitable parallelism of StreaMIT, MapReduce and S-Net based systems for comparison.
 StreaMIT's parallelism is bounded by factors such as delays and graph structure \cite{thies02}.
-Without intricate fissing operation \cite{mal08} this can mean fixed speedup-factors for certain tasks, that paper describes the maximal theoretical speedup of FFT without fissing is bounded by 17 (the number of actors in the process graph).
+Without intricate fissing operations \cite{mal08} this can mean fixed speedup-factors for certain tasks, that paper describes the maximal theoretical speedup of FFT without fissing is bounded by 17 (the number of actors in the process graph).
 S-Net's implementation is limited only by buffer sizes \cite{pen09} under reasonable assumptions.  However given stateful processes it is just as limited as any SDF implementation for the reasons described in \cite{mal08}.
 Unlike these, MapReduce's scheduling schemes allow for ``embarrasingly parallel'' speedups \cite{dea08} due to enfoced data independancy and stateless processes.
 Instead the speedup is bounded by data ammount and throughput, rather than the number of processes.
@@ -104,7 +106,7 @@ This also leads to the notion of re-scheduling redundant \cite{ran07} jobs in th
 \subsection*{Fault Tolerance}
 
 Fault tolerance is the main focus of our work.
-The notion of fault tolerance is not new \cite[ran75], however it has become absolutely essential in more recent cloud and grid systems.
+The notion of fault tolerance is not new \cite{ran75}, however it has become absolutely essential in more recent cloud and grid systems.
 Randell's early work focused more on software redundancies in the case of software faults, even going so far as to presume hardware faults would not occur and cause software ones.
 The work did discuss the notion of formal redundancies and checkpointing for fault-tolerance though, which are techniques we shall be employing.
 More to the point the notion of a fault was not clearly defined, we must look to Lamport et al. in \cite{lam86} for that.
@@ -114,16 +116,16 @@ The definition of Fault is discussed in more depth, we presume that each of the 
 This description accurately captures the nature of faults, that they may cause the computation to halt, to produce incorrect results, or to crash completely.
 The paper deals with assuring fault tolerance in the context of distributed clock synchronisation, however the principles are applicable to our problem of protecting against (specifically) node failure.
 The important observation is that there may be no more than $n/3 - 1$ faulty processors for n total.
-Our problem would be able to implement a voting scheme \cite{lam86} to determine correct computations from incorrect ones, where out commander and lieutennants are the controller and computing nodes respectively.
+This level of fault tolerance applies to our problem by implementing a voting scheme \cite{lam86} to determine correct computations from incorrect ones, where out commander and lieutennants are the controller and computing nodes respectively.
 
 The motivation behind this problem was described by Reed et al in \cite{ree06}.
 They point out that even ``under the generous assumption of fault independence'' that systems with $10^4$ nodes each having a lifetime of $10^6$ hours will likely fail in as little as 100 hours.
 This paper demonstrates both software and hardware changes to provide fault-tolerance, specifically dealing with an extension to the MPI framework to allow automatic checkpointing and recovery.
 Though the chance of an individual failure is high, given enough backup processors the time to failure can be made sufficiently long \cite{ree06}.
-Unfortunately this implementation makes extensive use of hardware fault-detection systems, which our project does not presume are available.
+Unfortunately this implementation makes extensive use of hardware fault-detection systems, which we presume are unavailable in our context.
 This paper can be seen as presenting the checkpointing method of ensuring fault-tolerance, that is, if a computation fails the computation is backed-up to a checkpoint and re-run, this is one of the fault-tolerance mechanisms we shall be examining.
 
-We also intend to examine static fault-tolerance via task representation.
+We also intend to examine static fault-tolerance via task replication.
 An implementation of such a system for mobile grid computing is presented by Litke et al. in \cite{lit07}.
 This paper discusses the mathematics which determine the number of replicas required in order to assure fault tolerance of a system given a certain probability of failure.
 Litke et al. also provide simulated results (just as we intend to) based on a knapsack formulation of the scheduling of such a fault-tolerant system.
@@ -136,8 +138,14 @@ Google's implementation discusses the master controller pinging each worker and 
 However neither system deals with the posibility (more likely in the case of PHOENIX \cite{ran07}) of master-failure.
 Google goes so far as to say ``our current implementation aborts the MapReduce computation of the master fails''.
 Granted master failure is unlikely, however a more desirable fault-tolerance scheme would be more robust to this possibility.
+Furthur none of these systems describe the relationship between faults and makespan in the way litke et al. do in \cite{lit07}.
 
-\section*{Research Proposal}
+\subsection*{Conclusions}
+
+The problem our research faces is the sum of several more general problems.
+Whilst each of these issues has been researched to varying degrees, ther is little literature on the combination of multiple factors.
+SDF implementations do not go into detail on fault tolerance, and fault tolerant implementations are rarely applicable to SDF problems.
+Our research must draw on the individual solutions in order to provide a solution to the whole problem.
 
 \bibliographystyle{plain}
 \bibliography{biblio}
