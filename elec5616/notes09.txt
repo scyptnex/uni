@@ -1,0 +1,22 @@
+needham-schroeder
+	alince sends nonce to trent
+	trent says a blob alice cant decrypt, ticket
+	bob has no guarantee that Kab is new
+	eggshell model, not robust to internal faults
+
+Network Security
+	ddos, amplified ping on routers connecting, 16yo
+	Strong authentication
+	security is catch-up, reactive
+	homogeneous, windows(linux) firefix, chrome, ie, android, iphone
+	marshmallow model, protect the exterior
+	attack is about leveraging access through trust
+
+TCP IP
+	ack, syn ack, syn
+	packet sniffing, spoofing
+	syn flooding, dos, exhaust a resource on machine
+	smurfing, amplify message, icmp echo
+	algorithm based attacks, run fast for avg case (hash table)
+	sequence number prediction, open a connetion as mallory, use it to guess seq number when impersonating alice, jitter decreases with technology, this attack gets easier
+	source routing

@@ -1,0 +1,28 @@
+IPSec
+	authentication header, security assosiation: session keys, algo names
+	encapsulated security payload
+Address resolution protocol
+	packet checks cache for mac to ip mapping, if not broadcasts
+	malarie poisons cache, alice and bob think malarie is the other
+	we can hard code in mac, loose configurability
+Attack on DNS
+	/etc/hosts
+	cache poisoning
+	infrastructure attacks
+
+increasing fidelity of AIs to impersonate humans
+	cleverbot, mycybertwin
+
+Wireless security
+	most wireless networks are inside the firewall, unsophisticated users cant cope with high security
+	Wired Equivalent Privacy (WEP) you cant match wired sec
+		master key 40-104 bits shared a-priori, each packet (header | data) RC4 stream cipher, xor stream cipher
+		problem if we repeat IV, passive attacks to decrypt traffic based on, birthday attack on IV, max 5288 packets
+		implementation is broken, standard doesnt say how to gen iv, starts at 0, memory tradeoff on IV, at most 24gb of space, changing iv with each packet is optional LOL
+		crc32 as hash, cipher integrity check linear hash h(m xor k) = h(m) xor h(k), can make our own IC
+		trick base statio to decrypt traffic, record trafic we want to decrypt, wait for iv one before it to arrive, resend on network
+		reaction attack, fail tcp checksum if bits change using ack nack of tcp lyer, learn 1 bit at a time
+software security
+	buffer overflow
+	canary, if overwritten problems
+	timing attacks, algorithm return time (dont return straight away) bad c compiler
