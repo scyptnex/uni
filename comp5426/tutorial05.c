@@ -5,89 +5,86 @@
 int main(int argc, char *argv[])
 {
 	int 		myid, numprocs;
-	int			chunk_size = 10;
-	int			x = 0;
-	int			curValue = 1;
-
+	int		x;
 
 	MPI_Init (&argc, &argv);
 	MPI_Comm_size (MPI_COMM_WORLD, &numprocs);
 	MPI_Comm_rank (MPI_COMM_WORLD, &myid);
 
-	if(myid == 0)
-	{
-		int* 			lSum = (int*)calloc(numprocs - 1, sizeof(int));
-		MPI_Request* 	reqs = (MPI_Request*)calloc(numprocs - 1, sizeof(MPI_Request));
-		int* 			indices = (int *)malloc((numprocs-1)*sizeof(int));
-		MPI_Status * 	stat=(MPI_Status*)malloc(sizeof(MPI_Status)*(numprocs - 1));
-		int 			i, count, numRunningProcs;
-		long int 		result;
-
+	if (myid == 0){
 		fprintf(stdout,"Please enter the value of x\n");
-		fscanf(stdin,"%i",&x);
+		scanf("%d",&x);
+		printf("the value of x is %d\n", x);
+	}
 
-		count = numprocs - 1;
-		for (i = 0; i < count; i++)
-			indices[i] = i;
+	if (numprocs == 1) {
+		/* trivial single CPU case */
+		int i, result = 0;
+		for (i=1; i<=x; i++)
+			result += i;
 
-		result = 0;
-		numRunningProcs = 0;
+		printf("one process and the final result is %d\n", result);
 
-		while (numRunningProcs || (curValue + chunk_size - 1) <= x) /*While there is still work to do */
+	} else 
+	if(myid == 0){
+		MPI_Request* 	reqs = (MPI_Request*)malloc((numprocs-1)*sizeof(MPI_Request));
+		MPI_Status* 	stat=(MPI_Status*)malloc((numprocs-1)*sizeof(MPI_Status));
+		int* 			indices = (int*)malloc((numprocs-1)*sizeof(int));
+		int* 			buf = (int*)malloc((numprocs-1)*sizeof(int));
+		int 			i, j, t, count, numRunningProcs, wkrid;
+		int 		result = 0;
+
+		for(i = 0; i < numprocs-1; i++)
 		{
-			for(i = 0; i < count && (curValue + chunk_size - 1) <= x; i++)
-			{
-				MPI_Send(&curValue, 1, MPI_INT, indices[i] + 1, 0, MPI_COMM_WORLD);
-				numRunningProcs++;
-				curValue += chunk_size;
-				/*after sending the work, we open an unblocking socket and wait for return*/
-				MPI_Irecv((lSum + indices[i]), 1, MPI_INT, indices[i] + 1, 1, MPI_COMM_WORLD, reqs + indices[i]);
-			}
+			/* send the problem size x to workers */
+			MPI_Send(&x, 1, MPI_INT, i+1, 10, MPI_COMM_WORLD);
 
-			MPI_Testsome(numprocs - 1, reqs, &count, indices, stat);
-
-			numRunningProcs -= count;
-			/* indices is an array with count entries containing the id's of
-				the processes that have finished. We obtain the values that
-				the finished processors have returned , and add them to the result */
-			for(i = 0; i < count; i++)
-				result += *(lSum + indices[i]);
+			/*open an unblocking socket and wait for return from that worker*/
+	   		MPI_Irecv(&buf[i], 1, MPI_INT, i+1, MPI_ANY_TAG, MPI_COMM_WORLD, &reqs[i]);
 		}
 
-		while (curValue <= x)
-			result += curValue++;
+		numRunningProcs = numprocs - 1;
 
-		curValue = 0;
-		for(i = 0; i < numprocs - 1; i++)	/* send the termination signal */
-			MPI_Send(&curValue, 1, MPI_INT, i + 1, 0, MPI_COMM_WORLD);
+		/* while there is any job to be allocated or received */
+		while (numRunningProcs){
+			/* wait for partial results from workers*/	
+			MPI_Waitsome(numprocs-1, reqs, &count, indices, stat);
 
-		printf("The final result is %ld\n", result);
-		free(lSum);
+			numRunningProcs -= count;
+			for(i = 0; i < count; i++){
+			   	wkrid = stat[i].MPI_SOURCE;
+				t = stat[i].MPI_TAG;
+				j = indices[i];
+				result += buf[j];
+			   	printf("partial result %d received from worker id = %d with tag = %d\n", buf[j], wkrid, t);
+			}
+		}
+
+		printf("The final result is %d\n", result);
+
+		free(buf);
 		free(reqs);
 		free(indices);
 		free(stat);
 	}
-	else
-	{
-		MPI_Status stat;
-		MPI_Request req;
+	else{ 
+		/* worker processes */
+		MPI_Status status; 
+		int x, i, strt, fnsh;  
+		int result = 0;
 
-		while (1)
-		{
-			int	i, curValue, sum = 0;
+		/* receive the size y from master */
+		MPI_Recv(&x, 1, MPI_INT, 0, 10, MPI_COMM_WORLD, &status);
 
-			MPI_Recv(&curValue, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &stat);
+		strt = (myid-1) * x / (numprocs-1) + 1;
+		fnsh = myid * x / (numprocs-1);
+ 		for (i=strt; i<=fnsh; i++)
+			result += i;
 
-			if (curValue == 0)
-				break;
-
-			for (i = 0; i < chunk_size; i++)
-				sum += curValue++;
-
-			MPI_Isend(&sum, 1, MPI_INT, 0, 1, MPI_COMM_WORLD, &req);
-			MPI_Wait(&req, &stat);
-		}
+		/* send the result to master */
+           	MPI_Send(&result, 1, MPI_INT, 0, myid, MPI_COMM_WORLD);
 	}
+
 
 	MPI_Finalize();
 	return 0;
