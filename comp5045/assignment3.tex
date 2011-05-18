@@ -31,9 +31,10 @@ This particular rendering was done in java where:
 	\item exhaustively search the points for the closest one.
 	\item colour (x,y) with that point's colour.
 \end{itemize}
+The Naivoronoi.java program runs in $O(xyn)$ for a canvas x pixels by y pixels.
 
 \subsection{b) Trapezoid}
-Note, the assignment description sats the 3rd segment lies on $(5,6) \rightarrow (1,9)$, however in the picture it appears (despite being annotated otherwise) to lie on $(5,6) \rightarrow (9,1)$.
+Note, the assignment description says the 3rd segment lies on $(5,6) \rightarrow (1,9)$, however in the picture it appears (despite being annotated otherwise) to lie on $(5,6) \rightarrow (9,1)$.
 We shall go with what the picture says.
 
 This mapping contains 13 trapezoids.
@@ -42,24 +43,57 @@ For simplicity, and indeed in this case, we presume no 2 points share the same x
 
 \section {Colinear Points}
 
-8.6: constructing a doubly-connected edge list for the arrangement can be done in n^2, each iteration takes n
-to find max, loop through edges, cound incidences, if 2 edges incident to a vertex in doubleedge then 2 points colinear, 3 = 3
+This solution relies on a description of how to construct a doubly-connected edge list from an arrangement of a set of n lines on $O(n^2)$ time.
+It can be found in the text book at \cite{tb}.
+We shall describe the relevance of this technique, breifly why it can be done in $O(n^2)$ time, and how to use the doubly-connected edge list to solve the problem.
+We need not impose any limitations on the points, save that no 2 points may overlap.
 
-euler's formula, we know there are n^2 edges for planar doubly-connected-edge-list, run through all edges count incidences to vertices
+First we observe that the problem ``report the line which passes through the greatest number of points'' is equivalent to the dual problem ``report the point through which the greatest number of lines pass''.
+We suspect it may be easier to solve the latter problem, so we convert S to the dual in $O(n)$ time.
+Any point in the dual where 2 lines meet, represents a line in the primal plane which passes through both points.
+Now we wish to find where the most lines meet.
 
-pp184-185
-Mark de Berg
-Otfried Cheong
-Marc van Kreveld
-Mark Overmar
+If we represented lines and segments as edges, and points where these liens meet as nodes, then we are looking for the node with greatest degree.
+With such a graph, we would simply add 1 to each endpoint of each edge, then choose the vertex with the greatest number of edges incident to it.
 
-Computational Geometry
-Algorithms and Applications
-3rd ed
+We construct the doubly-connected edge list as described in the text-book \cite{tb}.
+In short this can be done in $O(n^2)$ time because when we incrementally construct an arrangment we only need to deal with a subset of the faces/vertices/edges in the arrangment sofar.
+And that subseet does not exceed $O(i)$ for step i, thus the total construction time is $O(n^2)$.
+During construction we are sure to new incidences to verticies as they arise.
+If we forget to do this it can be done after the fact by going over every edge in the graph and adding its incidences to vertices, there are at most $O(n^2)$ edges in the arrangement.
 
-Springer-Verlag Berlin Heidelberg
+At the end we must query the arrangement graph for its most incident vertex, we know ther are at most $O(n^2)$ vertices, so this query takes that long.
+Clearly this vertex must represent the point where the most lines meet.
+In the case where there are equal numbers of lines meeting we simply choose one arbitrarily.
+Once we have the vertex, converting it back to a line in the primal plane is $O(1)$, and we return that line.
 
 \section {Populous Cities}
+
+From lectures we learnt that we could perform 2 dimensional orthogonal range queries in $O(n \log n)$ space with $O(n \log n)$ preprocessing using an associative range tree.
+This allows us to perform a range query in $O(\log^2 n + k)$ time, reporting k results.
+Thus the question becomes is there some way to modify this structure to return the most populous city in the range without breaking the space, preprocessing, or query time.
+
+This can be done trivially by annotating nodes in the associative trees with their most populous child.
+First we point out this results only in constant increase in size for each node, so the size complexity is unchanged, second that it imposes no additional overhead when constructing a tree, simply examine the most populous children of my own children and choose the greater.
+We run the orthogonal range query as normal, and thus are able to bound all cities within the region as expected.
+
+If we were so imply report the most populous child at the root of one of the associative trees, this would possibly be incorrect, if that child has been excluded based on the range query.
+The annotations are useful now in that any totally valid subtree's most populous child is itself in the region.
+We therefore compare the most populous children of nodes in the associated trees on the border of the range query with totally valid subtrees in the middle.
+We know that each border has at most 1 border child and 1 subtree child (or 1 border child, but never 2) and so re-calculating and temporarily storing this node's most populous valid child is constant for each node.
+And there are $O(\log n)$ such boundary nodes for each associative tree, of which there are at most $O(\log n)$ that we are concerned with.
+So we have recursed into the associative trees which meet the border of the primary range-tree.
+By the same argument as above we have recursed into at most $O(\log n)$ such associative trees, since we only care about border-nodes and complete subtrees next to them.
+We now recur the most populous children (which we calculated exhausively for each border node and associative subtree) back up the primary data structure.
+The same argument as above shows this can be done in $O(\log n)$ time.
+Thus we have recalculated the most populous node in the range for each associative tree, and then aggregated these over the entire structure.
+This means an $O(\log n)$ calculation for $O(\log n)$ trees, followed by an $O(\log n)$ final step.
+Thus it is dominated by the recalculation step, which requires $O(\log n . \log n)$ time, or $O(\log^2 n)$.
+
+We know this returns the most populous city in the range, since associative subtrees must already know their most populous child (which we pre-calculated).
+Then we recalculate the most populous child up to the root for each of our structures, to find the most populous in the range, in the associative tree.
+A more populous child inside the range cannot exist since it must either have been pre-calculated as a sub-tree, or be a border child itself, and so would be examiend individually.
+Once the associative trees have passed their most populous candidates to the primary tree, the same argument follows for the correctness of the final computation.
 
 \section {Trapezoidal Map Size}
 
@@ -92,9 +126,22 @@ When x coordinates are the same, the sweep line may encounter multiple start and
 For startpoints, the new trapezoid may indeed be new (as above) or it may not be, if it has already been counted by a different startpoint or as following an endpoint.
 Similarly with endpoints, we see that trapezoids may be opened several times, closed several times or or opened then immediately closed.
 Note that even if some x-coordinates are the same, this can  not affect the outcome if ther exists segments between them to block the double-counting of trapezoids.
-All of these result in over-counting the number of trapezoids, thus we can say that if we remove the uniqueness constraint on x coordinates, the number of trapezoids $t <= 3n + 1$
+All of these result in over-counting the number of trapezoids, thus we can say that if we remove the uniqueness constraint on x coordinates, the number of trapezoids $t <= 3n + 1$.
 
 \section {Arrangement Bounding}
 
+This problem seems complicated in the primal plane, we must consider $O(n^2)$ possible vertices.
+We shall first convert to the dual plane.
+We also only care for now bout finding the upper and lower
+
+\begin{thebibliography}{9}
+
+\bibitem{tb}
+  Mark de Berg and Otfried Cheong and Marc van Kreveld and Mark Overmar,
+  \emph{Computational Geometry, Algorithms and Applications}.
+  \emph{3rd ed, pp184-185}.
+  Springer-Verlag Berlin Heidelberg
+  
+\end{thebibliography}
 
 \end{document}
