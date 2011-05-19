@@ -5,6 +5,12 @@
 \author{Nic Hollingum - 308193415}
 \title{Computational Geometry - Assignment 3}
 
+\addtolength{\oddsidemargin}{-.875in}
+\addtolength{\evensidemargin}{-.875in}
+\addtolength{\textwidth}{1.75in}
+\addtolength{\topmargin}{-1in}
+\addtolength{\textheight}{2.5in}
+
 \begin{document}
 \maketitle
 
@@ -59,7 +65,7 @@ With such a graph, we would simply add 1 to each endpoint of each edge, then cho
 We construct the doubly-connected edge list as described in the text-book \cite{tb}.
 In short this can be done in $O(n^2)$ time because when we incrementally construct an arrangment we only need to deal with a subset of the faces/vertices/edges in the arrangment sofar.
 And that subseet does not exceed $O(i)$ for step i, thus the total construction time is $O(n^2)$.
-During construction we are sure to new incidences to verticies as they arise.
+During construction we are sure to add new incidences to verticies as they arise.
 If we forget to do this it can be done after the fact by going over every edge in the graph and adding its incidences to vertices, there are at most $O(n^2)$ edges in the arrangement.
 
 At the end we must query the arrangement graph for its most incident vertex, we know ther are at most $O(n^2)$ vertices, so this query takes that long.
@@ -73,18 +79,18 @@ From lectures we learnt that we could perform 2 dimensional orthogonal range que
 This allows us to perform a range query in $O(\log^2 n + k)$ time, reporting k results.
 Thus the question becomes is there some way to modify this structure to return the most populous city in the range without breaking the space, preprocessing, or query time.
 
-This can be done trivially by annotating nodes in the associative trees with their most populous child.
-First we point out this results only in constant increase in size for each node, so the size complexity is unchanged, second that it imposes no additional overhead when constructing a tree, simply examine the most populous children of my own children and choose the greater.
+This can be done trivially by annotating nodes in the associative trees with their most populous descendant.
+First we point out this results only in constant increase in size for each node, so the size complexity is unchanged, second that it imposes no additional overhead when constructing a tree, simply examine the most populous descendants of my own children and choose the greater.
 We run the orthogonal range query as normal, and thus are able to bound all cities within the region as expected.
 
-If we were so imply report the most populous child at the root of one of the associative trees, this would possibly be incorrect, if that child has been excluded based on the range query.
-The annotations are useful now in that any totally valid subtree's most populous child is itself in the region.
-We therefore compare the most populous children of nodes in the associated trees on the border of the range query with totally valid subtrees in the middle.
+If we were to simply report the most populous descendant at the root of one of the associative trees, this would possibly be incorrect, if that child has been excluded based on the range query.
+The annotations are useful now in that any totally valid subtree's most populous descendant is itself in the region.
+We therefore compare the most populous descendants of nodes in the associated trees on the border of the range query with totally valid subtrees in the middle.
 We know that each border has at most 1 border child and 1 subtree child (or 1 border child, but never 2) and so re-calculating and temporarily storing this node's most populous valid child is constant for each node.
-And there are $O(\log n)$ such boundary nodes for each associative tree, of which there are at most $O(\log n)$ that we are concerned with.
+And there are $O(\log n)$ such boundary nodes for each associative tree after the range query (there are 2 bounding paths of length $O(\log n)$ for each border of the range query)), of which there are at most $O(\log n)$ that we are concerned with.
 So we have recursed into the associative trees which meet the border of the primary range-tree.
 By the same argument as above we have recursed into at most $O(\log n)$ such associative trees, since we only care about border-nodes and complete subtrees next to them.
-We now recur the most populous children (which we calculated exhausively for each border node and associative subtree) back up the primary data structure.
+We now recur the most populous descendants (which we calculated exhausively for each border node and associative subtree) back up the primary data structure.
 The same argument as above shows this can be done in $O(\log n)$ time.
 Thus we have recalculated the most populous node in the range for each associative tree, and then aggregated these over the entire structure.
 This means an $O(\log n)$ calculation for $O(\log n)$ trees, followed by an $O(\log n)$ final step.
@@ -98,8 +104,10 @@ Once the associative trees have passed their most populous candidates to the pri
 \section {Trapezoidal Map Size}
 
 We use a plane sweep to count the nuber of trapezoids behind the sweep-line.
-Or more acurately, the number of trapezoids behind a sweep line $\epsilon$ distance infront of the current line.
+Or more intuitively, the number of trapezoids behind a sweep line $\epsilon$ distance infront of the current line.
 For now we presume no 2 endpoints share an x coordinate and no segments overlap.
+We use the terminology to ``open'' and ``close'' a trapezoid as the act of bounding the left and right edges of te trapezoid respectively.
+All plane's begin with a single opened trapezoid, the total number is the sum of opened and closed trapezoids.
 
 When we start the sweep-line , we have 1 trapezoid ``behind'' it, that is the left-most endpoint forms the x boud of the unbounded-negative-x trapezoid.
 Note that the instant we pass this first control point we have 3 trapezoids, the one behind, and the 2 above and below this segment.
@@ -112,9 +120,9 @@ This holds no matter what configuration of trapezoids are already on the sweep-l
 When a start-point is reached, the trapezoid to the left of it is closed, whether this trapezoid is bounded above or below or both or neither.
 At most one trapezoid will be bounded in this fashion, for more than 1 trapezoid to be bounded would require the line to extend through a segment and bound a second trapezoid, but this is not allowed.
 exactly 2 new trapezoids are started as well.
-The argument above follows here, except that ther are 2 trapezoids since the segment itself divides them.
+The argument above follows here, except that there are 2 trapezoids since the segment itself divides them.
 Even if these trapezoids are closed before the endpoint is reached, this start-point still caused them to be added, so they are counted.
-Finally, when the endpoint is reached, exactly 2 trapezoids are closed (the ones above and below the segment), and exactly one is started.
+Finally, when the endpoint is reached, exactly 2 trapezoids are closed (the ones above and below the segment), and exactly one is opened.
 Note it doesnt matter if the 2 closed are the same as the 2 opened, we only care that there must be trapezoids above and below the segment which we may close.
 Again the argument for the start-point applies here (in reverse, we cannot count a certain number going left to right then a different number going right to left).
 
@@ -124,15 +132,66 @@ If we remove the x-coordinate presumption we find that the number of trapezoids 
 
 When x coordinates are the same, the sweep line may encounter multiple start and end points simultaneously.
 For startpoints, the new trapezoid may indeed be new (as above) or it may not be, if it has already been counted by a different startpoint or as following an endpoint.
-Similarly with endpoints, we see that trapezoids may be opened several times, closed several times or or opened then immediately closed.
-Note that even if some x-coordinates are the same, this can  not affect the outcome if ther exists segments between them to block the double-counting of trapezoids.
+Similarly with endpoints, we see that trapezoids may be opened several times, closed several times or opened then immediately closed.
+Note that even if some x-coordinates are the same, this can sometimes not affect the outcome, if there exists segments between them to block the double-counting of trapezoids.
 All of these result in over-counting the number of trapezoids, thus we can say that if we remove the uniqueness constraint on x coordinates, the number of trapezoids $t <= 3n + 1$.
 
 \section {Arrangement Bounding}
 
-This problem seems complicated in the primal plane, we must consider $O(n^2)$ possible vertices.
-We shall first convert to the dual plane.
-We also only care for now bout finding the upper and lower
+{\em This description is necessarily complicated, owing to the fact that neither sorting the lines in the primal plane and examining similar gradients, nor edges of the convex hull in the dual plane, not any points in the hull, can guarantee a correct solution.
+It runs in $O(n \log n)$ time, with $O(n)$ space.}
+
+A minimal axis parallel rectangle can be found by setting its edges to be in-line with the 4 extreme vertices (left-most, right-most, down-most and upper-most) of the arrangement,
+To keep things simple we exclude parallel and vertical lines from the problem.
+Next we observe that if we are able to find any one of the 4 extreme vertices of the arrangement, then by performing linear time translations (mirror about y axis, transpose, transpose and mirror) we can run the same algorithm again to find te other extreme points.
+This method does not increase the time-complexity of the problem, if one point can be foind in $O(n \log n)$ time then the total time is $O(4(n \log n) + 3n)$.
+Clearly the right-most point is the left-most in its mirror, the down-most in its transpose, and the upper-most in its mirror+transpose.
+
+First attempting to work in the primal plane will be too difficult.
+We are unable to sort simultaneously by gradient and incident, but these characteristics are both required to find extreme points.
+If we use gradient alone it is trivial to see that 2 similarly sloped lines may intercept arbitrarily close to the center of the arrangement, whilst a 3rd line may be so far-off as to cause the most extreme interception.
+
+In the dual plane we are interested in 2 points which together form the lines of least gradient, most gradient, least intercept and most intercept.
+For now we will choose most gradient, which will return the right-most vertex in the primal plane.
+We observe that for any given point, only one other point in the plane will suffice to form the steepest possible gradient.
+The second point (b) must be to the left of the first (a), such that the line $b \rightarrow a$ is steeper than the steepest known line.
+If we were to examine these points left to right then it must be within an unbounded triangular region left and below a.
+
+If we sort the points left to right then stepping through each would be easier.
+It seems though that we have to look at every point left of each given point to see if it lies in such a triangle, but this is not the case.
+We say ``steepest'' to refer to most positive, so a gradient of -1 is ``steeper'' than one of -10, this is clearly not the case inr eality but the term is used here for simplicity.
+The cases where we may stop are quite complicated:
+\begin{itemize}
+	\item if the current steepest gradient is negative, we may stop instantly if the node immediately behind us is not steeper.
+		If there were a line between this node (a) and a previous (c) one steeper than between this and the immediately previous one (b), then $b \rightarrow c$ must be steeper than both.
+		This is an obvious result of the 3 points forming a triangle.
+	\item if the current steepest gradient is negative and the new point is above is predecessor, we may stop immediately as this line is the steepest.
+		We know that all points before the predecessor must be both higher and furthur back than the predecessor, thus we know that the line is the steepest we can get.
+	\item if the current steepest gradient is positive,  we can stop as soon as we reach a point higher that ours.
+		For now this would appear to be an O(n) case requirement.
+		Trivially we have a known negative slope and any slope between the higher point and one of its predecessors must be steeper than the line between the current point and that predecessor.
+	\item if the current steepest gradient is positive, we can stop as soon as we have traversed past a node outside our ``steepest gradient triangle'' region.
+		This region as described above is an unbounded triangle with a vertical right edge and a left edge with the slope of the steepest gradient.
+		If ther was a point outside our triangle (b), then another one inside our triangle later (c), then the line between those 2 is steeper than the line between this point and either of them.
+	\item finally if the current gradient is positive, we can stop as soon as we hit the right point that forms the current steepest gradient and stop.
+		The new steepest gradient must be made by this point or not at all.
+		Any point before it must form a shallower gradient with it than with its current best, and therefore a shallower gradient between the current point and it.
+		And the start-point of that line must also be shallower, by the triangle inequality.
+\end{itemize}
+
+Importantly these last 2 requirement have the effect of bounding the search-time to an amortized constant, and thus linear over the enture search.
+Either the current steepest gradient advances with the new points, or it becomes dissociated permanently.
+The 2nd termination ensures points must slope downwards or be terminated at, and the 3rd that points slope upwards or be terminated at.
+Therefore the total time for searching the sorted points for the steepest gradient is $O(n)$ over the whole tree.
+Once we have that steepest gradient we convert the line to the primal plane and recieve the right-most vertex of the arrangement.
+Similar arguments can be made to find the shallowest gradient and the greatest and least intercepts.
+Or we could use the inefficient translation and recalculation scheme described above without impeding the asymptotic running time.
+
+The entire algorithm therefor is an $O(n)$ conversion to the dual plane, and $O(n \log n)$ sorting of points, and an $O(n)$ searching of the sorted points.
+Clearly this is bounded by the sorting component.
+The search is guaranteed to return the line with greatest slope, and therefore the right-most vertex in the primal arrangment.
+This coupled with the less efficient translation and recalculation steps above, produces the 4 extreme points correctly in linear-logarithmic time.
+These points can be converted to a bounding rectangle in constant time.
 
 \begin{thebibliography}{9}
 

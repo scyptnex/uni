@@ -1,0 +1,18 @@
+cache oblivious algorithms
+	similar to external mem algos, without knowing sized os blocks
+	M - size of small memory
+	B - block size
+	N - size of instance
+	assume: optimal block replacement strategy, full associativity
+	f(N.M) num cache misses of optimal strategy: LRU, f_lru(N, 2M) <= 2f(N,M)
+	scan n elements: #blocks <= N/B+2 = O(N/B))
+	binary search tree of n elements; divide tree of height h into ceil(h/2) floor (h/2).  lay each subtree out, recursively divide each tree
+		if tree has height log_2 B, ach subtree fits in at most 2 blocks, search goes through little subtrees
+		#cache misses <= 2.(h/(log_2 B)) = O(log_B N)
+		van Emde Boas layout
+	There is a cache oblivious BST where search takes O(log_B N)
+	order file maintenance keep sequence a1...aN, insert delete in O(1), traverse k positions in O(k/B) <- amortized
+	linked list, start with compact list, insert and delete as normal, K/B+2+U
+		fix the list when we traverse, defrag middle blocks (start and end blocks may be huge), at most 2 extra jumps
+	Now for Binary Tree, there is a linear size cache-oblivious BST with ins/del in O(log_B N) amortized, searches O(log_B N) worst case
+		
