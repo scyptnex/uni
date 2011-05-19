@@ -1,0 +1,43 @@
+approximation
+	euclidian tsp, max clique
+	tsp: double MST, T <= 2.mst, mst < tsp, therefore T <= 2.tsp, 1.5 approx by shortcutting
+	can 1+epsilon approximate in polynomial time O(n log^(oi) n).
+
+heuristics: algos that do not give guaranteed approx, good in practice
+approx algos: worst case bound, almost always get it
+
+A is d approx if for every instance I with optimal solution OPT(I), A(I) <= d.OPT(I)
+	poly-time approx. schemes (PTAS) 
+
+Well separated Pair Decomposition
+	A and B sets, each fit into r radius circle (CA and CB)
+	well separated if distance is greater than s.r for separation constnt s.
+	2 points p p' in a ball are at most 2r distance, 2 points pq larger than s.r
+	pq >= s.r >= pp'.s/2
+	pp' <= pq.2/s
+	p'q' <= pp' + pq + qq' <= (1 + 4/s).pq
+
+	given a set P of n pts in d-dimensional space, s>0
+	WSPB for P wrt S is a sequence of well separated pairs {a1,b1}...{am,bm} s.t. for any to points p and q in P there is exactly 1 WSP {ai,bi} where p is in Ai and q is in bi
+	there is a decomposition m = O(s^d n), compute in O(sn^d + n log n)
+	closest pair(Q):
+		compute WSPD (Q, s=4), set distabnce to infinity, for every well separated pair {ai,bi}
+			if 1 point in both set pi=ai, qi=bi
+			if dist > |pi qi| then dist = piqi, save piqi
+		O(4^d n log n) + O(4^d n).
+	t-spanner
+		for all pair vertices pq shortest path between p and q is lesss than t times the euclidian distance
+		can we compute spanner efficiently
+		spanner (P,t), s = 4(t+1)/(t-1), calculate WSPD
+		for each WSP: pick a point in ai and bi, add edgeand return
+	proof: ind over rank of distances
+		base case: shortest possible distance pq is closest pair, dist is less than pw since is euclidian shortest dist
+		assume it holds for all pairs p`q`q where p`q` < pq
+		p -> rep(ai) -> rep(bi) -> q, p->rep(ai) and rep(bi)->q less than previous step
+		<= 2t.2/s.pq + (1 + 4/s . pq)
+	point diameter
+		compute WSPD wrt s = 4(1+e)/e, for every WSP aibi pick arbitrary points, dist is max over all arbitrary choosings
+		approximation s = 4(1+e)/e, we report p`q` >= pq/(1+e)
+
+Delauny dilation
+	
