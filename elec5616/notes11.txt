@@ -1,0 +1,13 @@
+hardware sec
+	tamper resistance, tamper evidence
+	assumptions devices are secure, usually wrong
+	imprinting ram, changing registers and checking parity bit.  disk drive heads never quite same, recovery
+	smartcards (3 kinds)
+	pay tv, cheating smartcard attacks (unidirectional, cards must monitor their own security)
+	physical attacks on packaging, chipworks, attacks on clocks
+	Van Eck monitoring, remote screen visualisation, reconstruct images on a screen 200m away by looking at light off walls, through curtains
+
+symmetric
+assymetric
+protocols
+randoms
