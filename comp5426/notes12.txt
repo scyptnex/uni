@@ -1,0 +1,15 @@
+GPGPU
+	2 orders of magnitude vs cpu
+	not suitable for all kinds, truck vs motorbike
+	same slides as prog-languages last year
+	tera, dray, massively data parallel device
+	no ieee standards, picels being off by a bit doesnt matter
+	set of SIMD multiprocessors
+	instruction stream, only 1 IU per SIMD (SPMD)
+	different cache per multiprocessor
+	hardware specialised for graphics, constant cache, texture cache
+	threads dont access other threads, can access global/constant memory, textures
+	kernel: work function, partition code into executable parts
+		little synchronisation, barriers, atomics (semaphors)
+		partitioned into grid of blocks, block made of threads
+	difficulty shipping memory (pcie bus), colocate in future
