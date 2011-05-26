@@ -1,0 +1,34 @@
+Streaming algorithms
+	too much data to store, must answer some questions
+	variants: continuous or finite data.  single or multiple pass. order or not. read or rw
+
+sampling
+	keep sample x: at time n Pr[x=ai]={1/n if i between 1 and n, o otherwise}
+		x <= a1, on seeing the nth element n>1 with prob 1/n we replace x <- an
+
+better sampling
+	keep sample X with k values
+	with prob k/n we select new xi and replace 1 uniformly at random
+
+sliding window
+	sampling between a_n and a_(n-w)
+	keep a_i with prob 1/w for i between n and n-w, 0 otherwise
+	cheat: run ^ for w, when ai expires, replace it with a(i+w)
+	better:
+		suppose upon a_n, pick v_n (importance) between 0 and 1 uniformly at random
+		for window w, report elem in w with lowest impoortnce
+		we only need to store lower front, on average log(w) points
+		what is expected length of chain? H_w (1+1/2+1/3+1/4+...1/w) approx ln w
+		C[i]=E[length of chain importances 1 to i]
+		c[0] = 0
+		C[i]	= sum(j = 1 to i)(1/i * (1+C[i-j]))
+			= 1 + sum(0 to i-1)(1/i * c[j])
+	
+		c[i] = 1+sum(j=0 to i-1)(1/i * H_j)
+		1 + 1/i * sum(o to i-1)(sum(1 to j)(1/l))
+		1+ 1/i * sum(1 to i-1)( (i-l)/l )
+		1 + 1/i * sum(1 to i-1)(i/l - 1)
+		1 + 1/i( i*H_(i-1) - (i-1) )
+		1 + H_(i-1) - i-1/i
+		H_i
+	
