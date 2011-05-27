@@ -1,0 +1,9 @@
+#include <stdio.h>
+
+unsigned long get_sp(void) {
+   __asm__("movl %esp,%eax");
+}
+void main() {
+  printf("0x%lx\n", get_sp());
+}
+

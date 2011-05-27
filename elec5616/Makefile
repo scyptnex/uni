@@ -1,5 +1,5 @@
 CC= gcc
-CFLAGS= -Wall -W -pedantic
+CFLAGS= -Wall -W -pedantic -fno-stack-protector
 
 COM= commanche
 WRAP= wrapper

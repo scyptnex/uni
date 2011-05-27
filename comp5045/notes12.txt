@@ -1,0 +1,30 @@
+path queries on obstacles
+	given a set of polygons in the plane: can i go from start to end? what is the shortest path from start to end?
+	straight line segments, verticies are vertices of polygons ([half]disk of nonzero radius in free zone)
+	vertices must be visible
+	build visibility graph
+visibility graph
+	at most n^2 edges
+	radial line sweep for each vertex O(n log n)
+	can be O(n log n + |E|) (Ghosh and Mount 91)
+
+is ther a path?
+	trapezoidal decomposition, node in each cell and node on boundary of neighbouring cells, connect adjacent nodes
+	num nodes is linear, 1 node per trapezoid (linear) and 2 per border
+	point query on cells, can always go to node in cell, can go to adjacent cells, BFS
+	but the robot is not a point: minkowski sum of 2 polygons, use previous approach
+	minkowski sum is linear if both are convex, complexity explodes if not convex
+	rotation, add 3rd dimension rotation, path corresponds
+	multi link robots, add more dimensions
+
+100 prisoners problem
+	pick box corresponding to your number, follow the numbers in the boxes
+	find my number find a cycle, if less 50 will find name
+	there must be a cycle of length > 50 for execute
+	2n prisoners, n boxes P_k = Prob of cycle length greater than k
+	P_n = sum(k=n+1 to 2n) P_k -> can only have at most 1 50 cycle for 100 boxes
+	P_k is number instances containing cycle length k / total num instances
+		num subsets with k elements * num arrangementss of cycle * num permutations of 1n-k elemns / total num
+		(2n c k) * (k-1)! * (2n-k)! / (2n)!
+		(k-1)! / k! = 1/k
+	sum(k = n+1 to 2n)(1/k) = H_2n - H_n < ln 2n - ln n = ln 2 = 0.307

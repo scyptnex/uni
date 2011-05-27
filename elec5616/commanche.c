@@ -4,7 +4,7 @@
 int printURL(char *myURL)
 {
 	int version = 2;
-	char url[256];
+	char url[16];
 	strcpy(url, myURL);
 	printf("Commanche version %d\n", version);
 	printf("Loading URL: \"%s\"\n", url);
