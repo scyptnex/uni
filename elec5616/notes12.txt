@@ -1,0 +1,40 @@
+de perimeterisation
+	eggshell model doesnt work, people working from laptops, outsourcing services
+	consumerisation, enough people pressure their companies
+	use of consumer products, it manager must keep all thousands of different systems safe
+	10:1 disparity security spending
+
+resiliance
+	any attacker has time money and motivation to break into any network
+	stop attackers getting out
+	little institutional control of 'security professionals'
+
+end users
+	are cannon fodder.  Cannot be trusted to ensure their own security
+	vs de perimeterisation
+	banks must keep paying back - in nz banks are allowed to ensure their own security
+
+advanced presistant threat
+	keep system conpromised, take lots of data
+	break in and own the database
+	persistant trans national threat
+	east to do, hard to defend, low capture rate
+	"security hunter", figure out where compromise is
+	cyber security academies
+
+Attribution
+	who compromised me?
+	hard to decide how to react
+	revenge, criminality, dod
+
+black swan theory
+	things will happen the cant be foreseen that completely change reality
+	factoring prime numbers
+	people stop using english as language (spam filters)
+	spucksnet iranian nuclear reactor goes down
+
+rules of engagement
+	cyber warfare
+	no mutually assured destruction, strong assymetry
+	military response to cyber attacks
+	
