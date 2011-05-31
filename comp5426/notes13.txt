@@ -1,3 +1,41 @@
 new way of thinking, introduce high performance computing, introduce basic parallel programming
 obtaining:
 	implicit (instruction level), explicit
+	gpgpu, cluseter, cloud, grid, parallel vs distributed
+	topologies: static, dynamuc
+	message routing
+	cache coherence
+IC networks
+	diameter, arc connectivity, bisection width, cost
+machine independant issues, parallel computing platforms
+
+partitioning, communication, agglomeration, mapping
+	first 2 are machine independant
+	others machine dependant: (map tasks to processes, map processes to processors)
+	reduction, matrix multiplication, sorting
+
+speedup depends on: input size, num processors, speedup and efficiency
+	serial/parallel runtime, total time overhead, speedup and efficiency <= KNOW THESE EQUATIONS
+	amdahl's law, Gustafson-Barsis law <- fixed (problem size, num processors respectively)
+	isoefficiency, scaled speedup <- variable everything?
+
+MPI NOT IN EXAM !!!!!!
+
+PThreads
+	management: create, terminate, join, pass parameters
+	Mutexes, creation destroy, lock, unlock
+	Condition variables, create destroy wait for signal
+	
+Exam
+
+	1 back to back a4 sheet notes
+	4 questions, 100 marks
+	look at old exam
+	Q1 (20)
+		general parallel/distributed concepts
+	Q2 (30)
+		interconnection networks
+	Q3 (35)
+		performance analysis
+	Q4 (15)
+		Pthreads
