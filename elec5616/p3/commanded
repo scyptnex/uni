@@ -1,0 +1,67 @@
+GNU gdb 6.4.90-debian
+Copyright (C) 2006 Free Software Foundation, Inc.
+GDB is free software, covered by the GNU General Public License, and you are
+welcome to change it and/or distribute copies of it under certain conditions.
+Type "show copying" to see the conditions.
+There is absolutely no warranty for GDB.  Type "show warranty" for details.
+This GDB was configured as "i486-linux-gnu"...Using host libthread_db library "/lib/tls/i686/cmov/libthread_db.so.1".
+
+(gdb) 0x8048331 <main+13>:	0x51
+(gdb) 0x8048332 <main+14>:	0xe9
+(gdb) 0x8048333 <main+15>:	0x2a
+(gdb) 0x8048334 <main+16>:	0x00
+(gdb) 0x8048335 <main+17>:	0x00
+(gdb) 0x8048336 <main+18>:	0x00
+(gdb) 0x8048337 <main+19>:	0x5e
+(gdb) 0x8048338 <main+20>:	0x89
+(gdb) 0x8048339 <main+21>:	0x76
+(gdb) 0x804833a <main+22>:	0x08
+(gdb) 0x804833b <main+23>:	0xc6
+(gdb) 0x804833c <main+24>:	0x46
+(gdb) 0x804833d <main+25>:	0x07
+(gdb) 0x804833e <main+26>:	0x00
+(gdb) 0x804833f <main+27>:	0xc7
+(gdb) 0x8048340 <main+28>:	0x46
+(gdb) 0x8048341 <main+29>:	0x0c
+(gdb) 0x8048342 <main+30>:	0x00
+(gdb) 0x8048343 <main+31>:	0x00
+(gdb) 0x8048344 <main+32>:	0x00
+(gdb) 0x8048345 <main+33>:	0x00
+(gdb) 0x8048346 <main+34>:	0xb8
+(gdb) 0x8048347 <main+35>:	0x0b
+(gdb) 0x8048348 <main+36>:	0x00
+(gdb) 0x8048349 <main+37>:	0x00
+(gdb) 0x804834a <main+38>:	0x00
+(gdb) 0x804834b <main+39>:	0x89
+(gdb) 0x804834c <main+40>:	0xf3
+(gdb) 0x804834d <main+41>:	0x8d
+(gdb) 0x804834e <main+42>:	0x4e
+(gdb) 0x804834f <main+43>:	0x08
+(gdb) 0x8048350 <main+44>:	0x8d
+(gdb) 0x8048351 <main+45>:	0x56
+(gdb) 0x8048352 <main+46>:	0x0c
+(gdb) 0x8048353 <main+47>:	0xcd
+(gdb) 0x8048354 <main+48>:	0x80
+(gdb) 0x8048355 <main+49>:	0xb8
+(gdb) 0x8048356 <main+50>:	0x01
+(gdb) 0x8048357 <main+51>:	0x00
+(gdb) 0x8048358 <main+52>:	0x00
+(gdb) 0x8048359 <main+53>:	0x00
+(gdb) 0x804835a <main+54>:	0xbb
+(gdb) 0x804835b <main+55>:	0x00
+(gdb) 0x804835c <main+56>:	0x00
+(gdb) 0x804835d <main+57>:	0x00
+(gdb) 0x804835e <main+58>:	0x00
+(gdb) 0x804835f <main+59>:	0xcd
+(gdb) 0x8048360 <main+60>:	0x80
+(gdb) 0x8048361 <main+61>:	0xe8
+(gdb) 0x8048362 <main+62>:	0xd1
+(gdb) 0x8048363 <main+63>:	0xff
+(gdb) 0x8048364 <main+64>:	0xff
+(gdb) 0x8048365 <main+65>:	0xff
+(gdb) 0x8048366 <main+66>:	0x2f
+(gdb) 0x8048367 <main+67>:	0x62
+(gdb) 0x8048368 <main+68>:	0x69
+(gdb) 0x8048369 <main+69>:	0x6e
+(gdb) 0x804836a <main+70>:	0x2f
+(gdb) 

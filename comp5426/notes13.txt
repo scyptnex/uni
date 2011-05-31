@@ -1,0 +1,3 @@
+new way of thinking, introduce high performance computing, introduce basic parallel programming
+obtaining:
+	implicit (instruction level), explicit

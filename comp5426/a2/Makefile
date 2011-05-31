@@ -8,11 +8,22 @@ CFLAGS= -ansi -Wall -g
 
 all: $(TARGETS)
 
-$(COLLAPSE): twoa.c
-	mpicc $(CFLAGS) twoa.c -o $(COLLAPSE)
+run: all
+	mpirun -np 1 $(COLLAPSE) < 999.tst
+	mpirun -np 2 $(COLLAPSE) < 999.tst
+	mpirun -np 3 $(COLLAPSE) < 999.tst
+	mpirun -np 4 $(COLLAPSE) < 999.tst
+	mpirun -np 20 $(COLLAPSE) < 999.tst
+	mpirun -np 1 $(COLLAPSE) < 10001.tst
+	mpirun -np 2 $(COLLAPSE) < 10001.tst
+	mpirun -np 3 $(COLLAPSE) < 10001.tst
+	mpirun -np 4 $(COLLAPSE) < 10001.tst
+	mpirun -np 20 $(COLLAPSE) < 9999999.tst
+
+$(COLLAPSE): collapse2.c
+	mpicc $(CFLAGS) collapse2.c -o $(COLLAPSE)
 
 $(REDBLUE):
-	#do nothing?
 
 test: test.c
 	gcc $(CFLAGS) test.c -o test
