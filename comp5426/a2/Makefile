@@ -23,7 +23,8 @@ run: all
 $(COLLAPSE): collapse2.c
 	mpicc $(CFLAGS) collapse2.c -o $(COLLAPSE)
 
-$(REDBLUE):
+$(REDBLUE): redblue.c
+	gcc $(CFLAGS) -lpthread redblue.c -o $(REDBLUE)
 
 test: test.c
 	gcc $(CFLAGS) test.c -o test

@@ -94,20 +94,16 @@ int main(int argc, char *argv[])
 			
 			while(stillgoing > 0){
 				MPI_Waitsome(numProcs-1, allReqs, &finCount, demanders, allStats);
-				/*printf("M: %d finished this round\n", finCount);*/
 				for(i = 0; i < finCount; i++){
 					curFin = allStats[i].MPI_SOURCE;
 					MPI_Recv(&maxAmmount, 1, MPI_INT, curFin, DEFAULT_TAG, MPI_COMM_WORLD, &nullStatus);
-					/*printf("M: %d has solved to %ld and requested %d", curFin, sumBuffers[curFin-1], maxAmmount);*/
 					total += sumBuffers[curFin-1];
 					curBufSize = buf_read(readBuffer, maxAmmount);
 					MPI_Send(&curBufSize, 1, MPI_INT, curFin, DEFAULT_TAG, MPI_COMM_WORLD);
 					if(curBufSize == 0){
 						stillgoing--;
-						/*printf(", we shall terminate it\n");*/
 					}
 					else{
-						/*printf(", sending %d\n", curBufSize);*/
 						MPI_Send(readBuffer, BLOCK_SIZE, MPI_CHAR, curFin, DEFAULT_TAG, MPI_COMM_WORLD);
 						MPI_Irecv(&sumBuffers[curFin-1], 1, MPI_UNSIGNED_LONG, curFin, MPI_ANY_TAG, MPI_COMM_WORLD, &allReqs[curFin-1]);
 					}
@@ -128,15 +124,13 @@ int main(int argc, char *argv[])
 		total = 0;
 		while(1){/*break when exiting*/
 			MPI_Send(&total, 1, MPI_UNSIGNED_LONG, MASTER, DEFAULT_TAG, MPI_COMM_WORLD);/* send the total ammount */
-			curBufSize = rand()%(BLOCK_SIZE/2) + BLOCK_SIZE/2;/*generate a random work ammount, to speed things up we say its between max and max/2*/
-			/*printf("%d: requesting %d\n", myid, curBufSize);*/
+			curBufSize = rand()%(BLOCK_SIZE/2) + BLOCK_SIZE/2;/*generate a random work ammount, to speed things up we say its between max and max/2.  I am aware the assignment specifies between 2 and BLOCK_SIZE*/
 			MPI_Send(&curBufSize, 1, MPI_INT, MASTER, DEFAULT_TAG, MPI_COMM_WORLD);/* tell the master the most i am willing to work */
 			MPI_Recv(&curBufSize, 1, MPI_INT, MASTER, DEFAULT_TAG, MPI_COMM_WORLD, &nullStatus);/* see how much i will actually work */
 			if(curBufSize == TERMINATE) break;/* i'm fired */
 			MPI_Recv(readBuffer, BLOCK_SIZE, MPI_CHAR, 0, DEFAULT_TAG, MPI_COMM_WORLD, &nullStatus);
 			total = sumBuffer(readBuffer, curBufSize);
 		}
-		/*printf("%d: goodbye\n", myid);*/
 	}
 	MPI_Finalize();
 	return 0;
