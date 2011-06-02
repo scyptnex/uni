@@ -43,7 +43,7 @@ void assignGridRandom(){
 }
 
 /* for debigging purposes */
-void printGridRandom(){
+void printGrid(){
 	int x, y;
 	char out;
 	for(x=0; x<N; x++){
@@ -59,7 +59,7 @@ void printGridRandom(){
 
 int main(){
 	srand(time(NULL));
-	assignGrid();
+	assignGridRandom();
 	printGrid();
 	printf("%d\n", R);
 	return 0;

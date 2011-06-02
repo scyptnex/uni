@@ -1,0 +1,33 @@
+Majority
+	input, a1...am elem [1,n], let (f1, f2...fn) be freq vector if fi > m/2 output i, or report NIL
+	with single pass we need O(n) bits, array solution has O(n log m) bits
+	proof: m=n, a = n/2 distinct numbers, b=n/2 same number x, if x is in a, then x is majority, otherwise nil.
+		n c n/2 different A's, roughly (2^n / sqrt(n)), so we need log(2^n / sqrt(n)) i.e. n + low order terms
+	we can reduce to log(n) with a second pass
+	
+misra gries (k)
+	B <- empty associative array, upon seeing some element j:
+		if j in key(B) B[j]++
+		else if |keys(B)| < k-1, B[j] = 1
+		else for each l in key(B): B[l]--, remove 0s
+	space O(k(log m + log n))
+	lemma: Let f~j = B[j] if j is a key, 0 otherwise
+		fj - m/k <= f~j <= fj, so if k is 2 then majority item will be in vector
+	
+median
+	input, a1...am elem [1,n], assume distinction, report median x s.t. rank(x, {a1....am}) = m/2, no. elems less than x
+	with 2 passes can reduce n to sqrt(m) space:
+		in pass 1 take a t-sample size O(sqrt(m)), use sample to find 2 elems: rank(x_low) < m/2, rank(x_high) > m/2, diff in rank <= O(sqrt(m)), pass 2 we lookfor elem rank m/2 - rank(x_low) between c_low x_high
+	Def: An i-sample of a sequence P of (2^i)*s numbers is a sortes subest of P of length S:
+		i=0 o-sample(P) = sort(P)
+		i>0 i-sample(P) = sort(eoe((i-1)-sample(p')) u eoe((i-1)-sample(p")))
+			p' and p", each P/2 elems, sample of 2 halves + merge. note we 
+	log m depth, choose as small t as possible so whole thing fits in memory
+		for fixed t: m elems (log m)*s/(2^t)
+		2^t ~= sqrt(m)
+	lemma: let x0 < x1 < x2... < x(s-1) be an i sample of p (|P| = 2^i * s) 2^i * j <= rank(xj, P) <= 2^i * (i+j)
+		i=0; whole set andwe're fine
+		p' -> b1 b2...bs, p" -> c1 c2 ... cs => b2 b4 c2 b6 c4 ...
+		j is bn, l b items, j-l c items, recur into the l b itmes
+		proof doen other way round for other inequality
+	there is a p-pass deterministic algorithm for median that uses O(m^(1/p)) space for p = O(log m) = O(1)
