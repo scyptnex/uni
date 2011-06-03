@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
 		total = 0;
 		while(1){/*break when exiting*/
 			MPI_Send(&total, 1, MPI_UNSIGNED_LONG, MASTER, DEFAULT_TAG, MPI_COMM_WORLD);/* send the total ammount */
-			curBufSize = rand()%(BLOCK_SIZE/2) + BLOCK_SIZE/2;/*generate a random work ammount, to speed things up we say its between max and max/2.  I am aware the assignment specifies between 2 and BLOCK_SIZE*/
+			curBufSize = rand()%(BLOCK_SIZE - 2) + 2;/*random work ammount between 2 and BLOCK_SIZE*/
 			MPI_Send(&curBufSize, 1, MPI_INT, MASTER, DEFAULT_TAG, MPI_COMM_WORLD);/* tell the master the most i am willing to work */
 			MPI_Recv(&curBufSize, 1, MPI_INT, MASTER, DEFAULT_TAG, MPI_COMM_WORLD, &nullStatus);/* see how much i will actually work */
 			if(curBufSize == TERMINATE) break;/* i'm fired */
