@@ -1,7 +1,7 @@
 COLLAPSE= collapse2
 REDBLUE= redblue
 TESTS= test
-TARGETS= $(COLLAPSE) $(REDBLUE) $(TESTS)
+TARGETS= $(COLLAPSE) $(REDBLUE)
 CFLAGS= -ansi -Wall -g
 
 .PHONY: all clean run
@@ -25,9 +25,6 @@ $(COLLAPSE): collapse2.c
 
 $(REDBLUE): redblue.c
 	gcc $(CFLAGS) -lpthread redblue.c -o $(REDBLUE)
-
-test: test.c
-	gcc $(CFLAGS) test.c -o test
 
 clean:
 	rm -rf *.o $(TARGETS)

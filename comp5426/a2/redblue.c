@@ -8,8 +8,10 @@
 #define TW 3
 #define N (T*TW)
 /* that is, if >R of any colour is in a grid, then the grid is won */
-#define PERCENT 33
+#define PERCENT 66
 #define R ((TW*TW*PERCENT)/100)
+
+#define MAX_ITERATIONS 100
 
 #define WHITE 0
 #define RED 1
@@ -28,6 +30,7 @@ static pthread_mutex_t checkLocks[T*T];
 static pthread_mutex_t doneLocks[T*T];
 static pthread_cond_t checkSyncs[T*T];
 
+static pthread_mutex_t finlock;/* when finished, one process grabs the lock */
 static int going;/* true to start with, if a thread finds saturation then we flag this and terminate all movement threads */
 static int stopcall;/* this is how check threads inform the synchroniser they found something, it is separate from going to prevent race conditions */
 static int quadrant;/* successful quadrants will write their ID here when they find saturation */
@@ -83,7 +86,7 @@ void printGrid(){
 			out = '.';
 			if(grid[y*N + x] == RED) out = 'r';
 			else if(grid[y*N + x] == BLUE) out = 'b';
-			printf("%c", out);
+			printf("%c ", out);
 		}
 		printf("\n");
 	}
@@ -93,21 +96,31 @@ void *checking(void * arg)
 {
 	int id = (int) arg;
 	int red, blue;
+	int x, y;
+	int xt = id%T, yt = id/T;
 	while(1){
 		pthread_cond_wait(&checkSyncs[id], &checkLocks[id]);
 		if(!going){
 			break;
 		}
-		red = rand()%30;
-		printf("c%d: got %d\n", id, red);
-		if(red == 0){
+		red = 0;
+		blue = 0;
+		for(x=xt*TW; x<(xt+1)*TW; x++){
+			for(y=yt*TW; y<(yt+1)*TW; y++){
+				if(grid[x + y*N] == RED) red++;
+				else if(grid[x + y*N] == BLUE) blue++;
+			}
+		}
+		/* printf("c%d: got %d r and %d b\n", id, red, blue); */
+		if(red > R || blue > R){
+			pthread_mutex_lock(&finlock);
 			stopcall = 0;
 			quadrant = id;
+			pthread_mutex_unlock(&finlock);
 		}
 		pthread_cond_wait(&checkSyncs[id], &doneLocks[id]);
 		/*printf("c%d: resetting\n", id);*/
 	}
-	printf("c%d: bye\n", id);
 	pthread_exit(NULL);
 }
 
@@ -142,7 +155,6 @@ void *movement(void * arg)
 			}
 		}
 	}
-	printf("m%d: bye\n", id);
 	pthread_exit(NULL);
 }
 
@@ -179,6 +191,7 @@ int main(){
 	iteration = 0;
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+	pthread_mutex_init(&finlock, NULL);
 	for(t=0; t<N; t++){
 		pthread_cond_init (&moveSyncs[t], NULL);
 		pthread_mutex_init(&redLocks[t], NULL);
@@ -206,10 +219,11 @@ int main(){
 	/* Time to make som dataflows */
 	while(going){
 		hold(N, blueLocks);
+		printf("[Iteration %d]===============================\n", iteration);
 		printGrid();
 		lockstep(T*T, checkLocks, checkSyncs);/* prime and begin all check threads */
 		lockstep(T*T, doneLocks, checkSyncs);/* block for all check thread completion */
-		if(!stopcall){
+		if(!stopcall || iteration > MAX_ITERATIONS){
 			going = 0;
 		}
 		if(going){
@@ -220,7 +234,12 @@ int main(){
 	}
 	advance(N, blueLocks, moveSyncs);
 	lockstep(T*T, checkLocks, checkSyncs);
-	printf("m: %d was saturated after %d iteration(s)\n", quadrant, iteration);
+	if(stopcall){
+		printf("m: No solution found after %d iterations\n", MAX_ITERATIONS);
+	}
+	else{
+		printf("m: Tile %d (x=%d - %d, y=%d - %d) was saturated after %d iteration(s)\n", quadrant, (quadrant%T)*TW, (quadrant%T)*TW + (TW - 1), (quadrant/T)*TW, (quadrant/T)*TW + (TW - 1), iteration);
+	}
 	
 	/* Join all threads for termination */
 	for(t=0; t<N; t++){
@@ -236,6 +255,7 @@ int main(){
 		pthread_mutex_destroy(&blueLocks[t]);
 		pthread_cond_destroy(&moveSyncs[t]);
 	}
+	pthread_mutex_destroy(&finlock);
 	pthread_attr_destroy(&attr);
 	return 0;
 }
