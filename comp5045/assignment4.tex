@@ -32,14 +32,14 @@ Proof by example:
 \leavevmode
 \includegraphics[width=0.6\textwidth]{mst.png}
 \end{center}
-\label{fig:mst}
 \end{figure}
+\label{fig:mst}
 
-Using the 5 points here, where our subset lacks point ``a'', we see that the MST grows longer.
-When a is absent, we must choose 3 of the 6 edges in $k_4$, and the 3 shortest edges are those around the perimeter.
-Each of the perimeter points is 1 unit up, down, left or right of a, and the border edges have length $\sqrt 2$ accordingly, the total length is $3 \sqrt 2 = 4.24$.
-When a is present then the MST is 4 edges from a to all of the corner points.
-Each corner point is 1 unit distance from A, and so the MST has length 4, which is less than above.
+Using the 5 points here, where our subset lacks point $a$, we see that the MST grows longer.
+When $a$ is absent, we must choose 3 of the 6 edges in $k_4$, and the 3 shortest edges are those around the perimeter.
+Each of the perimeter points is 1 unit up, down, left or right of $a$, and the border edges have length $\sqrt 2$ accordingly, the total length is $3 \sqrt 2 = 4.24$.
+When $a$ is present then the MST is 4 edges from $a$ to all of the corner points.
+Each corner point is 1 unit distance from $a$, and so the MST has length 4, which is less than above.
 Therefore even though the middle graph is a subset of the left, it has a longer MST than the right.
 
 \subsection*{c}
@@ -58,9 +58,62 @@ Such that if we would return from a to b, then b to it's parent c, we simply go 
 
 \section {Voronoi Convex Hull}
 
+This question can be posed more formally: For which pairs of points can we place an infinitely large circle such that the circle intersects both points and no others.
+Clearly such a circle constitutes an unbounded barrier between cells in the Voronoi diagram.
+If we can place such a circle then all the points in the triangle between its centre, the radial line joining the centre to one of the points, and a segment meeting the line between both points perpendicular (a right angled triangle) belongs to the cell for that point, and the mirror for the other cell.
+Since the circle is infinitely large the area of the triangle can be infinitely large and the region is unbounded.
+
+Furthur there can exist no unbounded cell for which such a circle cannot be constructed.
+Consider the unbounded barrier between 2 unbounded cells.
+Clearly if a cell is unbounded it must have at least 1 unbounded barrier (though usually 2), and therefore there must be other unbounded cells neighbouring this one.
+Where $n=2$ the voronoi diagram is defined but the convex hull is just a line, therefore the result is trivially obvious.
+Given we have unbounded barriers we are able to pick a point infinitely far out along the barrier and call this the circle's centre.
+Then when we draw the circle no other point in the set will be inside the circle, since this is the definition of barriers in the Voronoi diagram
+
+Now we must show that such circles can only be found (and are always found) between adjacent points in the convex hull.
+As the circle's radius increases to infinity the arc between the 2 chosen points approaches a straight line.
+Indeed for sufficiently (and we have all of infinity to work with) large circles we can extend this line to infinity and it will converge with the arc.
+So we can view the circle as actually defining a half-space to one side of the pair of points.
+We had wished to find circles which could be infinitely large and had no points inside them, and only the 2 points on their circumferance.
+But now we can say we are looking for pairs of points where no other point exists in the half space to one side of them.
+This is precisely the definition of an edge of the convex hull.
+
 \section {MST and Delauny}
 
+\subsection*{a}
+{\em We presume this is in euclidian space, for a general graph this statement is untrue}
+
+This observation follows from some basic trigonometry.
+We must try to find 7 points all closer to some centre point than to each other
+
+\subsection*{b}
+
+Our pointset is a single point $a$ in the centre with $n-1$ points arranged evenly around the circumfrence of a circle.
+We will show that there is only 1 valid way to delauny triangulate this region, and that the central point will always have degree n-1.
+
+Consider the Voronoi diagram of this pointset.
+At the center will be a regular polygon with $n-1$ edges.
+The centre of each edge will be equidistant from the central point and one of the points on the circumfrence.
+At each vertex of the polygon a half-line will be cast outwards between 2 points on the circumfrence.
+The important consideration is that this central polygon borders the unbounded cell of every point on the circumfrence, which there are $n-1$ of.
+Therefore in the delauny triangulation, the central point will have $n-1$ delauny edges joining it.
+
 \section {Interval Range Query}
+
+This problem can be solved using a 2D Range tree with fractional cascading.
+In lectures it was observed that 2d range trees use $O(n \log n)$ space, $O(n \log n)$ preprocessing, and with fractional cascading we can solve in $O(\log n + k)$ time.
+We shall co-opt the method described in lectures for solving 2D range queries with fractional cascading by converting our problem into a 2D problem, and our queries into 2D queries.
+
+Our dataset are 1D intervals with a start and end point, and our queries are for all intervals with a startpoint greater than $x$ and an endpoint less than $x'$.
+This converts to 2 1D queries (and hence 1 2D query) nicely, we want all intervals with a startpoint between $x$ and $\infty$, then all endpoints between $-\infty$ and $x'$.
+If we draw our ``intervals'' as 2D points then let us choose arbitrarily that the startpoint maps to x and the endpoint to y.
+So our query is now looking for points inside the rectangle undbounded to the right and below.
+Only points which start before $x$ will be to the left of the right bound of the rectangle, and only those that end before $x'$ will be below the upper bound.
+
+Now this problem can be solved just like a normal 2D Range query.
+Simply return all ``points'' that lie inside the unbounded rectangle.
+This requires $O(\log n + k)$ time so long as we use fractional cascading.
+The actual procedure for constructing and querying these trees is discussed in lectures, it will not be reiterated here.
 
 \section {t-Spanner}
 

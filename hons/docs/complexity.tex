@@ -1,6 +1,7 @@
 \documentclass{article}
 
 \usepackage{graphicx}
+\usepackage{amssymb,amsmath}
 
 \author{Nic Hollingum - 308193415}
 \title{Complexity}
@@ -39,7 +40,7 @@ We must now consider the added difficulty of duplication separation (i.e. duplic
 Let is temporarily allow negative edge weights.
 If actors i and j are meant to reside on different processors, we must increase the cost of assigning them to the same processor, or alternatively, we must fail to eliminate the cost of assigning them.
 Let us increase the cost of assigning these 2 actors to every terminal by increasing the weight of their edges to those terminals by some large finite ammount $k$ each.
-The total weight in the graph has been increased by $tk$, so to counteract this we decrease the weight $w_{i,j}$ by $tk$.
+The total weight in the graph has been increased by $tk$, so to counteract this we decrease the weight $w_{i,j}$ by $(t-1)k$.
 In this way the only way for the multiway cut to ``recover'' from the increased cost of assigning i and j is to make sure it assigns them to different processors, and gains the negative weight $w_{ij}$
 Note that k need not be infinite, but it must be greater than the sum of all weights before this modification, fortunately this can be found in polynomial time.
 If we are required not to have negative edges than we can furthur increase the cost of all edges so that the ``least'' weighted edge is positive.
@@ -52,6 +53,33 @@ We need not worry about actor duplication, and we say that each actor has no dup
 We say that the cost of assigning node i to terminal t is $w_{it}$ if there exists an edge $(i,t)$, and 0 otherwise.
 Then we say that it costs $w_{ij}$ for nodes i and j to communicate if there is an edge $(i,j)$ between 2 nonterminals, and 0 otherwise.
 Clearly solving an assignment such as this to optimality equates to solving the multiway cut instance.
+
+\subsection*{Formally}
+
+The multiway cut problem is formulated as an IP below \eqref{multicut}:
+
+\begin{equation}\label{multicut}
+\begin{split}
+& min \sum_{(i,j) \in E; s, t \in T; s \neq t}{X[i,s] X[j,t] w_{ij}} \\
+& \sum_{i \in V}{X[i,t]} = 1; t \forall T \\
+& X[v,t] = 1; t \forall T ; v \in T \\
+& X[v,t] \in \{0,1\};  t \forall T ; v \forall V
+\end{split}
+\end{equation}
+
+Our assignment problem on the other hand looks like this:
+
+\begin{equation}\label{assignment}
+\begin{split}
+& min \sum_{(i,j) \in E; p, q \in P; p \neq q}{X[i,j,p,q] COM[i,j,p,q]} + \sum_{a \in A; p \in P}{X[a,p] INVOKE[a,p]}\\
+& \sum_{p \in P}{X[a,p]} = 1; a \forall A \\
+& \sum_{p \in P}{Y[i,j,p,p]} = 0; \forall i,j \in DUP \\
+& Y[i,j,p,q] \leq X[i,p]; i,j \forall A; p,q \forall P \\
+& Y[i,j,p,q] \leq X[j,q]; i,j \forall A; p,q \forall P \\
+& X[i,p] + X[j,q] - 1 \leq Y[i,j,p,q]; i,j \forall A; p,q \forall P \\
+& X[i,p] \in \{0,1\};  \forall i \in A; p \in P
+\end{split}
+\end{equation}
 
 \bibliographystyle{plain}
 \bibliography{biblio}
