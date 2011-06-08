@@ -8,8 +8,8 @@
 \addtolength{\oddsidemargin}{-.875in}
 \addtolength{\evensidemargin}{-.875in}
 \addtolength{\textwidth}{1.75in}
-\addtolength{\topmargin}{-1in}
-\addtolength{\textheight}{2.5in}
+\addtolength{\topmargin}{-0.5in}
+\addtolength{\textheight}{1.5in}
 
 \begin{document}
 \maketitle
@@ -81,10 +81,25 @@ This is precisely the definition of an edge of the convex hull.
 \section {MST and Delauny}
 
 \subsection*{a}
-{\em We presume this is in euclidian space, for a general graph this statement is untrue}
+{\em We presume this is in euclidian space, for a general graph this statement is untrue, please excuse the verbose descriptions, my diagram authoring skills are not up to scratch}
 
-This observation follows from some basic trigonometry.
-We must try to find 7 points all closer to some centre point than to each other
+Consider the angle between these edges in the MST.
+We know that these edges all meet at a point $a$ of degree $d$.
+Then either all angles are ${2\pi} \over d$ or one is less.
+Now we observe that this minimal angle must satisfy a triangular constraint where the edges beteen the 2 points that construct it and $a$ are lesss than the distance between these 2 points.
+This is stated formally by basic trigonometry: $a^2 = b^2 + c^2 - 2bc\cos{A}$, in which $b$ and $c$ are the MST edges and $a$ is the distance between the 2 points.
+We Then must be able to find a $b$ and $c$ such that both are less than $a$.
+
+In the case where the degree is 6, the minimal angle is $\pi \over 3$ and hence $a^2 = b^2 + c^2 - bc$.
+Fixing $b$ of length 1 we can clearly see that $a > c$ when $c <= 1$, however when $c < 1$, $a$ becomes imaginary, so clearly $c$ must be 1 aswell.
+
+However when we must accomodate degree 7 then the minimum angle is ${{2\pi} \over 7} \approx 0.8976$ or less and our cosine rule becomes $a^2 \approx b^2 + c^2 - 1.247 b c$.
+If we suppose b and c are equidistant from a (let us call this distance 1) then $a^2 \approx 0.753$ and $a$ is less than $b$ and $c$.
+If they were not equidistant Then we are able to draw a circle with center at the more distant, then less distant must somehow be inside the sector with width ${2\pi} \over 7$ and closer than the more distant point.
+However this entire sector is contained within the circle with center at the more distant, and so any point inside it is closer to the more distant point than the more distant is to $a$.
+
+Therefor this is a contradiction, and it is impossible to construct those 2 edges of the MST whose angular difference is less than or equal to ${2 \pi} \over 7$.
+It is therefore impossible to construct a Euclidian MST with degree greater than 6, since 2 such edges must exist in it.
 
 \subsection*{b}
 
@@ -117,13 +132,47 @@ The actual procedure for constructing and querying these trees is discussed in l
 
 \section {t-Spanner}
 
-\begin{thebibliography}{9}
+{\em The proof for part a is lacking, but part a is required to do b, which is easy if we can assume a, so we shall.  Some attempt has been made to show the truth of a's claim, differentiation is involved.}
 
-\bibitem{tb}
-	Mark de Berg and Otfried Cheong and Marc van Kreveld and Mark Overmar,
-	\emph{Computational Geometry, Algorithms and Applications}.
-	\emph{3rd ed, pp184-185}.
-	Springer-Verlag Berlin Heidelberg
-\end{thebibliography}
+\subsection*{Lemma 1}
+First we examine the bounds on $\tau$.
+When it approaches $\pi \over 4$, T approaches infinity, at which point it is sufficient to say that $|uv| \geq |vw|$ by the triangle inequality, and therefore the proposition holds.
+Similarly when it approaches 0, T may be as low as 1, at which point again the simple argument that $|uv|$ is longer means the proposition holds.
+
+We can calculate $|vw| \leq \sqrt{|uv|^2 + |uw|^2 + |uv||uw| \cos \tau}$ to gain some insight into the problem.
+We are trying to find instances where $t$ can be small enough that $t|vw| + |uw| > t|uv|$ in order to disprove by contradiction, if such instances cannot exist then this suffices as proof for the lemma.
+We see easily that $|uv| > |vw|$ since if this were not true, w must either be outside the sector or furthur from u than v.
+Given this making t large is not an option for disproving the lemma, since $|uv|$ will always grow faster.
+Looking at the function we note that the LHS monotonically increases as w approaches u for sufficiently large t.
+This is demonstrated by the above application of the cosine rule, versus the corollary that when w and u share a point, $|vw| = |uv|$.
+If we fix $\tau$ and $|uv| = 1$ this also fixes the minimal value of t, and the LHS is maximised when $|uw| + t|vw|$ is maximised, or when $|uw| + t\sqrt{|uw|^2 + 1 + |uw| \cos \tau}$ is maximised.
+Given $t \geq {1 \over {\cos \tau \sin \tau}}$ the minimal value of t can also be presumed, hence $|uw| + {\sqrt{|uw|^2 + 1 + |uw| \cos \tau} \over {\cos \tau \sin \tau}}$.
+
+This gives us our intuition that the choice of $\tau$ affects the maximal choice of LHS and hence whether the lemma holds.
+Then it is sufficient to say that as $\tau$ increases linearly, $|vw|$ increases sublinearly for any choice of $\tau$, which means that if The lemma holds for the extreme values shown above, it must hold for values in between.
+Therefore there exists no value of $\tau$ for which $|uw| + t|vw| > t|uv|$ and hence the lemma holds.
+
+\subsection*{Spanner induction}
+
+Let us add an edge from every poing the the graph to the $k$ nearest points inside $k$ sectors surrounding the point.
+In the base case we have 2 points with an edge between them whose edge equals the euclidian distance, and hence this is a t-spanner.
+
+When we add a new point we shall add up to k edges from it to existing nodes in the graph.
+Clearly the graph is connected, since all new vertices must add at least 1 edge in the case when the entirety of the current graph is in 1 of the k sectors.
+Therefore there is a path from every vertex to every other vertex.
+When we added a new point it connected to the current graph by some arc, at which point paths to new vertices could flow through that arc.
+From the base case we saw that all paths had distance equal to euclidian distance, however now we shall show that after n additions, all paths have distance at most t times the euclidian distance.
+From lemma 1 we saw that in any sector, t times the distance between the new point and some far point was greater than the distance between the new point and the closest plus t times the distance between this closest point and the far one.
+This can be recursively applied by choosing the closest point as the ``new point'' and looking in the sector which contains the furthur point.
+We substitute the inequality from this second hop into the first for points $a, b, c, d$: the new point, its closest point, the closest point to b in b's sector containing d, and the farthest point respectively, to get $|ab| + |bc| + t|cd| \leq |ab| + t|bd| \leq t|ad|$.
+Simply continuing in this fashion, eventually we will reach a point where d is the closest in the sector containing d, and we wll not have ever exceeded t times the distance $ad$.
+
+Hence the graph constructed by the above description is a t-spanner.
+
+\subsection*{Linearity}
+The number of edges in the graph is linear in the number of points.
+This is a trivial observation that for a given t, $\tau$ is chosen maximally for efficiency and hence $k$ is minimal and fixed.
+Therefore since we draw an edge between each node n and the nearest neighbour inside each of the k sectors, there are at most $nk$ edges.
+Since k is constant this means $O(n)$ edges.
 
 \end{document}
