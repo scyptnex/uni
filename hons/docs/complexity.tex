@@ -2,84 +2,79 @@
 
 \usepackage{graphicx}
 \usepackage{amssymb,amsmath}
+\usepackage{theorem}
 
 \author{Nic Hollingum - 308193415}
 \title{Complexity}
 
 \begin{document}
 
-\section*{Complexity}
+\section{Robust Actor Assignment Problem}
+The {\em Robust Actor Assignment Problem} (RAAP) can be defined as follows:
+Given a set of $n$ Actors $A = \{a_1, a_2, ... a_n\}$, grouped into $g$ disjoint subsets $G_i$ where $\bigcup_{i=1}^{g}{G_i} = A$, and a set of $p$ processors $P = \{p_1, p_2 ... p_p\}$,
+where each actor $a_i$ has a cost of communicating with every other $a_j$ $communicate(a_i , a_j) \geq 0$, and each processor $p_i$ has a cost $invoke(p_i, a_j) \geq 0$ of invoking actor $a_j$ on it, and each pair of processors $p_i, p_j$ has a cost $bandwidth(p_i, p_j) \geq 0$ of allowing the actors assigned to them to communicate;
+find the mapping of actors to processors such that: no two actors $a_x, a_y \in G_i$ share the same processor, and the total cost of the assignment is minimised, where that cost is the sum of all $invoke(p_i, a_j)$ for processor $p_i$ invoking actor $a_j$ and the sum of all $communicate(a_x, a_y) \times bandwidth(p_i, p_j)$ for all actors $a_x$ assigned to $p_i$ and actors $a_y$ assigned to $p_j$, $i<j$.
 
-\subsection*{Decision Problem}
-We state the decision problem as: Given an assignment and a supposed cost, can we determine if the assignment is at least as good as that cost?
-Trivially this is done by simulating the cost of an assignment.
-We simply multiply the cost of assignment for each actor by its assigned processor (each actor has 1 processor, there are $O(n)$ assignments for n actors).
-The sum of these costs is the total sequential makespan for the simplified problem.
-In the more complicated parallel makespan problem we must determine the maximum assignment to a single processor, again it is done trivially in $O(n)$ time.
+This problem aims to capture the requirements of robust assignment on multicomputers.
+The ``robustness'' previously used informally is fomalised here as the requirement for certain actors to be placed on separate processors.
+Specifically duplicate actors, which must ensure correct computation even if one of the processors fails arbitrarily.
+The formal ``non-overlapping-duplication'' is realised as robustness by supplying fault-monitoring overheads, however the implementation details shall not be discussed here.
 
-The communication cost can be done separately.
-For each pair of communicating actors on different processors, multiply the communication ammount of the actors by the bandwidth cost of the processors.
-In the worst case we shall say that ther can be at most $O(n^2)$ communicating pairs of actors, with each actor on a different processor.
-So calculating the total communication cost is a matter of summing these components, which can be done in $O(n^2)$ time.
+Given that this section aims to prove NP-Completeness we shall now deal with a decision version of the problem.
+Simply, does there exist some assignment that does not exceed our budget $b \geq 0$.
 
-Clearly we are able to simulate and calculate the cost of a given assignment in polynomial time, so we have polynomial certification.
-Now we show that actually finding this assignment will be at least as hard as the multiway cut problem.
+\begin{lemma}
+\label{RAAPNP}
+RAAP is in NP.
+\end{lemma}
 
-\subsection*{Multiway Cut}
+\begin{proof}
+First we show that the cost of a guessed assignment can be determined in polynomial time, and hence whether this exceeds the budget.
+Our assignment is in the form of a list of actor-processor pairings $(a_i, p_j)$, for each of the $|A| = n$ pairings sum the $invoke(p_j, a_i)$, then for each pair of pairings $(a_x, p_i), (a_y, p_j)$ sum the communication-bandwidth costs $communicate(a_x, a_y)$ multiplied by $bandwidth(p_i, p_j)$ if $i<j$.
+Clearly this operation is quadratic in the number of actor-processor pairings, which is linear in the number of actors $n$.
+We must also ensure the robustness constraint has not been violated.
+Simply iterate over all $G_i$ and for each group, check the mapping list has not made an overlapping assignment.
+We can simply return ``no'' instantly if actors have not been assigned correctly.
+Again this operation is quadratic in the number of actors.
+Now we simply point out that solving this problem nondeterministically means guessing possible assignments, then checking that that assignment is valid and doesnt exceed the budget in polynomial time.
+\qed
+\end{proof}
 
-{\em Given a weighted graph $G = (V,E)$ with weights $w_{ij}$ for some edge $(i,j)$, partition the vertices into k sets where each set is nonempty, distinct, and the sum of weights of edges between vertices in different sets is minimised.}
+\section{Multiterminal Cut Problem}
+Given a graph $G=(V,E)$, a set $S=\{s_1, s_2, ... s_k\}$ of $k$ specified vertices or {\em terminals}, and a positive weight $w(e)$ for each edge $e \in E$, find a minimum weight set of edges $E' \subseteq E$ such that the removal of $E'$ from $E$ disconnects each terminal from all others.
 
-The Multiway cut is a similar problem to our assignment one.
-We show how to encode instances of the multiway cut problem into our problem and back in polynomial time, which proves that the assignment problem is as hard as the NP-Complete multiway cut.
+The MTC problem is discussed at length by Dahlhaus et al in \cite{dah94} and is shown to be a member of the NP-Complete problems when $k \geq 3$.
+When $k = 2$ this is simply the ST-Min-Cut problem, which is solvable in polynomial time \cite{for62}.
+The decision version of this problem specifies a maximul cut weight threshold $t$ and asks if there exists a cutset with total weight less than $t$.
+This problem is very similar to our assignment problem informally.
+We view each of the terminal nodes as processors and each nonterminal as actors, then we say that an actor has been assigned to a processor if there is a path from it to that terminal node.
+We note that after the cut there is no actor which has been assigned to multiple processors, since that would require a path between 2 terminals.
 
-In general there may be t terminals and n nodes in the multiway cut, and we wish to express this problem as finding the minimal cost for assigning the actor nodes to run on the processor terminals.
-For our assignment problem we must account for the cost of separating communicating actors onto separate processors, as well as the cost off placing actors on the various processors.
-In our reduction from assignment to multiway cut we simply create edges between the terminals and all nodes with weight equal to the weighted average of that node's running time on the other processors minus its running time on this processor, as in \cite{sto77}.
-Then we add edges between communicating nodes as the cost of the communication.
-We must now consider the added difficulty of duplication separation (i.e. duplicate actors cannot be assigned the same processor).
-Let is temporarily allow negative edge weights.
-If actors i and j are meant to reside on different processors, we must increase the cost of assigning them to the same processor, or alternatively, we must fail to eliminate the cost of assigning them.
-Let us increase the cost of assigning these 2 actors to every terminal by increasing the weight of their edges to those terminals by some large finite ammount $k$ each.
-The total weight in the graph has been increased by $tk$, so to counteract this we decrease the weight $w_{i,j}$ by $(t-1)k$.
-In this way the only way for the multiway cut to ``recover'' from the increased cost of assigning i and j is to make sure it assigns them to different processors, and gains the negative weight $w_{ij}$
-Note that k need not be infinite, but it must be greater than the sum of all weights before this modification, fortunately this can be found in polynomial time.
-If we are required not to have negative edges than we can furthur increase the cost of all edges so that the ``least'' weighted edge is positive.
-This encoding can be made in $O(n^2)$ time.
-By this encoding we are able to solve our problem if we can solve multiway cut in general.
+\section{Complexity of RAAP}
 
-For the reversal we must encode instances of multiway cut into assignment problems.
-Again this is nearly trivial.
-We need not worry about actor duplication, and we say that each actor has no duplicates.
-We say that the cost of assigning node i to terminal t is $w_{it}$ if there exists an edge $(i,t)$, and 0 otherwise.
-Then we say that it costs $w_{ij}$ for nodes i and j to communicate if there is an edge $(i,j)$ between 2 nonterminals, and 0 otherwise.
-Clearly solving an assignment such as this to optimality equates to solving the multiway cut instance.
+\begin{theorem}
+\label{RAAPNPC}
+RAAP is NP-Complete.
+\end{theorem}
 
-\subsection*{Formally}
+\begin{proof}
+From \ref{RAAPNP} we saw that RAAP was in NP.
 
-The multiway cut problem is formulated as an IP below \eqref{multicut}:
+We restrict RAAP to MTC by allowing only instances where all bandwidths are 1 and all groupings have cardinality 1 (that is, we ignore the non-overlapping constraint).
+Each terminal is a processor and each nonterminal is an actor.
+The cost of communication between 2 actors (nonterminals) is $w(e)$ if there is an edge $e$ between the nonterminals, and 0 otherwise.
+The cost of executing an actor $v_i$ (nonterminal) on a processor $s_p$(terminal) is $\sum_{j=1}^{k}{w(s_j,v_i)} - w(s_p, v_i)$, or the sum of all weights from this node to terminals except the current terminal.
+Nonterminals with no edges to terminals will cost 0 to execute, with 1 such edge of weight $w$ they will cost $w$ to execute on every processor except the one represented by that terminal across the edge.
 
-\begin{equation}\label{multicut}
-\begin{split}
-& min \sum_{(i,j) \in E; s, t \in T; s \neq t}{X[i,s] X[j,t] w_{ij}} \\
-& \sum_{i \in V}{X[i,t]} = 1; t \forall T \\
-& X[v,t] = 1; t \forall T ; v \in T \\
-& X[v,t] \in \{0,1\};  t \forall T ; v \forall V
-\end{split}
-\end{equation}
+We use such an instance to solve MTC as simply: after assignment, cut any edge between vertices assigned to different processors.
+Clearly the cost of the assignment is the same as the weight of the cutset.
+Nonterminals which are on seperate processors contribute $1 \times w(e)$ to the total weight, and nonterminals assigned directly contribute the weight of all edges between them and the terminal (0 if no such edge exists) except that of the processor to which they are assigned.
 
-Our assignment problem on the other hand looks like this:
-
-\begin{equation}\label{assignment}
-\begin{split}
-& min \sum_{(i,j) \in E; p, q \in P; p \neq q}{X[i,j,p,q] COM[i,j,p,q]} + \sum_{a \in A; p \in P}{X[a,p] INVOKE[a,p]}\\
-& \sum_{p \in P}{X[a,p]} = 1; a \forall A \\
-& \sum_{p \in P}{Y[i,j,p,p]} = 0; \forall i,j \in DUP \\
-& Y[i,j,p,q] \leq X[i,p]; i,j \forall A; p,q \forall P \\
-& Y[i,j,p,q] \leq X[j,q]; i,j \forall A; p,q \forall P \\
-& X[i,p] + X[j,q] - 1 \leq Y[i,j,p,q]; i,j \forall A; p,q \forall P \\
-& X[i,p] \in \{0,1\};  \forall i \in A; p \in P
-\end{split}
-\end{equation}
+Filling the communication function is clearly linear in the size of $E$.
+Filling the invocation time may require iterating over $E$ for every nonterminal in $V$, which is cubic in $V$ in the worst case.
+Hence the transformation is polynomial.
+\qed
+\end{proof}
 
 \bibliographystyle{plain}
 \bibliography{biblio}

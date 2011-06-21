@@ -1,0 +1,72 @@
+\section*{Complexity}
+
+\subsection*{Decision Problem}
+We state the decision problem as: Given an assignment and a supposed cost, can we determine if the assignment is at least as good as that cost?
+Trivially this is done by simulating the cost of an assignment.
+We simply multiply the cost of assignment for each actor by its assigned processor (each actor has 1 processor, there are $O(n)$ assignments for n actors).
+The sum of these costs is the total sequential makespan for the simplified problem.
+In the more complicated parallel makespan problem we must determine the maximum assignment to a single processor, again it is done trivially in $O(n)$ time.
+
+The communication cost can be done separately.
+For each pair of communicating actors on different processors, multiply the communication ammount of the actors by the bandwidth cost of the processors.
+In the worst case we shall say that ther can be at most $O(n^2)$ communicating pairs of actors, with each actor on a different processor.
+So calculating the total communication cost is a matter of summing these components, which can be done in $O(n^2)$ time.
+
+Clearly we are able to simulate and calculate the cost of a given assignment in polynomial time, so we have polynomial certification.
+Now we show that actually finding this assignment will be at least as hard as the multiway cut problem.
+
+\subsection*{Multiway Cut}
+
+{\em Given a weighted graph $G = (V,E)$ with weights $w_{ij}$ for some edge $(i,j)$, partition the vertices into k sets where each set is nonempty, distinct, and the sum of weights of edges between vertices in different sets is minimised.}
+
+The Multiway cut is a similar problem to our assignment one.
+We show how to encode instances of the multiway cut problem into our problem and back in polynomial time, which proves that the assignment problem is as hard as the NP-Complete multiway cut.
+
+In general there may be t terminals and n nodes in the multiway cut, and we wish to express this problem as finding the minimal cost for assigning the actor nodes to run on the processor terminals.
+For our assignment problem we must account for the cost of separating communicating actors onto separate processors, as well as the cost off placing actors on the various processors.
+In our reduction from assignment to multiway cut we simply create edges between the terminals and all nodes with weight equal to the weighted average of that node's running time on the other processors minus its running time on this processor, as in \cite{sto77}.
+Then we add edges between communicating nodes as the cost of the communication.
+We must now consider the added difficulty of duplication separation (i.e. duplicate actors cannot be assigned the same processor).
+Let is temporarily allow negative edge weights.
+If actors i and j are meant to reside on different processors, we must increase the cost of assigning them to the same processor, or alternatively, we must fail to eliminate the cost of assigning them.
+Let us increase the cost of assigning these 2 actors to every terminal by increasing the weight of their edges to those terminals by some large finite ammount $k$ each.
+The total weight in the graph has been increased by $tk$, so to counteract this we decrease the weight $w_{i,j}$ by $(t-1)k$.
+In this way the only way for the multiway cut to ``recover'' from the increased cost of assigning i and j is to make sure it assigns them to different processors, and gains the negative weight $w_{ij}$
+Note that k need not be infinite, but it must be greater than the sum of all weights before this modification, fortunately this can be found in polynomial time.
+If we are required not to have negative edges than we can furthur increase the cost of all edges so that the ``least'' weighted edge is positive.
+This encoding can be made in $O(n^2)$ time.
+By this encoding we are able to solve our problem if we can solve multiway cut in general.
+
+For the reversal we must encode instances of multiway cut into assignment problems.
+Again this is nearly trivial.
+We need not worry about actor duplication, and we say that each actor has no duplicates.
+We say that the cost of assigning node i to terminal t is $w_{it}$ if there exists an edge $(i,t)$, and 0 otherwise.
+Then we say that it costs $w_{ij}$ for nodes i and j to communicate if there is an edge $(i,j)$ between 2 nonterminals, and 0 otherwise.
+Clearly solving an assignment such as this to optimality equates to solving the multiway cut instance.
+
+\subsection*{Formally}
+
+The multiway cut problem is formulated as an IP below \eqref{multicut}:
+
+\begin{equation}\label{multicut}
+\begin{split}
+& min \sum_{(i,j) \in E; s, t \in T; s \neq t}{X[i,s] X[j,t] w_{ij}} \\
+& \sum_{i \in V}{X[i,t]} = 1; t \forall T \\
+& X[v,t] = 1; t \forall T ; v \in T \\
+& X[v,t] \in \{0,1\};  t \forall T ; v \forall V
+\end{split}
+\end{equation}
+
+Our assignment problem on the other hand looks like this:
+
+\begin{equation}\label{assignment}
+\begin{split}
+& min \sum_{(i,j) \in E; p, q \in P; p \neq q}{X[i,j,p,q] COM[i,j,p,q]} + \sum_{a \in A; p \in P}{X[a,p] INVOKE[a,p]}\\
+& \sum_{p \in P}{X[a,p]} = 1; a \forall A \\
+& \sum_{p \in P}{Y[i,j,p,p]} = 0; \forall i,j \in DUP \\
+& Y[i,j,p,q] \leq X[i,p]; i,j \forall A; p,q \forall P \\
+& Y[i,j,p,q] \leq X[j,q]; i,j \forall A; p,q \forall P \\
+& X[i,p] + X[j,q] - 1 \leq Y[i,j,p,q]; i,j \forall A; p,q \forall P \\
+& X[i,p] \in \{0,1\};  \forall i \in A; p \in P
+\end{split}
+\end{equation}
