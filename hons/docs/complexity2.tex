@@ -1,0 +1,153 @@
+\documentclass{article}
+
+\usepackage{graphicx}
+\usepackage{amssymb,amsmath}
+\usepackage{theorem}
+
+\author{Nic Hollingum - 308193415}
+\title{Complexity}
+
+\begin{document}
+
+\section{Multiterminal Cut Problem}
+MTC: Given a graph $G=(V,E,S,w)$, a set $S=\{s_1, s_2, ... s_k\}$ of $k$ specified vertices or {\em terminals} : $S \subseteq V$ , and a positive weight $w(e): E \rightarrow \mathbb{R}^+$ for each edge, find a minimum weight set of edges $E' \subseteq E$ such that the removal of $E'$ from $E$ disconnects each terminal from all others.
+
+\begin{definition}
+	A {\em pathset} : $\Pi_G$ is the set of all paths from every node to every other node in G.
+	$\Pi_g(v_i, v_j) = \{\pi_1, \pi_2, ... \}$ for the (possibly infinite) paths from $v_i$ to $v_j$.
+	A path from $v_a$ to $v_b$ is a list of $l$ edges $\pi =\{(x_i, x_{i+1}) : 0 \leq i < l \wedge x_i, x_{i+1} \in V)\}$ where $x_0 = v_a$ and $x_l = v_b$.
+\end{definition}
+
+\begin{observation}
+	After the MTC for $G=(V,E,S,w)$ choosing $E'$ as the cutset, if we construct $G'=(V,E-E')$ (the graph after removing the cut edges) then $\Pi_{G'}(s_i, s_j) = \emptyset \quad \forall s_i, s_j \in S, s_i \neq s_j$.
+\end{observation}
+
+\begin{proof}
+	This defines a cutset (it disconnects the terminal vertices).
+	Trivially by contradiction if any pathset between two terminal nodes was nonempty then $E'$ does not disconnect all terminals and is not a cutset.
+\end{proof}
+
+This property, coupled with the minimality of $E'$ defines the Multiterminal cut problem.
+Any $E'$ which disconnects all terminals and is minimal provides a solution to MTC.
+
+\section{Robust Actor Allocation Problem}
+RAAP: Given a graph $G=(V,E,w_c,w_i)$ and a set of processors $P$, where $w_c : E \rightarrow \mathbb{R}^+$ and $w_i : V \times P \rightarrow \mathbb{R}^+$, find a mapping $\alpha : V \rightarrow P$ such that:
+$\displaystyle\sum\limits_{(u,v) \in E : \alpha(u) \neq \alpha(v)} w_c(u,v) + \displaystyle\sum\limits_{v \in V} w_i(v, \alpha(v))$ is minimised.
+
+\begin{observation}
+\label{RAAPNP}
+A RAAP can be verified as costing less than a given amount $c$ in time polynomial in $|V|$.
+\end{observation}
+
+\begin{proof}
+RAAP produces the assignment $\alpha : V \rightarrow P$.
+TO compute the cost we examine all edges and all vertices once.
+
+$c = \displaystyle\sum\limits_{(u,v) \in E : \alpha(u) \neq \alpha(v)} w_c(u,v) + \displaystyle\sum\limits_{v \in V} w_i(v, \alpha(v))$.
+
+$|E| \leq |V|^2$, hence verification is of order $O(|V|^2 + |V|) = O(n^2 + n) = O(n^2)$
+\end{proof}
+
+Now we define a mapping $I_{MTC} \mapsto I_{RAAP}$ such that a solution to RAAP would provide the solution to MTC.
+
+MTC has a problem $I_{MTC} = (V,E,S,w)$ with solution $E' \subseteq E$.
+
+RAAP has a problem $I_{RAAP} = (V'',E'',w_c,w_i,P)$ with solution function $\alpha : V \rightarrow P$.
+
+\begin{itemize}
+	\item $V'' = V$
+	\item $E'' = E$
+	\item $w_c = w$
+	\item $P = \{p_1, p_2, ... p_k\}$ where $\{p_i : \exists s_i \in S \}$.  We say $p_i$ is the {\em main processor} for vertex $s_i \in S$
+	\item $w_i(a \in V'',p \in P) = \left\{ 
+		\begin{array}{l l}
+			0 & \quad \mbox{if $a \not\in S$}\\
+			0 & \quad \mbox{if $a = s_i$ and $p = p_i$ for some $i$}\\
+			\infty & \quad \mbox{otherwise}\\ \end{array} \right.$
+	\item $\{(u,v) \in E' : (u,v) \in E'' \wedge \alpha(u) \neq \alpha(v)\}$
+\end{itemize}
+
+Or in plain english: an edge is in the cutset if its endpoints are assigned to different processors.
+
+\begin{lemma}
+\label{MAINPROC}
+$\alpha(s_i) = p_i \quad \forall s_i \in S$
+\end{lemma}
+\begin{proof}
+By contradiction:
+\begin{align}
+	\nonumber c 	& = \displaystyle\sum\limits_{(u,v) \in E'' : \alpha(u) \neq \alpha(v)} w_c(u,v) + \displaystyle\sum\limits_{v \in V''} w_i(v, \alpha(v)) \\
+	\nonumber		& = \displaystyle\sum\limits_{(u,v) \in E'' : \alpha(u) \neq \alpha(v)} w_c(u,v) + \displaystyle\sum\limits_{v \in S} w_i(v, \alpha(v)) + \displaystyle\sum\limits_{v \in (V'' - S)} w_i(v, \alpha(v)) \\
+	\nonumber		& = \displaystyle\sum\limits_{(u,v) \in E'' : \alpha(u) \neq \alpha(v)} w_c(u,v) + \infty + 0 \\
+	\nonumber		& = \infty \\
+	\nonumber		& > \displaystyle\sum\limits_{(u,v) \in E''} w_c(u,v) + 0 + 0
+\end{align}
+Even if reassigning all terminals to their main processor forces us to count every edge, this is still less than infinity.
+\end{proof}
+
+\begin{corollary}
+\label{COSTMIN}
+$c = \displaystyle\sum\limits_{(u,v) \in E'} w(u,v)$
+\end{corollary}
+
+\begin{proof}
+From lemma \ref{MAINPROC} we saw that all terminals are assigned to their main processor, so:
+\begin{align}
+	\nonumber c 	& = \displaystyle\sum\limits_{(u,v) \in E'' : \alpha(u) \neq \alpha(v)} w_c(u,v) + \displaystyle\sum\limits_{v \in V''} w_i(v, \alpha(v)) \\
+	\nonumber		& = \displaystyle\sum\limits_{(u,v) \in E'' : \alpha(u) \neq \alpha(v)} w_c(u,v) + \displaystyle\sum\limits_{v \in S} w_i(v, \alpha(v)) + \displaystyle\sum\limits_{v \in (V'' - S)} w_i(v, \alpha(v)) \\
+	\nonumber		& = \displaystyle\sum\limits_{(u,v) \in E'' : \alpha(u) \neq \alpha(v)} w_c(u,v) + 0 + 0 \\
+	\nonumber		& = \displaystyle\sum\limits_{(u,v) \in E'} w(u,v)
+\end{align}
+\end{proof}
+
+\banach taski paradox
+
+\begin{lemma}
+\label{BREAKPATH}
+$\Pi_{G''=(V'', E'' - E')} (s_i, s_j) = \emptyset \quad \forall s_i, s_j \in S, s_i \neq s_j$
+\end{lemma}
+
+\begin{proof}
+By contradiction, let us say there is a path $\pi_x$ from $s_i$ to $s_j$:
+
+$\pi_x = \{(s_i, v_a), (v_a, v_b), ..., (v_p, s_j)\}$, then all of these edges must be edges in $E'' - E'$.
+
+If there is an edge $(u,v) \in (E''-E') : u, v \in V''$ then $\alpha(u) = \alpha(v)$.
+So all the vertices along a path are assigned to the same processor.
+
+This implies $\alpha(s_i) = \alpha(s_j)$, which contradicts lemma \ref{MAINPROC} so long as $s_i \neq s_j$ \qed.
+\end{proof}
+
+\begin{lemma}
+\label{WORSETHANMTC}
+$I_{MTC} \mapsto I_{RAAP}$ provides a solution to $I_{MTC}$ if a solution to $I_{RAAP}$ can be found.
+\end{lemma}
+
+\begin{proof}
+First lemma \ref{BREAKPATH} shows us that $E'$ is a cutset.
+
+Second corollary \ref{COSTMIN} shows us that if $c$ is minimised, then $\displaystyle\sum\limits_{(u,v) \in E'} w(u,v)$ is minimised.
+
+Hence the solution to $I_{RAAP}$ gives us the solution for $I_{MTC}$ \qed.
+\end{proof}
+
+\begin{theorem}
+\label{RAAPNPC}
+RAAP is NP-Complete.
+\end{theorem}
+
+\begin{proof}
+From observation \ref{RAAPNP} we saw that solutions to the decision problem can be verified in polynomial time.
+Then the problem can be solved on a Nondeteministic Turing Machine in polynomial time, and RAAP is in NP.
+
+From lemma \ref{WORSETHANMTC} we saw that the mapping $I_{MTC} \mapsto I_{RAAP}$ provides a solution to $I_{MTC}$ if a solution to $I_{RAAP}$ can be found.
+Hence RAAP is at best harder than MTC.
+Dahlhaus et. al. show MTC to be NP-Complete in \cite{dah94}.
+Hence RAAP must also be NP-Complete \qed.
+
+\end{proof}
+
+\bibliographystyle{plain}
+\bibliography{biblio}
+
+\end{document}
