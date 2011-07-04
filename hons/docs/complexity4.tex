@@ -61,6 +61,15 @@ Feasible Solution Space: $F \subseteq 2^E$
 	\nonumber \Pi_{(V,E \setminus S)}(t_i, t_j) = \emptyset \quad \forall (t_i, t_j) \in T^2 \setminus \{(t, t) | t \in T\}
 \end{align}
 
+Alternatively:
+
+\begin{align}
+	\nonumber \forall S \in F : S = \{(u, v) | \forall t \in T \quad & \Pi_{(V,E \setminus S)}(u, t) \neq \emptyset \\
+	\nonumber & \quad \Rightarrow \Pi_{(V,E \setminus S)}(v, t) = \emptyset \quad or \\
+	\nonumber & \Pi_{(V,E \setminus S)}(v, t) \neq \emptyset \\
+	\nonumber & \quad \Rightarrow \Pi_{(V,E \setminus S)}(u, t) = \emptyset \}
+\end{align}
+
 Optimal Solution Space: $O \subseteq F$
 \begin{align}
 	\forall S_j \in F , \quad \forall S_i \in O \quad \nonumber C(S_i) \leq C(S_j)
@@ -85,14 +94,17 @@ $\displaystyle\sum\limits_{(u,v) \in E : \alpha(u) \neq \alpha(v)} w_c(u,v) + \d
 
 Solution Space: $\alpha \in P^V \subseteq P(V \times P)$
 
-Solution Cost: $C(\alpha) = \displaystyle\sum\limits_{(u,v) \in E : \alpha(u) \neq \alpha(v)} w_c(u,v) + \displaystyle\sum\limits_{v \in V} w_i(v, \alpha(v))$
+Solution Cost: $C : P^V \rightarrow \mathbb{Z}^+$
+\begin{align}
+	\nonumber C(\alpha) = \displaystyle\sum\limits_{(u,v) \in E : \alpha(u) \neq \alpha(v)} w_c(u,v) + \displaystyle\sum\limits_{v \in V} w_i(v, \alpha(v))
+\end{align}
 
-Feasible Solution: $\alpha \in F \subseteq P^V$
+Feasible Solution Space: $F \subseteq P^V$
 \begin{align}
 	\nonumber C(\alpha) \neq \infty
 \end{align}
 
-Optimal Solution: $\alpha \in O \subseteq F$
+Optimal Solution Space: $O \subseteq F$
 \begin{align}
 	\nonumber 	C(\alpha_i) \leq C(\alpha_j) \quad \forall \alpha_j \in F \quad \forall \alpha_i \in O
 \end{align}
@@ -112,12 +124,39 @@ Mapping
 	\nonumber & E' = E\\
 	\nonumber & P = T\\
 	\nonumber & w_c = w\\
-	\nonumber & w_i(v,p) = \mbox{$\left\{ 
-		\begin{array}{l l}
-			0 & \quad \mbox{if $a \in V \setminus T$}\\
-			0 & \quad \mbox{if $p = v$}\\
-			\infty & \quad \mbox{otherwise}\\ \end{array} \right.$}
+	\nonumber & w_i(v,p) = 0 \forall v \in V', p \in P
 \end{align}
+\end{definition}
+
+\begin{definition}
+{\em Simplified RAAP}
+
+To keep the proof simple we restrict RAAP to the SRAAP, which differs in that certain processors are pre-assigned.
+This simplification is only applicale to the mapping, it imposes a restriction on the mapping.
+
+We have required an isomorphism between terminals and processors in the mapping, this simplification makes that concrete.
+Vertices which are terminals are restricted to being assigned to the processor which also represent that terminal.
+
+We can trivially solve SRAAP using RAAP by making the cost of not assigning the pre-assigned vertices to their processors infinite.
+
+Main Processor: $\mu : V \rightarrow P$
+\begin{align}
+	\nonumber \forall v_i \in P : \mu(v_i) = p_i
+\end{align}
+
+Solution Space: $\alpha \in P^V \subseteq P(V \times P)$
+
+Feasible Solution Space: $F \subseteq P^V$
+\begin{align}
+	\nonumber C(\alpha) \neq \infty \\
+	\nonumber \forall v_i \in P : \alpha(v_i) = \mu(v_i)
+\end{align}
+
+Optimal Solution Space: $O \subseteq F$
+\begin{align}
+	\nonumber 	C(\alpha_i) \leq C(\alpha_j) \quad \forall \alpha_j \in F \quad \forall \alpha_i \in O
+\end{align}
+
 \end{definition}
 
 \begin{definition}
@@ -130,28 +169,48 @@ Reversal Function $\gamma$
 \end{definition}
 
 \begin{lemma}
+\label{PATHASSIGN}
+Any vertices with a path to one another in the residual graph are assigned to the same processor.
+
+$\forall v_a, v_b \in V : \forall \pi \in \Pi_{(V, E \setminus \gamma(\alpha))}(v_a, v_b) : \forall (x_i, x_j) \in \pi : \alpha(x_i) = \alpha(x_j)$
+\end{lemma}
+
+\begin{proof}
+This derives from the definition of $\gamma$.
+We prove it by contradeiction:
+
+presume $\exists (x_i, x_j) \in \pi : \alpha(x_i) \neq \alpha(x_j)$
+\begin{align}
+	\nonumber (x_i, x_j) & \in \gamma(\alpha) \\
+	\nonumber (x_j, x_j) & \not\in E \setminus \gamma(\alpha) \\
+	\nonumber \Rightarrow (x_i, x_j) & \not\in \pi
+\end{align}
+
+\end{proof}
+
+\begin{lemma}
 The mapping is always feasible
 
 $\forall \alpha \in F' : \quad \gamma(\alpha) \in F$
 \end{lemma}
 
 \begin{proof}
+We use $F'$ to denote the feasible solution space of (S)RAAP to distinguish it from that of MTC.
+
+We show by contradiction that there can exist no feasible $\alpha$ for which $\gamma (\alpha)$ is not feasible for MTC.
+
+Presume $\exists \beta \in F' : \gamma(\beta) \not\in F$, Then:
+
 \begin{align}
-	\nonumber \alpha(p_i) = p_i & \quad \mbox{(Otherwise $\alpha \not\in F'$)} \\
-	\nonumber \Pi_{G=(V, E \setminus \gamma(\alpha))} (p_i, p_j) = \emptyset  \quad \forall p_i, p_j \in P & \quad \mbox{(From the definition of $\gamma$)}
+	\nonumber \exists (u,v) \in \gamma(\beta) : \exists t \in T, u, v \in V s.t. & \quad \Pi_G (u, t) \neq \emptyset \wedge \Pi_G (v, t) \neq \emptyset \\
+	\nonumber & \exists \pi_u \in \Pi_G (u, t) \Rightarrow \beta(u) = \beta(t) \quad \quad \mbox{(from \ref{PATHASSIGN})}\\
+	\nonumber & \exists \pi_v \in \Pi_G (v, t) \Rightarrow \beta(v) = \beta(t) \\
+	\nonumber & \Rightarrow \beta(u) = \beta(v) \\
+	\nonumber & \Rightarrow (u,v) \not\in \gamma(\beta)
 \end{align}
-\end{proof}
 
-\begin{lemma}
-The mapping is always optimal
-
-$\forall \alpha \in O' : \quad \gamma(\alpha) \in O$
-\end{lemma}
-
-\begin{proof}
-\begin{align}
-	\nonumber C'(\alpha) = C(\gamma(\alpha)) & \quad \mbox{(Otherwise $C'(\alpha) = \infty$ and $\alpha \not\in F'$)}
-\end{align}
+In plain english: if there was a solution which when reversed was infeasible, then there has to be a path from 2 endpoints of an element of the cutset in the residual graph.
+But from \ref{PATHASSIGN} that means those 2 vertices are assigned to the same processor, which menas that edge couldnt have been in the cutset, which is a contradiction.
 \end{proof}
 
 \bibliographystyle{plain}
