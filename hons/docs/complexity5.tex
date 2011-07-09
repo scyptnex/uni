@@ -16,6 +16,8 @@ Graph $G$
 	\nonumber V = & \{v_1, v_2, ..., v_n\} \quad & (vertices)\\
 	\nonumber E \subseteq & V^2 & (edges)
 \end{align}
+
+We shall deal exclusively with so-called ``undirected'' graphs, in which $\forall (u,v) \in E : (u,v) = (v,u)$.
 \end{definition}
 
 \begin{definition}
@@ -24,10 +26,15 @@ Path $\pi$ for graph $G = (V,E)$.
 \begin{align}
 	\nonumber \forall v \in V & : \pi(v, v) = \epsilon \\
 	\nonumber \forall (u,v) \in E & : \pi(u, v) = \{(u, v)\} \\
-	\nonumber \forall u, v \in V & : \pi(u, v) = \pi(u, w) + \pi(w, v) \quad \mbox{Here we use ``$+$'' to denote concatenating subpaths}
+	\nonumber \forall u, v, w \in V : if \quad \exists \pi(u, w) \wedge (w, v) \in E & : \pi(u, v) = \pi(u,w) + \pi(w, v)\\
+	\nonumber \forall u, v \in V : if \quad \exists \pi(u, v) & : \pi(u, v) + \epsilon = \pi(u, v)
 \end{align}
 
-If a path $\pi(u, v)$ cannot be formed by successively adding edges then the path is said to not exist, so there is no path etween disconnected nodes $u$ and $v$.
+Here we use ``$+$'' to denote concatenating paths.
+
+If a path $\pi(u, v)$ cannot be formed by successively adding edges then the path is said to not exist, so there is no path between disconnected nodes $u$ and $v$.
+
+For convenience all paths are of finite length which we call $l$.
 \end{definition}
 
 \begin{definition}
@@ -36,6 +43,8 @@ Pathset $\Pi_G$ for graph $G = (V,E)$.
 \begin{align}
 	\nonumber \Pi_G(v_a, v_b) = \{\pi(v_a, v_b) : v_a, v_b \in V\} \quad or \quad \emptyset \quad \mbox{if there is no path from $v_a$ to $v_b$}
 \end{align}
+
+Pathsets can be infinitely large, although as from the above definition of paths, no path can be infinitely long.
 
 Note: $\forall v \in V : \Pi(v, v) = \{\epsilon\} \neq \emptyset$.
 \end{definition}
@@ -136,8 +145,16 @@ For convenience we shall call the feasible and optimal solution spaces and cost 
 \end{align}
 
 In the case of $V', E', P$ and $w_c$ we have used ``$=$'' to denote a bijection.
-More formally we mean: $Y = X \Rightarrow \exists f : X \rightarrow Y \quad s.t. \quad \forall x_i \neq x_j \in X : f(x_i) \neq f(x_j) \wedge f(x_i), f(x_j) \in Y$
-
+More formally when we say $X = Y$ we mean:
+\begin{align}
+	\nonumber \exists f : X \rightarrow Y \wedge \exists g : Y \rightarrow X \quad s.t. & \\
+	\nonumber & \forall x_i \neq x_j \in X : f(x_i) \neq f(x_j) \wedge \\
+	\nonumber & \forall y_i \neq y_j \in Y : g(y_i) \neq g(y_j) \wedge \\
+	\nonumber & \forall x \in X : f(x) \in Y \wedge \\
+	\nonumber & \forall y \in Y : g(y) \in X  \wedge \\
+	\nonumber & \forall x \in X : g(f(x)) = x \wedge \\
+	\nonumber & \forall y \in Y : f(g(y)) = y
+\end{align}
 The above mapping makes $A = \emptyset$ which makes it impossible to violate feasibility this way.
 When talking about mapped instances we may therefore ignore it.
 \end{definition}
@@ -183,19 +200,16 @@ Given a feasible solution $\alpha \in F'$ to the mapped RAAP instance $I'$ for a
 \begin{proof}
 This derives from the definition of $\gamma$.
 We proove it inductively on the path.
-Let $G_r = (V, X)$ and $\pi \in \Pi_{G_r}(v_a, v_b)$ :
+Let $G_r = (V, X)$ and $\pi(v_a, v_b) \in \Pi_{G_r}(v_a, v_b)$ :
 
 \begin{align}
-	\nonumber & X = E \setminus \gamma(\alpha) : \pi \subseteq X \\
-	\nonumber & \forall (x_i, x_{i+1}) \in \pi : (x_i, x_{i+1}) \not\in \gamma(\alpha) \\
-	\nonumber & \Rightarrow \alpha(v_i) = \alpha(x_{i+1}) \\
-	\nonumber & \forall (x_i, x_{i+1}), (x_{i+1}, x_{i+2}) \in \pi : (x_i, x_{i+1}), (x_{i+1}, x_{i+2}) \not\in \gamma(\alpha) \\
-	\nonumber & \Rightarrow \alpha(x_i) = \alpha(x_{i+1}) = \alpha(x_{i+2}) \\
-	\nonumber \mbox{hence, let} & \quad \{(v_a, x_i), (x_i, x_{i+1}),...,(x_{j-1}, x_j), (x_j, v_b)\} = \pi \\
-	\nonumber & \Rightarrow \alpha(v_a) = \alpha(x_i) = \alpha(x_{i+1}) = \alpha(x_{j-1}) = \alpha(x_j) = \alpha(v_b)
+	% \nonumber & X = E \setminus \gamma(\alpha) : \pi \subseteq X \\
+	\nonumber \forall v \in V & : \pi(v, v) = \epsilon \wedge \alpha(v) = \alpha(v) & \mbox{(base case)} \\
+	\nonumber \forall \pi(v_a, v_b), v_a \neq v_b \in V & : \exists (v_c, v_b) \in X \quad s.t. \quad \pi(v_a, v_b) = \pi(v_a, v_c) + \pi(v_c, v_b) & \mbox{(hypothesis)}\\
+	\nonumber & \Rightarrow (v_c, v_b) \not\in \gamma(\alpha) \\
+	\nonumber & \Rightarrow \alpha(v_c) = \alpha(w_b) & \mbox{(inductive step)} \\
+	\nonumber & \Rightarrow \alpha(v_a) = \alpha(v_b)
 \end{align}
-
-Here we use $\subseteq$ to denote that all components of a path are edges in the residual graph
 
 \end{proof}
 
@@ -207,19 +221,17 @@ Given a feasible solution space $F'$ to the mapped RAAP instance $I'$ for an MTC
 \end{lemma}
 
 \begin{proof}
-We show by contradiction that no solution $\beta$ for $I'$ which maps to infeasible $2^E \setminus F$ can exist.
+We show by contradiction that if we have (a) $\beta \in F'$ we can't also have (b) $\gamma(\beta) \in 2^E \setminus F$.
+The lemmas \ref{PATHASSIGN} and \ref{FORCEASSIGN} which hold for $\beta$ are used to prove the contradiction.
 
 Let $G_r$ be the residual graph from $I$ made using $S = \gamma(\beta)$.
 
 \begin{align}
-	\nonumber \gamma(\beta) & \in 2^E \setminus F \\
-	\nonumber & \exists \quad t_1\neq t_2 \in T : \Pi_{G_r}(t_1, t_2) \neq \emptyset \\
-	\nonumber & \exists \quad \pi \in \Pi_{G_r}(t_1, t_2) \\
-	\nonumber & \beta(t_1) = \beta(t_2) & \mbox{(from \ref{PATHASSIGN})}\\
-	\nonumber \\
-	\nonumber & \beta(t_1) = t_1, \beta(t_2) = t_2 & \mbox{(from \ref{FORCEASSIGN})} \\
-	\nonumber & t_1 \neq t_2 \\
-	\nonumber & \beta(t_1) \neq \beta(t_2)
+	\nonumber \gamma(\beta) & \in 2^E \setminus F \Rightarrow \exists t_1\neq t_2 \in T : \Pi_{G_r}(t_1, t_2) \neq \emptyset \\
+	\nonumber & \exists \quad \pi(t_1, t_2) \in \Pi_{G_r}(t_1, t_2) \\
+	\nonumber & \quad \Rightarrow \beta(t_1) = \beta(t_2) & \mbox{(from \ref{PATHASSIGN})}\\
+	\nonumber & \beta(t_1) = t_1 \wedge \beta(t_2) = t_2 & \mbox{(from \ref{FORCEASSIGN})} \\
+	\nonumber & \quad \Rightarrow \beta(t_1) \neq \beta(t_2)
 \end{align}
 
 \end{proof}
