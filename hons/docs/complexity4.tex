@@ -1,0 +1,219 @@
+\documentclass{article}
+
+\usepackage{graphicx}
+\usepackage{amssymb,amsmath}
+\usepackage{theorem}
+
+\author{Nic Hollingum - 308193415}
+\title{Complexity}
+
+\begin{document}
+
+\begin{definition}
+Graph $G$
+\begin{align}
+	\nonumber G = & (V,E) \\
+	\nonumber V = & \{v_1, v_2, ..., v_n\} \quad & (vertices)\\
+	\nonumber E \subseteq & V^2 & (edges)
+\end{align}
+\end{definition}
+
+\begin{definition}
+Path $\pi$ for graph $G = (V,E)$ of length $l$
+\begin{align}
+	\nonumber \pi(v_a, v_b) = \{(x_i, x_{i+1}) : 0 \leq i < l \wedge x_i, x_{i+1} \in V \wedge x_0 = v_a \wedge x_l = v_b\}
+\end{align}
+\end{definition}
+
+\begin{definition}
+Pathset $\Pi_G$ for graph $G = (V,E)$
+\begin{align}
+	\nonumber \Pi_G(v_a, v_b) = \{\pi(v_a, v_b) : \pi(v_a, v_b) \subseteq E\}
+\end{align}
+Hence if there is no path from $v_a$ to $v_b$ in $G$: $\Pi_G(v_a, v_b) = \emptyset$
+\end{definition}
+
+
+\section{Multiterminal Cut Problem}
+
+\begin{definition}
+Multi-Terminal Cut
+
+Given a graph $G=(V,E,w,T)$, a set $T=\{t_1, t_2, ... t_k\}$ of $k$ specified vertices or {\em terminals} : $T \subseteq V$ , and a positive weight $w(e)$ for each edge, find a minimum weight set of edges $E' \subseteq E$ such that the removal of $E'$ from $E$ disconnects each terminal from all others.
+An instance of MTC is therefore defined fromally:
+
+\begin{align}
+	\nonumber MTC = & (V,E,w,T)\\
+	\nonumber & E \subseteq V^2\\
+	\nonumber & w : E \rightarrow \mathbb{Z}^+\\
+	\nonumber & T \subseteq V
+\end{align}
+
+Solution Space: $2^E$
+
+Solution Cost: $C : 2^E \rightarrow \mathbb{Z}^+$
+\begin{align}
+	\nonumber C(S) = \displaystyle\sum\limits_{(u,v) \in S} w(u,v)
+\end{align}
+
+Feasible Solution Space: $F \subseteq 2^E$
+\begin{align}
+	\nonumber \Pi_{(V,E \setminus S)}(t_i, t_j) = \emptyset \quad \forall (t_i, t_j) \in T^2 \setminus \{(t, t) | t \in T\}
+\end{align}
+
+Alternatively:
+
+\begin{align}
+	\nonumber \forall S \in F : S = \{(u, v) | \forall t \in T \quad & \Pi_{(V,E \setminus S)}(u, t) \neq \emptyset \\
+	\nonumber & \quad \Rightarrow \Pi_{(V,E \setminus S)}(v, t) = \emptyset \quad or \\
+	\nonumber & \Pi_{(V,E \setminus S)}(v, t) \neq \emptyset \\
+	\nonumber & \quad \Rightarrow \Pi_{(V,E \setminus S)}(u, t) = \emptyset \}
+\end{align}
+
+Optimal Solution Space: $O \subseteq F$
+\begin{align}
+	\forall S_j \in F , \quad \forall S_i \in O \quad \nonumber C(S_i) \leq C(S_j)
+\end{align}
+
+\end{definition}
+
+
+\section{Robust Actor Allocation Problem}
+
+\begin{definition}
+Given a graph $G=(V,E,w_c,w_i)$ and a set of processors $P$, where $w_c : E \rightarrow \mathbb{Z}^+$ and $w_i : V \times P \rightarrow \mathbb{Z}^+$, find a mapping $\alpha : V \rightarrow P$ such that:
+$\displaystyle\sum\limits_{(u,v) \in E : \alpha(u) \neq \alpha(v)} w_c(u,v) + \displaystyle\sum\limits_{v \in V} w_i(v, \alpha(v))$ is minimised.
+
+\begin{align}
+	\nonumber RAAP = & (V,E,w_c, w_i, P)\\
+	\nonumber & E \subseteq V^2\\
+	\nonumber & w_c : E \rightarrow \mathbb{Z}^+\\
+	\nonumber & w_i : V \times P \rightarrow \mathbb{Z}^+\\
+	\nonumber & P = \{p_1, p_2, ...p_p\}
+\end{align}
+
+Solution Space: $\alpha \in P^V \subseteq P(V \times P)$
+
+Solution Cost: $C : P^V \rightarrow \mathbb{Z}^+$
+\begin{align}
+	\nonumber C(\alpha) = \displaystyle\sum\limits_{(u,v) \in E : \alpha(u) \neq \alpha(v)} w_c(u,v) + \displaystyle\sum\limits_{v \in V} w_i(v, \alpha(v))
+\end{align}
+
+Feasible Solution Space: $F \subseteq P^V$
+\begin{align}
+	\nonumber C(\alpha) \neq \infty
+\end{align}
+
+Optimal Solution Space: $O \subseteq F$
+\begin{align}
+	\nonumber 	C(\alpha_i) \leq C(\alpha_j) \quad \forall \alpha_j \in F \quad \forall \alpha_i \in O
+\end{align}
+
+\end{definition}
+
+\section{Mapping}
+
+\begin{definition}
+Mapping
+
+\begin{align}
+	\nonumber I \in & MTC(V,E,w,T) &\\
+	\nonumber I' \in & RAAP(V', E', w_c, w_i, P) &\\
+	\nonumber & I \mapsto I' if: &\\
+	\nonumber & V' = V\\
+	\nonumber & E' = E\\
+	\nonumber & P = T\\
+	\nonumber & w_c = w\\
+	\nonumber & w_i(v,p) = 0 \forall v \in V', p \in P
+\end{align}
+\end{definition}
+
+\begin{definition}
+{\em Simplified RAAP}
+
+To keep the proof simple we restrict RAAP to the SRAAP, which differs in that certain processors are pre-assigned.
+This simplification is only applicale to the mapping, it imposes a restriction on the mapping.
+
+We have required an isomorphism between terminals and processors in the mapping, this simplification makes that concrete.
+Vertices which are terminals are restricted to being assigned to the processor which also represent that terminal.
+
+We can trivially solve SRAAP using RAAP by making the cost of not assigning the pre-assigned vertices to their processors infinite.
+
+Main Processor: $\mu : V \rightarrow P$
+\begin{align}
+	\nonumber \forall v_i \in P : \mu(v_i) = p_i
+\end{align}
+
+Solution Space: $\alpha \in P^V \subseteq P(V \times P)$
+
+Feasible Solution Space: $F \subseteq P^V$
+\begin{align}
+	\nonumber C(\alpha) \neq \infty \\
+	\nonumber \forall v_i \in P : \alpha(v_i) = \mu(v_i)
+\end{align}
+
+Optimal Solution Space: $O \subseteq F$
+\begin{align}
+	\nonumber 	C(\alpha_i) \leq C(\alpha_j) \quad \forall \alpha_j \in F \quad \forall \alpha_i \in O
+\end{align}
+
+\end{definition}
+
+\begin{definition}
+Reversal Function $\gamma$
+
+\begin{align}
+	\nonumber \gamma & : (P^V) \rightarrow P(E) \\
+	\nonumber \gamma & \mapsto \{(u,v) \in E | \alpha(u) \neq \alpha(v)\}
+\end{align}
+\end{definition}
+
+\begin{lemma}
+\label{PATHASSIGN}
+Any vertices with a path to one another in the residual graph are assigned to the same processor.
+
+$\forall v_a, v_b \in V : \forall \pi \in \Pi_{(V, E \setminus \gamma(\alpha))}(v_a, v_b) : \forall (x_i, x_j) \in \pi : \alpha(x_i) = \alpha(x_j)$
+\end{lemma}
+
+\begin{proof}
+This derives from the definition of $\gamma$.
+We prove it by contradeiction:
+
+presume $\exists (x_i, x_j) \in \pi : \alpha(x_i) \neq \alpha(x_j)$
+\begin{align}
+	\nonumber (x_i, x_j) & \in \gamma(\alpha) \\
+	\nonumber (x_j, x_j) & \not\in E \setminus \gamma(\alpha) \\
+	\nonumber \Rightarrow (x_i, x_j) & \not\in \pi
+\end{align}
+
+\end{proof}
+
+\begin{lemma}
+The mapping is always feasible
+
+$\forall \alpha \in F' : \quad \gamma(\alpha) \in F$
+\end{lemma}
+
+\begin{proof}
+We use $F'$ to denote the feasible solution space of (S)RAAP to distinguish it from that of MTC.
+
+We show by contradiction that there can exist no feasible $\alpha$ for which $\gamma (\alpha)$ is not feasible for MTC.
+
+Presume $\exists \beta \in F' : \gamma(\beta) \not\in F$, Then:
+
+\begin{align}
+	\nonumber \exists (u,v) \in \gamma(\beta) : \exists t \in T, u, v \in V s.t. & \quad \Pi_G (u, t) \neq \emptyset \wedge \Pi_G (v, t) \neq \emptyset \\
+	\nonumber & \exists \pi_u \in \Pi_G (u, t) \Rightarrow \beta(u) = \beta(t) \quad \quad \mbox{(from \ref{PATHASSIGN})}\\
+	\nonumber & \exists \pi_v \in \Pi_G (v, t) \Rightarrow \beta(v) = \beta(t) \\
+	\nonumber & \Rightarrow \beta(u) = \beta(v) \\
+	\nonumber & \Rightarrow (u,v) \not\in \gamma(\beta)
+\end{align}
+
+In plain english: if there was a solution which when reversed was infeasible, then there has to be a path from 2 endpoints of an element of the cutset in the residual graph.
+But from \ref{PATHASSIGN} that means those 2 vertices are assigned to the same processor, which menas that edge couldnt have been in the cutset, which is a contradiction.
+\end{proof}
+
+\bibliographystyle{plain}
+\bibliography{biblio}
+
+\end{document}
