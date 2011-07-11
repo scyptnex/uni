@@ -33,6 +33,8 @@ This predicate $\pi$ is true in the following cases:
 
 For simplicity we shall use $\not\pi(u, v)$ when the predicate does not hold.
 
+For clarity we may say $\pi_{(V,E)}$ to explicitly state that this predicate applies to the graph $G=(V,E)$.
+
 \end{definition}
 
 \begin{definition}
@@ -146,11 +148,123 @@ When talking about mapped instances we may therefore ignore it.
 Reversal Function $\gamma$
 
 \begin{align}
-	\nonumber \gamma & : (P^V) \rightarrow P(E) \\
+	\nonumber \gamma & : P^V \rightarrow P(E) \\
 	\nonumber \alpha & \mapsto \{(u,v) \in E | \alpha(u) \neq \alpha(v)\}
 \end{align}
 \end{definition}
 
+\begin{definition}
+Inversion Function $\gamma'$
+
+\begin{align}
+	\nonumber \gamma' & : P(E) \rightarrow P^V \\
+	\nonumber S & \mapsto \forall v \in V' \alpha(v) = \mbox{$\left\{ 
+		\begin{array}{l l}
+			t \quad & \mbox{if $\exists t \in T : \pi_{(V, E \setminus S)} (v, t)$}\\
+			t_0 & \mbox{otherwise}\\ \end{array} \right.$} 
+\end{align}
+
+For arbitrarily chosen $t_0 \in T$
+\end{definition}
+
+\begin{lemma}
+\label{EDGEASSIGN}
+The 2 nodes at the endpoint of any edge in the residual graph were assigned to the same processor:
+
+\begin{align}
+	\nonumber \forall(u, v) \in E \setminus \gamma(\alpha) : \alpha(u) = \alpha(v)
+\end{align}
+\end{lemma}
+\begin{proof}
+Immediate by definition of $\gamma$.
+Otherwise $(u, v) \in \gamma(\alpha)$.
+\end{proof}
+
+\begin{lemma}
+\label{PATHASSIGN}
+The 2 nodes for which the path predicate is true in the residual graph were assigned to the same processor:
+
+\begin{align}
+	\nonumber \forall (u, v) \in V^2 : \pi_{(V, E \setminus \gamma(\alpha))}(u,v) \Rightarrow \alpha(u) = \alpha(v)
+\end{align}
+\end{lemma}
+\begin{proof}
+Using \ref{EDGEASSIGN} and induction on the path predicate.
+
+In the trivial cases:
+\begin{align}
+	\nonumber \forall v \in V : \pi(v, v) & \Rightarrow \alpha(v) = \alpha(v) \\
+	\nonumber \forall (u, v) \in E \setminus \gamma(\alpha) : \pi(u, v) & \Rightarrow \alpha(u) = \alpha(v) \quad \mbox{From \ref{EDGEASSIGN}}
+\end{align}
+
+Otherwise:
+\begin{align}
+	\nonumber \forall (u, v) \in V^2 : \pi(u, v) \Rightarrow \exists w \in V : \pi(u, w) \wedge (w, v) \in E \setminus \gamma(\alpha)
+\end{align}
+
+Clearly by \ref{EDGEASSIGN} $\alpha(w) = \alpha(v)$ and the definition recurs backwards until it is satisfied by one of the trivial cases.
+
+\end{proof}
+
+\begin{lemma}
+\label{FORCEASSIGN}
+Any feasible assignment $\alpha$ maps all terminals to themselves:
+
+\begin{align}
+	\nonumber \forall \alpha \in F' : \forall t \in T : \alpha(t) = t
+\end{align}
+\end{lemma}
+\begin{proof}
+Immediate by the definition of the mapping.
+Otherwise $C(\alpha) = \infty$ and $\alpha \not\in F'$.
+\end{proof}
+
+\begin{lemma}
+\label{REVERSEFEASABLE}
+The reverse solution for any feasible $\alpha$ is also a feasible $S$.
+
+\begin{align}
+	\nonumber \forall \alpha \in F' : \gamma(\alpha) \in F
+\end{align}
+\end{lemma}
+\begin{proof}
+In other words, we must show that $\forall s \neq t \in T : \not\pi_{(V, E \setminus \gamma(\alpha))}(s, t)$.
+
+To prove this by contradiction let us presume $\exists \beta \in F' : \gamma(\beta) \not\in F$.
+Therefore $\exists (s, t) \in T^2 \setminus {(r,r) | r \in T} : \pi_{(V, E \setminus \gamma(\alpha))}(s, t)$.
+
+First from \ref{FORCEASSIGN}:
+\begin{align}
+	\nonumber \forall t \in T : \beta(t) = t & \Rightarrow \beta(s) = s \wedge \beta(t) = t \\
+	\nonumber & \Rightarrow \beta(s) \neq \beta(t)
+\end{align}
+
+Second from \ref{PATHASSIGN}:
+\begin{align}
+	\nonumber \forall (u, v) \in V^2 : \pi_{(V, E \setminus \gamma(\alpha))}(u,v) & \Rightarrow \alpha(u) = \alpha(v) \\
+	\nonumber \pi(s, t) & \Rightarrow \beta(s) = \beta(t)
+\end{align}
+
+But this is a contradiction.
+\end{proof}
+
+\begin{lemma}
+\label{SINGLEPATH}
+\end{lemma}
+\begin{proof}
+\end{proof}
+
+\begin{lemma}
+\label{INVERSECOST}
+\end{lemma}
+\begin{proof}
+\end{proof}
+
+\begin{lemma}
+\label{REVERSEOPTIMAL}
+\end{lemma}
+\begin{proof}
+\end{proof}
 
 \bibliographystyle{plain}
 \bibliography{biblio}
