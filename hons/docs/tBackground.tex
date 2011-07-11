@@ -1,2 +1,52 @@
 \section{Background}
-for all backgrounded infos?
+\subsection{Synchronous Dataflow}
+Synchronous dataflow (SDF) is a computing paradigm based on the execution of computational units called actors and the communication of computed outputs (called tokens) amongst the actors.
+Each actor may be stateless or have state, communication is in FIFO order.
+Certain variations of SDF such as StreaMIT \cite{thies02} allow for actors to poll their token input buffers out-of-order, but this is not true of SDF systems in general.
+
+Computations are expressed as a SDF graph which includes:
+\begin{itemize}
+	\item Actors are represented by the vertices.
+	\item Communication between actors is represented by a directed edge.
+	\item Each endpoint of an edge has a consumption and production ammount; the number of tokens produced or consumed for a single invocation of the actor.
+	\item Each edge may have zero or more tokens pre-loaded, called a delay; the layout of all delays in the graph is called the fill state.
+\end{itemize}
+This graphical format captures the isolation of independant computational units.
+Since computations are viewed in this large-grained decomposition, SDF programs are particularly easy to parallelise.
+
+When executing an actor we must fulfil the requirement that enough tokens are present on all edges which that actor consumes from first, then the actor is invoked, and places some tokens on edges which it produces for.
+Clearly then the initial fill-state of the graph is important in ensuring it can be executed.
+We are also concerned with executions of multiple actors.
+SDF Programs execute on a potentially infinite dataset, to do this we construct several schedules for actor invocations which deal with the fill state.
+Note that a fill state is only concerned with the number of tokens on the edges, not the content of them.
+The ``init schedule'' invokes actors so as to increase the fill state.
+Once sufficiently filled the ``steady-state schedule'' is run multiple times.
+One running of the steady state leaves the fill-state the same as before the schedule was ran.
+Finally if required a ``death schedule'' is used to return the fill state to before the init schedule was ran.
+
+\subsection{Cloud Computers}
+Cloud computers are a general term for service-based computing systems.
+In recent years advancements in network technologies have made cloud systems popular, and providing software to run on these systems can be challenging.
+Although there are many nuances of ``cloud systems'' we are primarily concerned with those made up of hundreds to thoosands of stand-alone computers.
+
+SDF applications are particularly important to cloud systems as they provide easy decomposition of tasks.
+
+\subsection{Fault Tolerance}
+Fault tolerance is becomming a more important requirement for systems as they increase in size.
+Current implementations of SDF systems \cite{mal08, thies02, thies10} do not explicitly guarantee fault tolerance in execution.
+This is an acceptable shortfall in the case of standalone systems, where a ``node failure'' means the whole computer dies, and so no mechanisms can exist to recover from such a failure, the computation must be rerun.
+However in the cloud/grid context mean time to failure (MTTF) can be as short as 100h \cite{ree06}.
+As such, mechanisms must be put in place to ensure successful computation given a few node failures.
+
+Fault tolerance can be achieved through several mechanisms:
+\begin{itemize}
+	\item Replication is where multiple versions of the same computation take place on different machines.  By mechanisms described by Lamport and Smith in \cite{lam86}, so long as no less than two thirds of the computations succeed, the failing computations can be ignored.
+	\item Redundancy is imilar to replication except it presumes that faulting systems fail completely (and no vote can be taken), here the computations happen completely independantly so that one will likely complete.
+	\item Checkpointing is where successful states are saved to disk, so that in the event of a failure, the last successful state can be reverted to and computation re-performed.
+\end{itemize}
+
+Systems with these kinds of fault-tolerance have been implemented in the past (\cite{ree06} \cite{lit07}) with some success.
+All these systems involve expending some kind of overhead or wasting some computational power on redundant executions.
+This is generally the case for fault-tolerant systems, however the overheads are not equal and the extent to which accuracy can be ensured varies.
+For example, the checkpointing method will never fail completely, in the sense that correct state can always be recovered and computation re-run, whereas the Redundant methods may fail completely in the (rare) case that all redundancies fail.
+Similarly checkpointing requires enough space to store successful states, whereas replication does not increase space overhead, but requires more computation both to duplicate tasks and to decide on successful computations.

@@ -231,7 +231,7 @@ The reverse solution for any feasible $\alpha$ is also a feasible $S$.
 In other words, we must show that $\forall s \neq t \in T : \not\pi_{(V, E \setminus \gamma(\alpha))}(s, t)$.
 
 To prove this by contradiction let us presume $\exists \beta \in F' : \gamma(\beta) \not\in F$.
-Therefore $\exists (s, t) \in T^2 \setminus {(r,r) | r \in T} : \pi_{(V, E \setminus \gamma(\alpha))}(s, t)$.
+Therefore $\exists (s, t) \in T^2 \setminus \{(r,r) | r \in T\} : \pi_{(V, E \setminus \gamma(\alpha))}(s, t)$.
 
 First from \ref{FORCEASSIGN}:
 \begin{align}
@@ -248,29 +248,140 @@ Second from \ref{PATHASSIGN}:
 But this is a contradiction.
 \end{proof}
 
+%\begin{lemma}
+%\label{SINGLEPATH}
+%Any node with a path to a terminal in the residual graph has no path to any other terminal in that graph.
+%
+%\begin{align}
+%	\nonumber \forall v \in V, t \in T : \pi_{G_r}(v,t) \Rightarrow \forall s \in T \setminus \{t\} : \not\pi(v,s)
+%\end{align}
+%\end{lemma}
+%\begin{proof}
+%Immediate by definition of the feasible space.
+%Otherwise $\pi_{G_r}(v,t) \wedge \pi_{G_r}(v,s) \Rightarrow \pi_{G_r}(t,s)$ which means the curset was not feasible.
+%\end{proof}
+
+%\begin{lemma}
+%\label{INVERSEEDGE}
+%In the inversion of a feasible solution to a multiterminal cut problem, the endpoints of an edge are assigned to different processors if an only if that edge is in the solution.
+%
+%\begin{align}
+%	\nonumber \forall S \in F : (u, v) \in S \Leftrightarrow \gamma'(S)(u) \neq \gamma'(S)(v) \wedge (u,v) \in E'
+%\end{align}
+%\end{lemma}
+%\begin{proof}
+%
+%\end{proof}
+
 \begin{lemma}
-\label{SINGLEPATH}
-Any node with a path to a terminal in the residual graph has no path to any other terminal in that graph.
+\label{INVERSESUBSET}
+Any edge in the inversion of a feasible solution to a multiterminal cut with endpoints assigned to different processors had to be in the solution.
 
 \begin{align}
-	\nonumber \forall v \in V, t \in T : \pi_{G_r}(v,t) \Rightarrow \forall s \in T \setminus {t} : \not\pi(v,s)
+	\nonumber & \forall (u, v) \in E' : \gamma'(S)(u) \neq \gamma'(S)(v) \Rightarrow (u,v) \in S \\
+	\nonumber \mbox{or} &\\
+	\nonumber & \forall S \in F : \{(u,v) | \gamma'(S)(u) \neq \gamma'(S)(v)\} \subseteq S
 \end{align}
 \end{lemma}
 \begin{proof}
-Immediate by definition of the feasible space.
-Otherwise $\pi_{G_r}(v,t) \wedge \pi_{G_r}(v,s) \Rightarrow \pi_{G_r}(t,s)$ which means the curset was not feasible.
+To prove this by contradiction we must show that there is no edge with differently assigned endpoints that is not in the solution.
+Assume $\exists (u,v) \in E' : \gamma'(S)(u) \neq \gamma'(S)(v) \wedge (u,v) \not\in S$.
+
+Neither or one of $u$ or $v$ may have the arbitrailty chosen assignment $t_0$, all others have an assignment to $\gamma'(S)(v) = t$ if $\pi_{(V, E \setminus S)}(v, t)$.
+
+Let us say that $\gamma'(S)(u) = t_0$:
+\begin{align}
+	\nonumber \exists s \in T \setminus \{t_0\} & : \pi(v, s) \\
+	\nonumber & \Rightarrow \pi(u, s) \\
+	\nonumber & \Rightarrow \gamma'(S)(u) = s \neq t_0
+\end{align}
+
+The definition of the inversion function procludes that assignment.
+A similar problem arises in the case where neither endpoint is assigned to the arbitrary $t_0$.
+\begin{align}
+	\nonumber \exists s \neq t \in T  & : \pi(u, s) \wedge \pi(v, t) \\
+	\nonumber \exists (u, v) \in E & \\
+	\nonumber & \Rightarrow \pi(u, t) \wedge \pi(v, s) \\
+	\nonumber & \Rightarrow S \not\in F
+\end{align}
+
+Then that assignment would mean $S$ was infeasible.
+Hence the contradicting assumption cannot exist.
+\end{proof}
+
+\begin{lemma}
+\label{INVERSEFEASIBLE}
+Any feasible solution to a multiterminal cut is also a feasible solution to its inverted mapped instance:
+
+\begin{align}
+	\nonumber \forall S \in F : \gamma'(S) \in F'
+\end{align}
+\end{lemma}
+\begin{proof}
+Since the mapping allows us to ignore the partitioning constraint on feasibility we are only conserned with the cost.
+
+Immediately from the path predicate and definition of $\gamma'$ we see that $\forall t \in T : \gamma'(S)(t) = t$.
+
+\begin{align}
+	\nonumber C'(\gamma'(s)) & = \displaystyle\sum\limits_{(u,v) \in E' : \gamma'(S)(u) \neq \gamma'(S)(v)} w_c(u,v) + 0 \\
+	\nonumber C'(\gamma'(s)) & \leq \displaystyle\sum\limits_{(u,v) \in E'} w_c(u,v) \\
+	\nonumber C'(\gamma'(s)) & \neq \infty \\
+	\nonumber \gamma'(s) & \in F'
+\end{align}
 \end{proof}
 
 \begin{lemma}
 \label{INVERSECOST}
+The inverted solution to a multiterminal cut problem costs the same or lesss than the cut.
+
+\begin{align}
+	\nonumber \forall S \in F : C(S) \geq C'(\gamma'(S))
+\end{align}
 \end{lemma}
 \begin{proof}
+\begin{align}
+	\nonumber C(S) & = \displaystyle\sum\limits_{(u,v) \in S} w(u,v)\\
+	\nonumber C'(\gamma'(S)) & = \displaystyle\sum\limits_{(u,v) \in E' : \gamma'(S)(u) \neq \gamma'(S)(v)} w_c(u,v) + \displaystyle\sum\limits_{v \in V'} w_i(v, \gamma'(S)(v)) \\
+	\nonumber & = \displaystyle\sum\limits_{(u,v) \in E' : \gamma'(S)(u) \neq \gamma'(S)(v)} w_c(u,v) + 0 \\
+	\nonumber \mbox{And from \ref{INVERSESUBSET}} \\
+	\nonumber & \{(u,v) | (u,v) \in E' \wedge \gamma'(S)(u) \neq \gamma'(S)(v)\} \subseteq S \\
+	\nonumber & \Rightarrow \displaystyle\sum\limits_{(u,v) \in S} w(u,v) \geq \displaystyle\sum\limits_{(u,v) \in E' : \gamma'(S)(u) \neq \gamma'(S)(v)} w_c(u,v) \\
+	\nonumber & \Rightarrow C(S) \geq C'(\gamma'(S))
+\end{align}
+\end{proof}
+
+\begin{lemma}
+\label{REVERSECOST}
+The solution to the RAAP instance of a mapped MTC problem costs the same as the reverse solution.
+
+\begin{align}
+	\nonumber \forall \alpha \in F' : C'(\alpha) = C(\gamma(\alpha))
+\end{align}
+\end{lemma}
+\begin{proof}
+Immediately by the definition of $\gamma$ and lemma \ref{FORCEASSIGN}.
 \end{proof}
 
 \begin{lemma}
 \label{REVERSEOPTIMAL}
+Any optimal solution to RAAP can be reversed to give an optimal solution to MTC.
+
+\begin{align}
+	\nonumber \forall \alpha \in O' : \gamma(\alpha) \in O
+\end{align}
 \end{lemma}
 \begin{proof}
+This uses a contradiction that would arise otherwise because of lemmas \ref{INVERSEFEASIBLE}, \ref{REVERSECOST} and \ref{INVERSECOST}.
+\begin{align}
+	\nonumber \mbox{Assume:} \quad & \exists \alpha \in O' : \gamma(\alpha) \not\in O \\
+	\nonumber & \Rightarrow \exists S \in F : C(S) < C(\gamma(\alpha)) \quad \mbox{Definition of optimal space} \\
+	\nonumber & \Rightarrow \forall \beta \in F' : C'(\alpha) \leq C'(\beta) \\
+	\nonumber \\
+	\nonumber & \gamma'(S) \in F' \\
+	\nonumber & C'(\gamma'(S)) \leq C(S) < C(\gamma(\alpha)) = C'(\alpha) \\
+	\nonumber & \Rightarrow C'(\gamma'(S)) < C'(\alpha) \\
+	\nonumber & \Rightarrow \alpha \not\in O'
+\end{align}
 \end{proof}
 
 \bibliographystyle{plain}

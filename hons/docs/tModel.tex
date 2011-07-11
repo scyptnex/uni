@@ -1,2 +1,28 @@
 \section{Mathematical Model}
-So fundamentally linked to the hardness section, but also containing description for other assignment problem and cplex?
+
+\subsection{Checkpoint Recomputation}
+The checkpoint recomputation method keeps a checkpoint for the last successful execution's state.
+When a steady-state schedule is completed correctly the checkpoint is updated.
+If it fails the system can return to the last successful state and continue.
+
+We understand the expected steady-state execution time of a CR fault tolerant system as follows:
+\begin{itemize}
+	\item The makespan of a single successful execution is known statically, we shall call this $m$.
+	\item For the duration of any makespan, the probability of any single processor or communication failure is known statically.
+	\item Hence the probability that at least one component will fail can be worked out, we shall call this $p$.
+	\item The time required to reset the system to the last checkpointed state is known statically, we shall call this $r$.
+\end{itemize}
+
+Since we are only concerned if a single component fails, we can take the generous presumption of failure independance (only the first failure matters).
+This makes calculating the total expected execution time $t$ simple.
+\begin{align}
+	\nonumber t & = (1-p)m + p(m + r + ...) \quad \mbox{We either succeed and exit or fail, reset, and continue} \\
+	\nonumber & = m - pm + pm + pr + p(... \\
+	\nonumber & = m + pr + p(... \\
+	\nonumber & = m + p(r + m + p(r + m + p(r + m + p(...\\
+	\nonumber & = m + pr + pm + p^2r + p^2m + p^3r + p^3m ...\\
+	\nonumber & = -r + (m+r)p^0 + (m+r)p^1 + (m+r)p^2\\
+	\nonumber & = (m+r)(p^0 + p^1 + p^2 + p^3 ...) - r\\
+	\nonumber & = (m+r)({{1}\over{1-p}}) - r\\
+	\nonumber & = {{m+r}\over{1-p}} - r
+\end{align}
