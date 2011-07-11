@@ -250,8 +250,15 @@ But this is a contradiction.
 
 \begin{lemma}
 \label{SINGLEPATH}
+Any node with a path to a terminal in the residual graph has no path to any other terminal in that graph.
+
+\begin{align}
+	\nonumber \forall v \in V, t \in T : \pi_{G_r}(v,t) \Rightarrow \forall s \in T \setminus {t} : \not\pi(v,s)
+\end{align}
 \end{lemma}
 \begin{proof}
+Immediate by definition of the feasible space.
+Otherwise $\pi_{G_r}(v,t) \wedge \pi_{G_r}(v,s) \Rightarrow \pi_{G_r}(t,s)$ which means the curset was not feasible.
 \end{proof}
 
 \begin{lemma}
