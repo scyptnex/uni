@@ -1,14 +1,16 @@
 \section{Background}
 \subsection{Synchronous Dataflow}
 Synchronous dataflow (SDF) is a computing paradigm based on the execution of computational units called actors and the communication of computed outputs (called tokens) amongst the actors.
-Each actor may be stateless or have state, communication is in FIFO order.
-Certain variations of SDF such as StreaMIT \cite{thies02} allow for actors to poll their token input buffers out-of-order, but this is not true of SDF systems in general.
+Each actor may retain some information about previous invocations stored locally, this is called its state.
+Actors that do this are called stateful, whereas those that do not are called stateless.
+An actor's state may be used to vary the output of its tokens, such as an actor which appends an integer tag counting the sequence number of tokens it encounters.
+Certain implementations of SDF such as StreaMIT \cite{thies02} allow for actors to poll their token input buffers out-of-order, but this is not true of SDF systems in general.
 
 Computations are expressed as a SDF graph which includes:
 \begin{itemize}
 	\item Actors are represented by the vertices.
 	\item Communication between actors is represented by a directed edge.
-	\item Each endpoint of an edge has a consumption and production ammount; the number of tokens produced or consumed for a single invocation of the actor.
+	\item Each endpoint of an edge has a consumption and production amount; the number of tokens produced or consumed for a single invocation of the actor.
 	\item Each edge may have zero or more tokens pre-loaded, called a delay; the layout of all delays in the graph is called the fill state.
 \end{itemize}
 This graphical format captures the isolation of independant computational units.
@@ -17,7 +19,7 @@ Since computations are viewed in this large-grained decomposition, SDF programs 
 When executing an actor we must fulfil the requirement that enough tokens are present on all edges which that actor consumes from first, then the actor is invoked, and places some tokens on edges which it produces for.
 Clearly then the initial fill-state of the graph is important in ensuring it can be executed.
 We are also concerned with executions of multiple actors.
-SDF Programs execute on a potentially infinite dataset, to do this we construct several schedules for actor invocations which deal with the fill state.
+SDF programs execute on a potentially infinite dataset, to do this we construct several schedules for actor invocations which deal with the fill state.
 Note that a fill state is only concerned with the number of tokens on the edges, not the content of them.
 The ``init schedule'' invokes actors so as to increase the fill state.
 Once sufficiently filled the ``steady-state schedule'' is run multiple times.
@@ -41,12 +43,13 @@ As such, mechanisms must be put in place to ensure successful computation given 
 Fault tolerance can be achieved through several mechanisms:
 \begin{itemize}
 	\item Replication is where multiple versions of the same computation take place on different machines.  By mechanisms described by Lamport and Smith in \cite{lam86}, so long as no less than two thirds of the computations succeed, the failing computations can be ignored.
-	\item Redundancy is imilar to replication except it presumes that faulting systems fail completely (and no vote can be taken), here the computations happen completely independantly so that one will likely complete.
+			These systems are also called ``redundant''.  Some variations of RAID are typical examples of fault tolerance using this mechanism.
 	\item Checkpointing is where successful states are saved to disk, so that in the event of a failure, the last successful state can be reverted to and computation re-performed.
 \end{itemize}
 
-Systems with these kinds of fault-tolerance have been implemented in the past (\cite{ree06} \cite{lit07}) with some success.
+Systems with these kinds of fault-tolerance have been implemented in the past \cite{ree06, lit07} with some success.
 All these systems involve expending some kind of overhead or wasting some computational power on redundant executions.
-This is generally the case for fault-tolerant systems, however the overheads are not equal and the extent to which accuracy can be ensured varies.
-For example, the checkpointing method will never fail completely, in the sense that correct state can always be recovered and computation re-run, whereas the Redundant methods may fail completely in the (rare) case that all redundancies fail.
-Similarly checkpointing requires enough space to store successful states, whereas replication does not increase space overhead, but requires more computation both to duplicate tasks and to decide on successful computations.
+This is generally the case for fault-tolerant systems, however the ammount of time/storage/computation wasted on overheads are not equal and the extent to which successful execution can be ensured varies.
+For example, the checkpointing method will never fail completely, in the sense that correct state can always be recovered and computation re-run, whereas the methods involving some redundancy may fail completely in the (rare) case that all elements fail.
+On the other hand, checkpointing requires enough space to store successful states, whereas replication does not increase space overhead, but requires more computation both to duplicate tasks and to decide on successful computations.
+One of the aims of this research is to find if (and when) the costs of such overheads can decide the appropriate fault tolerant mechanisms.
