@@ -1,0 +1,32 @@
+%The predicate determining whether nodes #2 and #3 are connected in the graph #1.
+\newcommand{\path}[3]{\pi_{#1}(#2, #3)}
+%The negation of the path predicate $\path{#1}{#2}{#3}$.
+\newcommand{\npath}[3]{\neg\path{#1}{#2}{#3}}
+
+%An Instance of the RAAP problem mapped from the MTC problem.
+\newcommand{\rInstance}{I_r}
+%An Instance of the MTC problem.
+\newcommand{\mInstance}{I_m}
+
+%A solution to the MTC problem.
+\newcommand{\mSolution}{S}
+%The function for determining the cost of a solution #1 to the MTC problem.
+\newcommand{\mCost}[1]{C(#1)}
+%The feasible solution space for the MTC problem.
+\newcommand{\mFeasible}{F}
+%The optimal solution space for the MTC problem.
+\newcommand{\mOptimal}{O}
+
+%A solution to the RAAP problem.
+\newcommand{\rSolution}{\alpha}
+%The function for determining the cost of a solution #1 to the RAAP problem.
+\newcommand{\rCost}[1]{C'(#1)}
+%The feasible solution space for the RAAP problem.
+\newcommand{\rFeasible}{F'}
+%The optimal solution space for the RAAP problem.
+\newcommand{\rOptimal}{O'}
+
+%The function for retreiving the solution for the MTC problem from its mapped RAAP version's solution #1.
+\newcommand{\reverse}[1]{\gamma(#1)}
+%The function for inserting the solution #1 to an MTC problem into its mapped RAAP version's solution.
+\newcommand{\inverse}[1]{\gamma'(#1)}
