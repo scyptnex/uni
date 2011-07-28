@@ -1,0 +1,40 @@
+2 assignments %30
+
+presentation + survey %40
+
+Exam %30
+
+prisoner's dilemma
+	what is a reasonable thing to look for? (equilibrium)
+	how do we find the solution? (both confess)
+	
+nash bargaining
+	a offers (a, b) where a+b = 1
+	b chooses to accept or reject
+		b offers (a, b)
+		ad infinitum
+	disagreement point (x, y) not related to dollar
+	x+y<1, a and b are actually splitting 1-x-y
+	split leftover halfway
+	
+	several rounds, game ends after round with probability p>0
+	2 rounds: b offers (x, 1-x) - (1-z, z)
+		z = p.y + (1-p)(1-x) <- reserve price
+	1 round: z=y
+	many rounds: a:(a1, b1) b:(a2, b2) z:(a-, b-) d:(x, y)
+		a offers b1 = b- [acceps b1 : rejects py + (1-p)(1-a2)]
+			b1 = py + (1-p)b2
+		b offers a2 = a- [accepts a2 : rejects py + (1-p)(1-a2)]
+			a2 = px + (1-p)a1
+		b1 = 1-a1 = (y+(1-p)(1-x))/2-p
+		1/2 1/2 solution
+		
+Axioms:
+	Symmetry
+	pereto optimality
+	invariance to equivalent representations of utility functions
+	independence of irrelevant alternatives
+	p404 15.6.3
+	
+lemke howser - complexity of equilibrium
+arrow's impossibility theorem
