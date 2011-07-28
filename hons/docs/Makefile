@@ -3,7 +3,7 @@
 META=thesis.tex biblio.bib txSymbols.tex
 TEMPFI=thesis.temp.tex
 
-intro.pdf: tIntroduction.tex $(META)
+introduction.pdf: tIntroduction.tex $(META)
 
 background.pdf: tBackground.tex $(META)
 	rm -f $(TEMPFI)
@@ -28,6 +28,14 @@ algos.pdf: tAlgos.tex $(META)
 experiment.pdf: tExperiment.tex $(META)
 
 related.pdf: tRelated.tex $(META)
+	rm -f $(TEMPFI)
+	echo "\input{tRelated}" > $(TEMPFI)
+	cp thesis.tex related.tex
+	pdflatex related.tex
+	bibtex related.aux
+	pdflatex related.tex
+	pdflatex related.tex
+	rm related.tex
 
 conclusion.pdf: tConclusion.tex
 

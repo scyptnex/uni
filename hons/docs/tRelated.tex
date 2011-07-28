@@ -1,77 +1,76 @@
 \section{Related work}
 
-\subsection*{SDF and Parallel Paradigms}
+\subsection{SDF and Parallel Paradigms}
 
-The Synchronous Dataflow (SDF) paradigm is just one of many programming paradigms.
-It builds on the more general computation graphs described in \cite{kar66}, 44 years ago.
+The Synchronous Dataflow (SDF) paradigm builds on the more general computation graphs described in \cite{kar66}.
 At the time that model was only a graph-theoretical representation of parallel computation, and was more of an abstraction rather than a paradigm.
 We compare this with the more fleshed-out description of the fundamentals of the language in \cite{sdfBook}.
 Synchronous Dataflow is an amalgamation of previous input on the SDF issue, and is considered the defacto description of the paradigm.
 We are particularly interested in the calculation of actor repetitions described first in Lee and Messerschmitt's \cite{lee87} and appearing in \cite{sdfBook}.
-This is important because it is the static calculation of demand and supply by actors (called blocks by Lee) that allows SDF to be optimized statically, giving it advantages over dynamic systems such as S-Net described in \cite{pen09}.
+This is important because it is the static calculation of demand and supply by actors (called blocks in \cite{lee87}) that allows SDF to be optimized statically, giving it advantages over dynamic systems such as S-Net in \cite{pen09}.
 
-Dynamic dataflow systems like S-Net, are deemed necessary for solving certain classes of problems pure SDF cannot.
-This is seen to be one of the major problems with StreaMIT, as stated by Thies, Karczmarek and Amarasinghe in \cite{thies02}.
-SDF requires static declaration fo actor consumptions and productions on each of its channels, which allows the calculation of Lee's repetitions vector.
-However, this added difficulty was presumed to be difficult by Thies and Amarasinghe in \cite{thies10}, despite the genrally positive impression of programming in the language.
-That said, systems which allow the same level of abstractions without static IO rates are difficult to optimize for multiprocessor environments.
+Dynamic dataflow systems like S-Net, are designed for solving certain classes of problems pure SDF cannot.
+This is seen to be one of the major problems with StreaMIT, as stated by Thies, Karczmarek and Amarasinghe \cite{thies02}.
+SDF requires static declaration of actor consumptions and productions on each of its channels, which allows the calculation of Lee's foxed periodic schedule.
+Thies and Amarasinghe argued that systems which allow the same level of abstractions without static IO rates are difficult to optimize for multiprocessor environments \cite{thies10}.
 Implementations of S-Net described in \cite{pen09} usually involve a Master-Worker paradigm, which is not sufficiently fault tolerant for our purposes.
 Without knowing these rates it is unable to assign more duplications of certain actors which are known to be in high demand.
 
 S-Net and StreaMIT are not the only dataflow implementations, as a much earlier work can be found in \cite{cas87}.
-In this work LUSTRE is presented, which is declarative as opposed to functional (StreaMIT).
-The language presented seems difficult to work with, and implements several novel notions of computation (sequence operators, clocking) that normal declarative languages do not deal with, which is understandable given the stream paradigm.
-However The notion of data-dependant clocks is an important one.
+That work presents LUSTRE, which is declarative as opposed to functional (StreaMIT).
+LUSTRE implements several novel notions of computation (sequence operators, clocking) that normal declarative languages do not deal with, which are required in implementing a streaing paradigm.
+
+The notion of data-dependent clocks is an important one.
+In LUSTRE data precedence is defined by an incremental counter (called the clock) assigned in a tuple with each data item.
 We contrast this to the distributed clocking system presented by Lamport in \cite{lam78}.
 Both Lamport and Caspi et al. strike the distinction between physical clocks and logical clocks, so as to be able to deal with the notion of precedence in distributed systems.
-This is a necessary distinction, since it doesn't actually matter what the physical time of an execution is, but only the time relative to the execution of other distributed components.
-Lamport defines a {\em happened before} relationship among processes, which imposes a partial ordering of the system at the level of processes, whereas in LUSTRE data precedence is defined by an incremental counter (called the clock) assigned in a tuple with each data item.
-Both process and data clocking is important in SDF implementations, processes must not execute before they have data to execute on, and data must not be consumed or produced out-of-order.
+This is a necessary distinction, since it does not actually matter what the physical time of an execution is, but only the time relative to the execution of other distributed components.
+Lamport defines a {\em happened before} relationship among processes, which imposes a partial ordering of the system at the level of processes.
 
-Given a partial ordering of data items and processes on distributed systems in general and SDF-like systems specifically, we are now able to explot the parallelism inherant in SDF.
-A simplistic means of doing this is to assign actors to processors, in a similar fashion to \cite{par03}.
-The distributed process networks described in that paper have the ability to scale well with instance size, given sufficiently good load balancing.
-However that paper only deals with worker count, in the hope of data independance and stateless processes.
-The paper therefore deals more with buffer management and load balancing, in order to achieve {\em Embarrasing parallelism}.
+Given a partial ordering of data items and processes on distributed systems in general and SDF-like systems specifically, we can exploit the parallelism inherent in SDF.
+A means of doing this is to assign actors to processors, in a similar fashion to \cite{par03}.
+The distributed process networks described in that paper scale well with instance size, given sufficiently good load balancing.
+However the work only deals with worker count, assuming data independance and stateless processes.
+The paper therefore deals more with buffer management and load balancing, in order to achieve {\em embarrasing parallelism}.
 Embarassingly parallel programs are programs with no data interdependencies (i.e. unordered) and no process states (in our case, statless actors).
-This presumption is not allowed in general for SDF programs, whose actors can have arbitary state and whose tokens are necessarily ordered.
+This assumption is not allowed in general for SDF programs, whose actors can have arbitary state and whose tokens are necessarily ordered.
 This is not a problem for the most well known massively-parallel paradigm, MapReduce.
-MapReduce is a popular tool these days for large scale data-crunching, as described in \cite{dea08}.
-Much of the work goes into distributed-memory grid/cloud systems, however implementations such as PHOENIX \cite{ran07} demonstrate the paradigm's viability for shared-memory multithread systems.
+MapReduce \cite{dea08} is a popular tool for large scale data-crunching.
+Much of the work goes into distributed-memory grid/cloud systems, however implementations such as PHOENIX \cite{ran07} demonstrate the paradigm's viability for shared-memory multithreaded systems.
 
-\subsection*{Fault Tolerance}
+\subsection{Fault Tolerance}
 
 Fault tolerance is the main focus of our work.
-The notion of fault tolerance is not new \cite{ran75}, however it has become absolutely essential in more recent cloud and grid systems.
-Randell's early work focused more on software redundancies in the case of software faults, even going so far as to presume hardware faults would not occur and cause software ones.
-The work did discuss the notion of formal redundancies and checkpointing for fault-tolerance though, which are techniques we shall be employing.
-More to the point the notion of a fault was not clearly defined, we must look to Lamport et al. in \cite{lam86} for that.
-
-Lamport et al. describe the notion of a Byzantine fault, in order to provide tolerance to ``arbitrary'' faults.
-The definition of Fault is discussed in more depth, we presume that each of the processors is malicious (that is, a traitorous general of the Byzantine army), and may act so as to prevent the army from taking action.
-This description accurately captures the nature of faults, that they may cause the computation to halt, to produce incorrect results, or to crash completely.
-The paper deals with assuring fault tolerance in the context of distributed clock synchronisation, however the principles are applicable to our problem of protecting against (specifically) node failure.
-The important observation is that there may be no more than $n/3 - 1$ faulty processors for n total.
-This level of fault tolerance applies to our problem by implementing a voting scheme \cite{lam86} to determine correct computations from incorrect ones, where out commander and lieutennants are the controller and computing nodes respectively.
+The notion of fault tolerance is not new \cite{ran75}, however, it has become absolutely essential in more recent cloud and grid systems.
 
 The motivation behind this problem was described by Reed et al in \cite{ree06}.
 They point out that even ``under the generous assumption of fault independence'' that systems with $10^4$ nodes each having a lifetime of $10^6$ hours will likely fail in as little as 100 hours.
-This paper demonstrates both software and hardware changes to provide fault-tolerance, specifically dealing with an extension to the MPI framework to allow automatic checkpointing and recovery.
+The work demonstrates both software and hardware changes to provide fault-tolerance, specifically dealing with an extension to the MPI framework to allow automatic checkpointing and recovery.
 Though the chance of an individual failure is high, given enough backup processors the time to failure can be made sufficiently long \cite{ree06}.
 Unfortunately this implementation makes extensive use of hardware fault-detection systems, which we presume are unavailable in our context.
 This paper can be seen as presenting the checkpointing method of ensuring fault-tolerance, that is, if a computation fails the computation is backed-up to a checkpoint and re-run, this is one of the fault-tolerance mechanisms we shall be examining.
 
+Randell's early work \cite{ran75} focused more on software redundancies in the case of software faults.
+The work did discuss the notion of formal redundancies and checkpointing for fault-tolerance, which are techniques we are employing.
+
+Lamport et al. \cite{lam86} describe the notion of a Byzantine fault, in order to provide tolerance to ``arbitrary'' faults.
+The definition of a fault is discussed in more depth, we presume that each of the processors is malicious (that is, a traitorous general of the Byzantine army), and may act so as to prevent the army from taking action.
+This description accurately captures the nature of faults, that they may cause the computation to halt, to produce incorrect results, or to crash completely.
+The paper deals with assuring fault tolerance in the context of distributed clock synchronisation, however, the principles are applicable to our problem of protecting against (specifically) node failure.
+The important observation is that there may be no more than $n/3 - 1$ faulty for n total.
+Lamport proposes a voting scheme \cite{lam86} to determine correct computations from incorrect ones.
+
 We also intend to examine static fault-tolerance via task replication.
 An implementation of such a system for mobile grid computing is presented by Litke et al. in \cite{lit07}.
-This paper discusses the mathematics which determine the number of replicas required in order to assure fault tolerance of a system given a certain probability of failure.
-Litke et al. also provide simulated results (just as we intend to) based on a knapsack formulation of the scheduling of such a fault-tolerant system.
+The work discusses a technique to determine the number of replicas required in order to assure fault tolerance of a system given a certain probability of failure.
+Litke et al. also provide simulated results (just as we intend to) based on a Knapsack formulation of the scheduling of such fault-tolerant systems.
 This work is very similar to our goal except it does not deal with the problems unique to SDF, namely actor indivisibility, nor the communication costs of the system.
 
 Few of the implementations we have seen so far deal explicitly with fault-tolerance.
-Though it does not say so in \cite{pen09}, we can presume that an S-Net program, on detecting failure, would simply dynamically reassign the workload.
+S-Net makes no mention of fault tolerance or recovery mechanisms in \cite{pen09}.
 The MapReduce implementations \cite{dea08, ran07} both state their fault-tolerance mechanisms, namely reassigning jobs if a worker is presumed to have failed.
 Google's implementation discusses the master controller pinging each worker and presuming the worker fails if the ping times out.
 However neither system deals with the posibility (more likely in the case of PHOENIX \cite{ran07}) of master-failure.
-Google goes so far as to say ``our current implementation aborts the MapReduce computation of the master fails''.
-Granted master failure is unlikely, however a more desirable fault-tolerance scheme would be more robust to this possibility.
-Furthur none of these systems describe the relationship between faults and makespan in the way litke et al. do in \cite{lit07}.
+Google's implementation simply aborts the MapReduce computation if the master fails.
+Granted master failure is unlikely, however a better fault-tolerance scheme would be more desirable for this feature of robustness.
+Further, none of these systems describe the relationship between faults and makespan in the way of Litke et al. \cite{lit07}.
