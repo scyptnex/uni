@@ -256,31 +256,6 @@ Second from \ref{PATHASSIGN}:
 But this is a contradiction.
 \end{proof}
 
-%\begin{lemma}
-%\label{SINGLEPATH}
-%Any node with a path to a terminal in the residual graph has no path to any other terminal in that graph.
-%
-%\begin{align}
-%	\nonumber \forall v \in V, t \in T : \pi_{G_r}(v,t) \Rightarrow \forall s \in T \setminus \{t\} : \neg\pi(v,s)
-%\end{align}
-%\end{lemma}
-%\begin{proof}
-%Immediate by definition of the feasible space.
-%Otherwise $\pi_{G_r}(v,t) \wedge \pi_{G_r}(v,s) \Rightarrow \pi_{G_r}(t,s)$ which means the curset was not feasible.
-%\end{proof}
-
-%\begin{lemma}
-%\label{INVERSEEDGE}
-%In the inversion of a feasible solution to a multiterminal cut problem, the endpoints of an edge are assigned to different processors if an only if that edge is in the solution.
-%
-%\begin{align}
-%	\nonumber \forall S \in F : (u, v) \in S \Leftrightarrow \gamma'(S)(u) \neq \gamma'(S)(v) \wedge (u,v) \in E'
-%\end{align}
-%\end{lemma}
-%\begin{proof}
-%
-%\end{proof}
-
 \begin{lemma}
 \label{INVERSESUBSET}
 Any edge in the inversion of a feasible solution to a multiterminal cut with endpoints assigned to different processors had to be in the solution.
