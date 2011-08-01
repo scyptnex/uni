@@ -5,7 +5,7 @@ TEMPFI=thesis.temp.tex
 
 thesis.pdf: tIntroduction.tex tBackground.tex tExample.tex tSystems.tex tModel.tex tHardness.tex tAlgos.tex tExperiment.tex tRelated.tex tConclusion.tex $(META)
 	rm -f $(TEMPFI)
-	echo "\input{tIntroduction.tex}\n\input{tBackground.tex}\n\input{tExample.tex}\n\input{tSystems.tex}\n\input{tModel.tex}\n\input{tHardness.tex}\n\input{tAlgos.tex}\n\input{tExperiment.tex}\n\input{tRelated.tex}\n\input{tRelated.tex}" > $(TEMPFI)
+	echo "\input{tIntroduction.tex}\n\input{tBackground.tex}\n\input{tExample.tex}\n\input{tSystems.tex}\n\input{tModel.tex}\n\input{tHardness.tex}\n\input{tAlgos.tex}\n\input{tExperiment.tex}\n\input{tRelated.tex}\n\input{tConclusion.tex}" > $(TEMPFI)
 	pdflatex thesis.tex
 	bibtex thesis.aux
 	pdflatex thesis.tex

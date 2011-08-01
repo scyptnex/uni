@@ -1,5 +1,5 @@
-\section{Background}
-\subsection{Synchronous Dataflow}
+\chapter{Background}
+\section{Synchronous Dataflow}
 Synchronous dataflow (SDF) is a computing paradigm based on the execution of computational units called actors and the communication of computed outputs (called tokens) amongst the actors.
 Each actor may retain some information about previous invocations stored locally, this is called its state.
 Actors that do this are called stateful, whereas those that do not are called stateless.
@@ -26,14 +26,14 @@ Once sufficiently filled the ``steady-state schedule'' is run multiple times.
 One running of the steady state leaves the fill-state the same as before the schedule was ran.
 Finally if required a ``death schedule'' is used to return the fill state to before the init schedule was ran.
 
-\subsection{Cloud Computers}
+\section{Cloud Computers}
 Cloud computers are a general term for service-based computing systems.
 In recent years advancements in network technologies have made cloud systems popular, and providing software to run on these systems can be challenging.
 Although there are many nuances of ``cloud systems'' we are primarily concerned with those made up of hundreds to thoosands of stand-alone computers.
 
 SDF applications are particularly important to cloud systems as they provide easy decomposition of tasks.
 
-\subsection{Fault Tolerance}
+\section{Fault Tolerance}
 Fault tolerance is becomming a more important requirement for systems as they increase in size.
 Current implementations of SDF systems \cite{mal08, thies02, thies10} do not explicitly guarantee fault tolerance in execution.
 This is an acceptable shortfall in the case of standalone systems, where a ``node failure'' means the whole computer dies, and so no mechanisms can exist to recover from such a failure, the computation must be rerun.
