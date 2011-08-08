@@ -1,0 +1,58 @@
+multiple participants interact to affect each others outcomes
+
+solution concepts and computational issues
+	each player has a set of strategies and a payoff function
+	
+	n players, m strategies, player i has utility ui = ui(s1, .., sn)
+	(s1, s2,..., sn) is a nash equilibrium iff for all i=(1 to n)  ui(s1, ..., sn) >= ui(s1,...,si`,...,sn)
+	
+	battle of sexes, 2 stable (sport, sport) (opera, opera)
+	doves and hawks, (hawk, dove)(dove, hawk)
+	matching pennies, zero sum, no pure nash equilibria
+	
+	polution game - similar to n player prisoners
+		reducing polution costs 3 + n(for n polluting countries) and n to keep poluting
+		all countries pollute
+	tragedy of the commons
+		n players share a resource, max cpacity of 1, each player uses xi = [0, 1]
+		if use exceeds caoacity no player gets any benefit, otherwise payoff is xi(1-sum(xj))
+		player i maximises self x = (1-t)/2, all players use xi = 1/n+1
+		total payoff is 1/n, if all users used 1/2 total would be 1/4
+	
+	dominant strategy, highest payoff independant of other strategies, if all players have one game has a dominant strategy solution
+	pure nash equilibrium, ui(si, s-i) >= ui(si`, s-i)
+		no player can individually increase their payoff
+	mixed nash equilibrium
+		randomized strategies: matching pennies (0.5, 0.5)
+		(-1)pq + 1p(1-q) + 1(1-p)(q) + (-1)(1-p)(1-q)
+		maxp minq (2p-1)(1-2q) <- (1/2, 1/2)
+	
+	mixed payoff
+		player i chooses s1, s2 ... sm with probability ps1i, ps2i
+		ui = sum(ps11, ps22, ps33...psnn . ui(s1,...,sn))
+		
+	2 person zero sum game
+			a, -a | b, -b
+			c, -c | d, -d
+			
+			A = | a b |
+				| c d |
+		exp payoff (row) p1aq1 + p2bq2 + p3cq3 + p4dq4 = (p1, p2) A (q1 | q2)
+		players announcing strategies can expect <= to nash payoff
+		since announcing strategy shouldnt change equilibrium, means is equal to nash
+		prob dist will be unigue but more than one strategy can give same prob dist
+	
+	players {1, ..., n}
+	each player has set of strategies Sj = {s1, s2, ..., sm}
+	all strategy profiles S = S1 x S2 x ... x Sn
+	each player chooses a distribution over Si: Pi in R^m
+	p is nash eq iff forall ui(p) >= ui(si ; P-i) i.e. mixed is checked against pure, weighted average
+
+Nash's theorem
+	"any game with a finite set of players and strategies has a nash equilibrium"
+	
+	
+fixed point theorem
+complexity of games
+chaps 2 and 3
+networks crowds and markets

@@ -2,6 +2,8 @@
 
 \section{SDF and Parallel Paradigms}
 
+\subsection{Historic Work}
+
 The Synchronous Dataflow (SDF) paradigm builds on the more general computation graphs described in \cite{kar66}.
 At the time that model was only a graph-theoretical representation of parallel computation, and was more of an abstraction rather than a paradigm.
 We compare this with the more fleshed-out description of the fundamentals of the language in \cite{sdfBook}.
@@ -37,6 +39,25 @@ This assumption is not allowed in general for SDF programs, whose actors can hav
 This is not a problem for the most well known massively-parallel paradigm, MapReduce.
 MapReduce \cite{dea08} is a popular tool for large scale data-crunching.
 Much of the work goes into distributed-memory grid/cloud systems, however implementations such as PHOENIX \cite{ran07} demonstrate the paradigm's viability for shared-memory multithreaded systems.
+
+\subsection{Modern work}
+
+More modern implementations of streaming systems build on the simpler ideas expressed above.
+These systems are designed in an era dominated by real world peta-scale systems involving thousands of computers, and so can be better tested under those conditions.
+StreaMIT \cite{thies01, thies02, thies10} we saw earlier, but other systems such as pig \cite{ols08}, SPADE \cite{ged08}, Sawzall \cite{pik05} and DryadLINQ \cite{yu08} also exist in this domain.
+
+The trend is in data analysis and distributed database applications.
+Olston et al. describe Pig Latin \cite{ols08} which is a declaritive-style language for large-scale distributed database and compiles into execution plans for the open source Map-Reduce implementation {\em hadoop}.
+This is very similar in principle to Sawzall \cite{pik05} by Pike et al. and SPADE \cite{ged08} by Gedik et al., though Sawzall is designed more for automatic analysis whereas SPADE is for more general databasing.
+It is also worthwhile to note that pig and Sawzall are system agnostic whereas SPADE is designed for IBM's System-S.
+For comparison DryadLINQ \cite{yu08} by Yu et al. encorporates features of general purpose languages (Objects, strong typing) as well as highly parallel execution environments (Map-Reduce, Distributed databases).
+To an extent these systems attempt to provide farmiliar programming concepts to users along with well-known powerful technologies.
+In contrast the more rigid and limiting StreaMIT is not so extensible, instead focusing more on performance through compiler optimisations \cite{thies01}.
+
+The notion of optimising streaming and peta-scale computations is not new, however, an important means of formalising these notions for compiler validation and optimisation came from Soul{\'e} et al. with their universal calculus \cite{sou10}.
+This allows us to compare the enrality and performance of streaming languages themselves, and that work (besides introducing the calculus {\em Brooklet}) makes a comparison between Sawzall, StreaMIT and CQL, a dialect of StreamSQL.
+Understandably then, a large part of these modern streaming systems' focus is on performance optimizations, specifically linear or near-linear scaling improvements (both for the system itself and for the computations).
+To a extent the literature on these systems neglects issues such as faultiness in favour of performance.
 
 \section{Fault Tolerance}
 
