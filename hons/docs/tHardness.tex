@@ -1,6 +1,6 @@
 \chapter{NP-Hardness}
 
-\section{RAAP and MTC}
+\section{Graph and Path Predicate}
 
 \begin{definition}
 Graph $G$
@@ -18,25 +18,25 @@ Note: if $V' \subset V \vee E' \subset E$ then we may call the graph $G'=(V',E')
 \begin{definition}
 Path Predicate.
 
-This predicate $\pi$ is true in the following cases:
+This predicate $\pi$ is true for the graph $G=(V,E)$ in the following cases:
 
 \begin{align}
-	\nonumber \forall (u,v) \in V^2 : \pi(u, v) \Leftrightarrow & ( (u, v) \in E \\
-	\nonumber & \vee \langle \exists w \in V : \pi(u, w) \wedge (w, v) \in E \rangle \\
-	\nonumber & \vee u = v )
+	\nonumber \forall (u,v) \in V^2 : \path{E}{u}{v} \Leftrightarrow & ( (u, v) \in E \\
+	\nonumber & \vee \langle \exists w \in V : \path{E}{u}{w} \wedge (w, v) \in E \rangle \\
+	\nonumber & \vee u = v ).
 \end{align}
 
 Note also then that:
 
 \begin{align}
-	\nonumber \exists w \in V : \pi(u, w) \wedge \pi(w, v) \Rightarrow \pi(u, v)
+	\nonumber \exists w \in V : \path{E}{u}{w} \wedge \path{E}{w}{v} \Rightarrow \path{E}{u}{v}.
 \end{align}
 
-For simplicity we shall use $\neg\pi(u, v)$ when the predicate does not hold.
-
-For clarity we may say $\pi_{(V,E)}$ to explicitly state that this predicate applies to the graph $G=(V,E)$.
+For simplicity we shall use $\npath{E}{u}{v}$ when the predicate does not hold.
 
 \end{definition}
+
+\section{RAAP and MTC}
 
 \begin{definition}
 {\em Multi-Terminal Cut}
@@ -51,16 +51,16 @@ An instance of MTC is therefore defined formally:
 	\nonumber & T \subseteq V
 \end{align}
 
-Solution Space: $2^E$
+Solution: $\mSolution \in 2^E$
 
-Solution Cost: $C : 2^E \rightarrow \mathbb{Z}^+$
+Solution Cost: $\mCost : 2^E \rightarrow \mathbb{Z}^+$
 \begin{align}
-	\nonumber C(S) = \displaystyle\sum\limits_{(u,v) \in S} w(u,v)
+	\nonumber \mCost(S) = \displaystyle\sum\limits_{(u,v) \in S} w(u,v)
 \end{align}
 
 Feasible Solution Space: $F \subseteq 2^E$
 \begin{align}
-	\nonumber \forall S \in F : \forall (s, t) \in T^2 \setminus \{(r, r) | r \in T\} : \neg\pi_{(V, E \setminus S)}(s, t)
+	\nonumber \forall S \in F : \forall s, t \in T: s \neq t \Rightarrow \npath{E \setminus S}{s}{t}
 \end{align}
 
 Optimal Solution Space: $O \subseteq F$
@@ -79,8 +79,8 @@ $G_r = (V, E \setminus S, w, T)$
 \begin{definition}
 {\em Robust Actor Allocation}
 
-Given a graph $G=(V,E,w_c,w_i, P, A)$, a partitioning of $V$ into $k$ subsets and a set of processors $P$, where $w_c : E \rightarrow \mathbb{Z}^+$ and $w_i : V \times P \rightarrow \mathbb{Z}^+$, find a mapping $\alpha : V \rightarrow P$ such that:
-$\displaystyle\sum\limits_{(u,v) \in E : \alpha(u) \neq \alpha(v)} w_c(u,v) + \displaystyle\sum\limits_{v \in V} w_i(v, \alpha(v))$ is minimised and no actors in the same partition are assigned to the same processor.
+Given a graph $G=(V,E,w_c,w_i, P, A)$, a partitioning of $V$ into $k$ subsets and a set of processors $P$, where $w_c : E \rightarrow \mathbb{Z}^+$ and $w_i : V \times P \rightarrow \mathbb{Z}^+$, find a mapping $\alpha : V \rightarrow P$ such that
+the cost function $\rCost(\rSolution)$ (detailed below) is minimised and no actors in the same partition are assigned to the same processor.
 
 \begin{align}
 	\nonumber RAAP = & (V,E,w_c, w_i, P, A)\\
@@ -91,20 +91,24 @@ $\displaystyle\sum\limits_{(u,v) \in E : \alpha(u) \neq \alpha(v)} w_c(u,v) + \d
 	\nonumber & A \subseteq 2^V \quad s.t. : \displaystyle\bigcup\limits_{S \in A} S = V \wedge \langle \forall S_1, S_2 \in A : S_1 \neq S_2 \Rightarrow S_1 \cap S_2 = \emptyset \rangle
 \end{align}
 
-Solution Space: $\rSolution \in P^V$
+Solution: $\rSolution \in V \rightarrow P$
 
-Solution Cost: $\rCost : P^V \rightarrow \mathbb{Z}^+$
+Solution Cost: $\rCost : V \rightarrow P \rightarrow \mathbb{Z}^+$
 \begin{align}
-	\nonumber \rCost(\rSolution) = \displaystyle\sum\limits_{(u,v) \in E : \alpha(u) \neq \alpha(v)} w_c(u,v) + \displaystyle\sum\limits_{v \in V} w_i(v, \alpha(v))
+	\nonumber \rCost(\rSolution) = \displaystyle\sum\limits_{(u,v) \in E : \rSolution(u) \neq \rSolution(v)} w_c(u,v) + \displaystyle\sum\limits_{v \in V} w_i(v, \rSolution(v))
 \end{align}
 
-Feasible Solution Space: $\rSolution \in \rFeasible \subseteq P^V$
+Feasible Solution Space: $\rFeasible \subseteq V \rightarrow P$
 \begin{align}
-	\nonumber \rCost(\alpha) & \neq \infty \quad \mbox{We use $\infty$ as a placeholder for a very large integer} \\
-	\nonumber \forall A_i \in A : \forall u , v \in A_i : u \neq v \Rightarrow \alpha(u) & \neq  \alpha(v)
+	\nonumber \forall \rSolution \in \rFeasible & \\
+	\nonumber \mbox{(1)} \quad & \rCost(\rSolution) \neq \infty \quad \mbox{We use $\infty$ as a placeholder for a very large integer} \\
+	\nonumber \mbox{(2)} \quad & \forall A_i \in A : \forall u , v \in A_i : u \neq v \Rightarrow \rSolution(u) \neq  \rSolution(v)
 \end{align}
 
-Optimal Solution Space: $\rSolution \in \rOptimal \subseteq \rFeasible$
+The feasibility constraint (1) here is used as a means of excluding parts of the solution space known to be non-optimal from the feasible region too.
+It is simply a shortcut but does not affect the results.
+
+Optimal Solution Space: $\rOptimal \subseteq \rFeasible$
 \begin{align}
 	\nonumber 	\forall \rSolution_o \in \rOptimal : \forall \rSolution_f \in \rFeasible : \rCost(\rSolution_o) \leq \rCost(\rSolution_f)
 \end{align}
@@ -115,8 +119,6 @@ Optimal Solution Space: $\rSolution \in \rOptimal \subseteq \rFeasible$
 
 \begin{definition}
 Mapping
-
-For convenience we shall call the feasible and optimal solution spaces and cost for the RAAP side of the mapping $F'$, $O'$ and $C'$ respectively.
 
 \begin{align}
 	\nonumber I \in & MTC(V,E,w,T) &\\
@@ -134,6 +136,9 @@ For convenience we shall call the feasible and optimal solution spaces and cost 
 	\nonumber A & = \{\{v\} | v \in V\}
 \end{align}
 
+Note that $w_i(v, p)$ may take infinity where $v$ is a terminal that doesnt map to $p$.
+This is simply a way of forcing all terminals to be mapped to themselves, as we shall see.
+
 We have used ``$=$'' to keep future descriptions simple, where we really mean:
 \begin{align}
 	\nonumber \langle \exists f : V \rightarrow V' \quad s.t. & \\
@@ -143,8 +148,8 @@ We have used ``$=$'' to keep future descriptions simple, where we really mean:
 	\nonumber & \forall (u, v) \in E : w_c(f(u), f(v)) = w(u, v) \rangle
 \end{align}
 
-The above mapping makes $A$ consist of singletons of vertices, which makes it impossible to violate feasibility.
-When talking about mapped instances we may therefore ignore it.
+The above mapping constrains $A$ to be singletons of vertices, which makes it impossible to violate feasibility constraint (2).
+When talking about mapped instances we may therefore ignore this constraint.
 \end{definition}
 
 \section{Feasibility of the Mapping}
@@ -153,14 +158,14 @@ When talking about mapped instances we may therefore ignore it.
 Reversal Function $\gamma$
 
 \begin{align}
-	\nonumber \reverse & : P^V \rightarrow 2^E \\
+	\nonumber \reverse & : V \rightarrow P \rightarrow 2^E \\
 	\nonumber \reverse(\rSolution) & = \{(u,v) \in E | \alpha(u) \neq \alpha(v)\}
 \end{align}
 \end{definition}
 
 \begin{lemma}
 \label{EDGEASSIGN}
-The 2 nodes at the endpoint of any edge in the residual graph were assigned to the same processor:
+The two nodes at the endpoint of any edge in the residual graph were assigned to the same processor:
 
 \begin{align}
 	\nonumber \forall(u, v) \in E \setminus \gamma(\alpha) : \alpha(u) = \alpha(v)
@@ -175,21 +180,25 @@ Immediate by definition of $\gamma$.
 The two nodes for which the path predicate is true in the residual graph were assigned to the same processor:
 
 \begin{align}
-	\nonumber \forall (u, v) \in V^2 : \pi_{(V, E \setminus \gamma(\alpha))}(u,v) \Rightarrow \alpha(u) = \alpha(v)
+	\nonumber \forall (u, v) \in V^2 : \path{E \setminus \reverse(\rSolution)}{u}{v} \Rightarrow \alpha(u) = \alpha(v)
 \end{align}
 \end{lemma}
 \begin{proof}
-Using \ref{EDGEASSIGN} and induction on the path predicate.
+Using Lemma \ref{EDGEASSIGN} and induction on the path predicate, we take the above to be the inductive hypothesis.
 
 In the trivial cases:
 \begin{align}
-	\nonumber \forall v \in V : \pi(v, v) & \Rightarrow \alpha(v) = \alpha(v) \\
-	\nonumber \forall (u, v) \in E \setminus \gamma(\alpha) : \pi(u, v) & \Rightarrow \alpha(u) = \alpha(v) \quad \mbox{From \ref{EDGEASSIGN}}
+	\nonumber \forall v \in V : \path{E \setminus \reverse(\rSolution)}{v}{v} & \Rightarrow \alpha(v) = \alpha(v) \\
+	\nonumber \forall (u, v) \in E \setminus \gamma(\alpha) : \path{E \setminus \reverse(\rSolution)}{u}{v} & \Rightarrow \alpha(u) = \alpha(v) \quad \mbox{From \ref{EDGEASSIGN}}
 \end{align}
 
-Otherwise:
+Now we draw the recursive step from the definition of the path predicate: $\path{E}{u}{w} \wedge (w,v) \in E \Rightarrow \path{E}{u}{v}$.
+Thus:
+
 \begin{align}
-	\nonumber \forall (u, v) \in V^2 : \pi(u, v) \Rightarrow \exists w \in V : \pi(u, w) \wedge (w, v) \in E \setminus \gamma(\alpha)
+	\nonumber \path{E \setminus \reverse(\rSolution)}{u}{w} & \Rightarrow \rSolution(u) = \rSolution (w) \quad \mbox{from the hypothesis}\\
+	\nonumber (w, v) \in E \setminus \reverse(\rSolution) & \Rightarrow \rSolution(w) = \rSolution(v) \quad \mbox{from \ref{EDGEASSIGN}}\\
+	\nonumber & \Rightarrow \rSolution(u) = \rSolution(v)
 \end{align}
 
 Clearly by \ref{EDGEASSIGN} $\alpha(w) = \alpha(v)$ and the definition recurs backwards until it is satisfied by one of the trivial cases.
@@ -211,29 +220,28 @@ Otherwise $\rCost(\rSolution) = \infty$ and therefore $\rSolution \not\in \rFeas
 
 \begin{lemma}
 \label{REVERSEFEASABLE}
-The reverse solution for any feasible $\alpha$ is also a feasible $S$.
+The reverse solution for any feasible $\alpha$ is also a feasible solution for the MTC instance.
 
 \begin{align}
-	\nonumber \forall \alpha \in F' : \gamma(\alpha) \in F
+	\nonumber \forall \rSolution \in \rFeasible : \reverse(\rSolution) \in \mFeasible
 \end{align}
 \end{lemma}
 \begin{proof}
-In other words, we must show that $\forall s, t \in T : s \neq t \Rightarrow \npath{(V, E \setminus \gamma(\alpha))}{s}{t}$.
+In other words, we must show that $\forall s, t \in T : s \neq t \Rightarrow \npath{E \setminus \reverse(\rSolution)}{s}{t}$.
 
-To prove this by contradiction let us presume $\exists \beta \in F' : \gamma(\beta) \not\in F$.
-Therefore $\exists (s, t) \in T^2 \setminus \{(r,r) | r \in T\} : \pi_{(V, E \setminus \gamma(\alpha))}(s, t)$.
+To prove this by contradiction let us presume $\exists \beta \in \rFeasible : \reverse(\beta) \not\in \mFeasible$.
+Therefore $\exists s, t \in T : s \neq t \wedge \path{E \setminus \reverse(\beta)}{s}{t}$.
 
-First from \ref{FORCEASSIGN}:
-\begin{align}
-	\nonumber \mbox{since } \beta(s) = s \mbox{ and } \beta(t) = t \\
-	\nonumber s \neq t \Rightarrow \beta(s) \neq \beta(t)
-\end{align}
+Now, let us assume $s, t \in T, s \neq t$ and $\path{E \setminus \reverse(\beta)}{s}{t}$.
+First from \ref{FORCEASSIGN}, it is the case that $\beta(s) = s$ and $\beta(t) = t$.
+So since $s \neq t$ then $\beta(s) \neq \beta(t)$.
 
 Second from \ref{PATHASSIGN}:
 \begin{align}
-	\nonumber \forall (u, v) \in V^2 : \pi_{(V, E \setminus \gamma(\alpha))}(u,v) & \Rightarrow \alpha(u) = \alpha(v) \\
-	\nonumber \pi(s, t) & \Rightarrow \beta(s) = \beta(t)
+	\nonumber \forall (u, v) \in V^2 : \pi_{(V, E \setminus \gamma(\alpha))}(u,v) & \Rightarrow \alpha(u) = \alpha(v)
 \end{align}
+
+And therefore since $\path{E \setminus \reverse(\beta)}{s}{t}$, $\beta(s) = \beta(t)$.
 
 But this is a contradiction.
 \end{proof}
@@ -241,7 +249,7 @@ But this is a contradiction.
 \section{Optimality of the mapping}
 
 We need to show that the mapping allows us to solve the MTC problem optimally if we can solve the RAAP mapped instance optimally.
-To do this we must show that all reversed optimal RAAP solutions are also optimal MTC solutions.
+To do this we must show that all optimal solutions of the RAAP instance $\rInstance$ can be reversed using $\reverse$ to optimal solutions of the MTC instance $\mInstance$.
 
 We intuit a surjection on the reversal function.
 If we were to name processors in the assignment, we can have a different assignment by switching the names of 2 processors that would yield the same reversed solution.
@@ -253,16 +261,16 @@ Most importantly we can say something about the cost of inverted solutions which
 \begin{definition}
 Inversion Function $\inverse$
 
+First we pick arbitrarily $t_0 \in T$ as a default processor.
+We use it to be able to assign vertices $v \in V'$ for which $\forall t \in T : \npath{}{v}{t}$.
 \begin{align}
-	\nonumber \inverse & : 2^E \rightarrow P^V \\
+	\nonumber \inverse & : 2^E \rightarrow (V \rightarrow P) \\
 	\nonumber \inverse(S) & = \rSolution \mbox{ where } \forall v \in V' \alpha(v) = \mbox{$\left\{ 
 		\begin{array}{l l}
 			t \quad & \mbox{if $t \in T \wedge \path{(V,E \setminus S)}{v}{t}$}\\
-			t_0 & \mbox{for some $t_o \in T$ otherwise}\\ \end{array} \right.$} 
+			t_0 & \mbox{otherwise}\\ \end{array} \right.$} 
 \end{align}
 
-The choice of $t_0$ is arbitrary and, as we shall see, irrelevant.
-We simply choose it to be able to assign vertices $v \in V'$ for which $\forall t \in T : \npath{}{v}{t}$.
 \end{definition}
 
 \begin{lemma}
@@ -270,35 +278,36 @@ We simply choose it to be able to assign vertices $v \in V'$ for which $\forall 
 Any edge in the inversion of a feasible solution to a multiterminal cut with endpoints assigned to different processors had to be in the solution.
 
 \begin{align}
-	\nonumber & \forall (u, v) \in E' : \gamma'(S)(u) \neq \gamma'(S)(v) \Rightarrow (u,v) \in S \\
+	\nonumber & \forall \mSolution \in \mFeasible : \forall (u, v) \in E' : \gamma'(S)(u) \neq \gamma'(S)(v) \Rightarrow (u,v) \in S \\
 	\nonumber \mbox{or} &\\
-	\nonumber & \forall S \in F : \{(u,v) | \gamma'(S)(u) \neq \gamma'(S)(v)\} \subseteq S
+	\nonumber & \forall S \in F : \{(u,v) |(u, v) \in E' \wedge \gamma'(S)(u) \neq \gamma'(S)(v)\} \subseteq S
 \end{align}
 \end{lemma}
 \begin{proof}
 To prove this by contradiction we must show that there is no edge with differently assigned endpoints that is not in the solution.
 Assume $\exists (u,v) \in E' : \gamma'(S)(u) \neq \gamma'(S)(v) \wedge (u,v) \not\in S$.
 
-Neither or one of $u$ or $v$ may have the arbitrailty chosen assignment $t_0$, all others have an assignment to $\gamma'(S)(v) = t$ if $\pi_{(V, E \setminus S)}(v, t)$.
+For the above assumption we are concerned with two possible cases, either neither $u$ nor $v$ has been assigned the default processor (1) $t_0$ or one of them has (2).
+It is possible that one of the nodes happened to be assigned the default processor because they are connected (rather than because it was disconnected from every terminal) but we can ignore this case as we only need to show the Lemma for all differently assigned nodes.
 
-Let us say that $\gamma'(S)(u) = t_0$:
+1) When neither node was assigned the default processor we have the following:
 \begin{align}
-	\nonumber \exists s \in T \setminus \{t_0\} & : \pi(v, s) \\
-	\nonumber & \Rightarrow \pi(u, s) \\
-	\nonumber & \Rightarrow \gamma'(S)(u) = s \neq t_0
-\end{align}
-
-The definition of the inversion function procludes that assignment.
-A similar problem arises in the case where neither endpoint is assigned to the arbitrary $t_0$.
-\begin{align}
-	\nonumber \exists s \neq t \in T  & : \pi(u, s) \wedge \pi(v, t) \\
-	\nonumber \exists (u, v) \in E & \\
-	\nonumber & \Rightarrow \pi(u, t) \wedge \pi(v, s) \\
+	\nonumber \exists s \neq t \in T  & : \path{E \setminus S}{u}{s} \wedge \path{E \setminus S}{v}{t} \\
+	\nonumber \exists (u, v) \in E \setminus S& \\
+	\nonumber & \Rightarrow \path{E \setminus S}{u}{t} \wedge \path{E \setminus S}{v}{s} \\
 	\nonumber & \Rightarrow S \not\in F
 \end{align}
 
-Then that assignment would mean $S$ was infeasible.
-Hence the contradicting assumption cannot exist.
+2) When one of the nodes was assigned the default processor we have the following:
+\begin{align}
+	\nonumber \mbox{Let: } \inverse(S)(u) = t_0 & \\
+	\nonumber \exists s \in T \setminus \{t_0\} & : \path{E \setminus S}{v}{s} \\
+	\nonumber & \Rightarrow \path{E \setminus S}{u}{s} \\
+	\nonumber & \Rightarrow \gamma'(S)(u) = s = t_0
+\end{align}
+But that is a contradiction, since we assumed $v$ was assigned to a different terminal to $t_0$ and therefore $s \neq t_0$.
+
+Hence both cases would lead to contradictions.
 \end{proof}
 
 \begin{lemma}
@@ -315,10 +324,10 @@ Since the mapping allows us to ignore the partitioning constraint on feasibility
 Immediately from the path predicate and definition of $\gamma'$ we see that $\forall t \in T : \gamma'(S)(t) = t$.
 
 \begin{align}
-	\nonumber C'(\gamma'(s)) & = \displaystyle\sum\limits_{(u,v) \in E' : \gamma'(S)(u) \neq \gamma'(S)(v)} w_c(u,v) + 0 \\
-	\nonumber C'(\gamma'(s)) & \leq \displaystyle\sum\limits_{(u,v) \in E'} w_c(u,v) \\
-	\nonumber C'(\gamma'(s)) & \neq \infty \\
-	\nonumber \gamma'(s) & \in F'
+	\nonumber \rCost(\inverse(\mSolution)) & = \displaystyle\sum\limits_{(u,v) \in E' : \gamma'(S)(u) \neq \gamma'(S)(v)} w_c(u,v) + 0 \\
+	\nonumber \rCost(\inverse(\mSolution)) & \leq \displaystyle\sum\limits_{(u,v) \in E'} w_c(u,v) \\
+	\nonumber \rCost(\inverse(\mSolution)) & \neq \infty \\
+	\nonumber \inverse(\mSolution) & \in F'
 \end{align}
 \end{proof}
 
@@ -351,7 +360,7 @@ The solution to the RAAP instance of a mapped MTC problem costs the same as the 
 \end{align}
 \end{lemma}
 \begin{proof}
-Immediately by the definitions of the mapping, $\gamma$ and lemma \ref{FORCEASSIGN}.
+Immediately by the definitions of the mapping, $\gamma$ and Lemma \ref{FORCEASSIGN}.
 
 From \ref{FORCEASSIGN} we know $\forall t \in T : \rSolution(t) = t$ hence $\displaystyle\sum\limits_{v \in V'} w_i(v, \rSolution(v)) = 0$.
 
@@ -376,11 +385,16 @@ This uses a contradiction that would arise otherwise because of lemmas \ref{INVE
 \begin{align}
 	\nonumber \mbox{Assume:} \quad & \exists \alpha \in O' : \gamma(\alpha) \not\in O \\
 	\nonumber & \Rightarrow \exists S \in F : C(S) < C(\gamma(\alpha)) \quad \mbox{Definition of optimal space} \\
-	\nonumber & \Rightarrow \forall \beta \in F' : C'(\alpha) \leq C'(\beta) \\
 	\nonumber \\
-	\nonumber & \gamma'(S) \in F' \\
-	\nonumber & C'(\gamma'(S)) \leq C(S) < C(\gamma(\alpha)) = C'(\alpha) \\
+	\nonumber \alpha \in \rOptimal & \Rightarrow \forall \beta \in \rFeasible : \rCost(\alpha) \leq \rCost(\beta) \quad (*)\\
+	\nonumber \\
+	\nonumber \mbox{from \ref{INVERSEFEASIBLE}}\quad & \inverse(\mSolution) \in \rFeasible \\
+	\nonumber \mbox{from \ref{INVERSECOST}}\quad & \rCost(\inverse(\mSolution)) \leq \mCost(S) \\
+	\nonumber & \mCost(S) < \mCost(\reverse(\rSolution)) \\
+	\nonumber \mbox{from \ref{REVERSECOST}}\quad & \mCost(\reverse(\rSolution)) = \rCost(\rSolution)\\
 	\nonumber & \Rightarrow C'(\gamma'(S)) < C'(\alpha) \\
 	\nonumber & \Rightarrow \alpha \not\in O'
 \end{align}
+But this contradicts (*).
+
 \end{proof}
