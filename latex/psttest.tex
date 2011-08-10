@@ -1,0 +1,21 @@
+\documentclass{article}
+\usepackage{pst-all}
+\begin{document}
+
+\begin{figure}
+\begin{center}
+\label{SOMEFIGURE}
+	\begin{pspicture}(4,5)
+		\psgrid[subgriddiv=1,griddots=10,gridlabels=7pt]
+		\rput[tl](0,3){\rnode{A}{\psframebox{Node A}}}
+		\rput[br](4,0){\ovalnode{B}{Node B}}
+		\ncdiag[angleA=-90,angleB=90,arm=.5,linearc=.2]{A}{B}
+	\end{pspicture}
+\caption{Here is a picture}
+\end{center}
+\end{figure}
+
+
+Here is a ref to \ref{SOMEFIGURE} huzzah.
+
+\end{document}
