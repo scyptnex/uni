@@ -1,0 +1,36 @@
+\begin{pspicture}(10,6)
+	
+	\cnode(1,1){0.6}{l1}
+	\cnode(4,1){0.6}{l2}
+	\cnode(2.5,5){0.6}{l3}
+	\cnode(6,1){0.6}{r1}
+	\cnode(9,1){0.6}{r2}
+	\cnode(7.5,5){0.6}{r3}
+	
+	\ncline{->}{l3}{l1}
+	\bput(0.15){3}
+	\bput(0.85){1}
+	\ncline{->}{l3}{l2}
+	\bput(0.15){2}
+	\bput(0.85){1}
+	\nccurve[angleA=0,angleB=90]{->}{l3}{l2}
+	\aput(0.15){2}
+	\aput(0.85){1}
+	\ncline{->}{l1}{l2}
+	\aput(0.15){1}
+	\aput(0.85){1}
+	
+	\ncline{->}{r3}{r1}
+	\bput(0.15){2}
+	\bput(0.85){1}
+	\ncline{->}{r3}{r2}
+	\bput(0.15){2}
+	\bput(0.85){1}
+	\nccurve[angleA=0,angleB=90]{->}{r3}{r2}
+	\aput(0.15){2}
+	\aput(0.85){1}
+	\ncline{->}{r1}{r2}
+	\aput(0.15){1}
+	\aput(0.85){1}
+
+\end{pspicture}
