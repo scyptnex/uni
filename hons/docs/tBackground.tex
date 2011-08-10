@@ -6,10 +6,15 @@ The entire domain of streaming systems is diverse and loosely defined.
 For convenience streaming programs can be though of as those which deal with ``flows'' of data rather than the more traditional Von Neumann computational model.
 To that end streaming systems can range from {\em dataflow} type systems to {\em signal processing}.
 
-%CHEESE
-{\em Here we have a picture of a typical D-Graph}
+\begin{figure}
+\begin{center}
+	\input{figures/backDataflow}
+\caption{A simple computational graph.  This one computes $ax^2 + bx + c$}
+\label{figSimpleDG}
+\end{center}
+\end{figure}
 
-Stream programs can be though of as computational graphs, often visualised as directed graphs.
+Stream programs can be though of as computational graphs, often visualised as directed graphs, such as the one in Figure \ref{figSimpleDG}.
 In future we shall say that such a graph has $n$ nodes and $m$ arcs.
 In general systems the graphs have some nodes which provide inputs for the system, other nodes which transform data, and finally nodes which publish this data.
 In such graphs data is not a discrete finite unit but rather a (possibly infinite) stream, where each node in the graph performs an atomic computation, possibly consuming a subsequence of its inputs and possibly producing more data on its outputs.

@@ -1,0 +1,34 @@
+\begin{pspicture}(10,7)
+	
+	\cnodeput(7,1){A}{A}
+	\cnodeput(2,5){B}{B}
+	\cnodeput(9,6){C}{C}
+	
+	\cnodeput(1,2){X}{In}
+	
+	\cnodeput(3,1){0}{Dup}
+	\cnodeput(3,3){1}{Dup}
+	
+	\cnodeput(5,2){2}{Mult}
+	\cnodeput(5,5){3}{Mult}
+	\cnodeput(7,3){4}{Mult}
+	
+	\cnodeput(7,5){5}{Add}
+	\cnodeput(9,4){6}{Add}
+	
+	\cnodeput(9,2){Y}{Out}
+	\ncarc{->}{X}{0}
+	\ncarc{->}{0}{1}
+	\ncarc{->}{0}{2}
+	\ncarc{->}{1}{2}
+	\ncarc{->}{B}{3}
+	\ncarc{->}{A}{4}
+	\ncarc{->}{1}{3}
+	\ncarc{->}{2}{4}
+	\ncarc{->}{3}{5}
+	\ncarc{->}{4}{5}
+	\ncarc{->}{5}{6}
+	\ncarc{->}{C}{6}
+	\ncarc{->}{6}{Y}
+
+\end{pspicture}
