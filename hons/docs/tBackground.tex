@@ -4,7 +4,7 @@
 \subsection{Streaming Systems}
 The entire domain of streaming systems is diverse and loosely defined.
 For convenience streaming programs can be though of as those which deal with ``flows'' of data rather than the more traditional Von Neumann computational model.
-To that end streaming systems can range from {\em dataflow} type systems to {\em signal processing}.
+To that end streaming systems can range from dataflow type systems to signal processing.
 
 \begin{figure}
 \begin{center}
@@ -22,7 +22,7 @@ In this way the data streams are said to flow along the edges of the graph, thes
 
 As a rule there are no restrictions applied to such computational graphs.
 However as we shall see there may be some limitations we can apply to these graphs in order to gain desirable properties.
-These restrictions are detailed in \ref{BACK_SYNC}.
+These restrictions are detailed in section \ref{BACK_SYNC}.
 
 Stephens has compiled a more complete survey \cite{ste97} on the range of implementations for the varying flavours of stream systems.
 In that work he makes special note of the lack of coherence or similarity between differing implementations or even purposes for stream computation.
@@ -89,30 +89,57 @@ The other large area of use is in signal processing and other variants of real t
 Environmental and status monitors, as well as astronomical software, right through to media applications like video processing (and video playing \cite{thies02}) fall under this category.
 Applications of this kind benefit from the more natural expression of the streaming domain, as well as benefiting from parallelism.
 
-\section{Cloud Computers}
-Cloud computers are a general term for service-based computing systems.
-In recent years advancements in network technologies have made cloud systems popular, and providing software to run on these systems can be challenging.
-Although there are many nuances of ``cloud systems'' we are primarily concerned with those made up of hundreds to thoosands of stand-alone computers.
-
-SDF applications are particularly important to cloud systems as they provide easy decomposition of tasks.
-
 \section{Fault Tolerance}
-Fault tolerance is becomming a more important requirement for systems as they increase in size.
-Current implementations of SDF systems \cite{mal08, thies02, thies10} do not explicitly guarantee fault tolerance in execution.
-This is an acceptable shortfall in the case of standalone systems, where a ``node failure'' means the whole computer dies, and so no mechanisms can exist to recover from such a failure, the computation must be rerun.
-However in the cloud/grid context mean time to failure (MTTF) can be as short as 100h \cite{ree06}.
-As such, mechanisms must be put in place to ensure successful computation given a few node failures.
+\subsection{Motivating Problems}
+Fault tolerance (FT) has a broad meaning in regards to computer systems.
+Intuitively we think of FT as some mechanisms or practices inherant in systems that prevent them from failing completely under adverse circumstances.
+Though this understanding lacks formal grounding, as we shall see it is useful to begin with.
+Most computer users will experience faults on a regular basis, ranging from bugs or errors to more serious security flaws and instability.
+Systems which are able to ignore or recover from such problems may be called fault tolerant.
 
-Fault tolerance can be achieved through several mechanisms:
+Whilst home systems may benefit from some ammount of FT, this becomes an absolure requirement for large systems.
+To demonstrate this let us treat faults like a random variable, and say that every hour a computer has a small chance of serious fault (overheated core, disk corruption, terminal bugs or malware, magnetic interference etc.) causing the computer to go offline.
+Reed, Lu and Mendes observed that even given a reasonably small probability, such that an individual computer fails on average after $10^6$ hours, in large systems composed of 10000 computers, at least one component is likely to fail in hunder 100 hours \cite{ree06}.
+Large systems therefore require stronger guarantees for FT.
+
+However not all FT mechanisms are the same.
+We shall detail the actual mechanisms in the following sections, but to compare them we must state what the desirable properties of FT are.
 \begin{itemize}
-	\item Replication is where multiple versions of the same computation take place on different machines.  By mechanisms described by Lamport and Smith in \cite{lam86}, so long as no less than two thirds of the computations succeed, the failing computations can be ignored.
-			These systems are also called ``redundant''.  Some variations of RAID are typical examples of fault tolerance using this mechanism.
-	\item Checkpointing is where successful states are saved to disk, so that in the event of a failure, the last successful state can be reverted to and computation re-performed.
+	\item	The system must be able to recover from arbitrary faults.
+			Lamport and Smith's early work on {\em byzantine} fault tolerance \cite{lam86} informs our understading here.
+			The intuition is that the systems designer cannot know in advance which nodes are likely to fail or how, and therefore must cope with the worst possible kinds of faults, namely malicious attacks.
+			That work crucially deals with the notion that a fault can come from any source.
+			Systems such as Google's Mapreduce \cite{dea08} are able to handle most faults, however are unable to recover from faults in certain key machines.
+	\item	The overhead for FT must be reasonable.
+			More intuitively it shouldnt cost more to prevent certain kinds of faults than the fault itself costs.
+			Clearly this requirement will vary between situations.
+			It is one of the research goals of this work to examine the tradeoffs necessary for various FT mechanisms, one of which is overhead.
 \end{itemize}
 
-Systems with these kinds of fault-tolerance have been implemented in the past \cite{ree06, lit07} with some success.
-All these systems involve expending some kind of overhead or wasting some computational power on redundant executions.
-This is generally the case for fault-tolerant systems, however the ammount of time/storage/computation wasted on overheads are not equal and the extent to which successful execution can be ensured varies.
-For example, the checkpointing method will never fail completely, in the sense that correct state can always be recovered and computation re-run, whereas the methods involving some redundancy may fail completely in the (rare) case that all elements fail.
-On the other hand, checkpointing requires enough space to store successful states, whereas replication does not increase space overhead, but requires more computation both to duplicate tasks and to decide on successful computations.
-One of the aims of this research is to find if (and when) the costs of such overheads can decide the appropriate fault tolerant mechanisms.
+\subsection{Replication}
+{\em Replication} is a generally applicable way to ensure FT both in computer systems and the real world.
+This mechanism may be alternatively called {\em duplication} or {\em redundancy} with slightly varied flavours of meaning, however the principal is the same.
+
+This mechanism involves providing multiple instances ({\em replicates}) of the same task.
+So long as any one of the replicates succeeds then the computation will succeed, in other words with $r$ replicates, if any one replicate fails with probability $p$ then the entire process fails with probability $p^r$, given naive assumptions about failure independance.
+
+This mechanism is particularly useful for large systems and systems with relatively heavyweight components.
+In the case of large systems, the replication is usualy viable given sufficient processors over which to duplicate, and these redundant elements significantly increase the mean time to failure.
+However users are more farmiliar with the concept of redundant heavyweigt components, particularly hard disks in RAID.
+RAID as the name suggests is a replication strategy providing fault tolerance or performance gains (or both), depending on the configuration.
+
+In this work we examine the FT and overhead of duplicating SDF actors accross multiple processors.
+This overhead is compared with another FT mechanism, checkpointing.
+
+\subsection{Checkpointing}
+The {\em checkpointing} mechanism is an alternative to the replication method described above.
+Though many systems do indeed checkpoint, for our work all systems which recover from faults by storing information about current or past computations will be called ``checkpointing'' systems.
+
+In this mechanism, some information about the system's state is stored in a reliable way, so that it can be recovered in the event of a crash.
+One way is to write the node's state to disk before performing a computation, in this way if a node fails during that computation the previous state can be recovered.
+However the revocery information need not be kept or tracked by individual nodes, in the case of Google's Mapreduce the state is stored by the master controller, and in the case of a worker fault the master redistributes the task to a different worker \cite{dea08}.
+
+This kind of FT is well researched in the area of databases.
+Modern databases use various checkpointing methodologies (called {\em commiting}) to make guarantees about the system's robustness.
+These mechanisms are interesting, because they must work on standalone machines, and are not specifically designed for parallel problems.
+Because of this individual computers are able to provide guarantees for robustness, and therefore can be orchestrated to provide robust parallel systems.
