@@ -1,0 +1,16 @@
+\begin{pspicture}(10,6)
+	
+	\cnodeput(1.5,2.5){a}{Add}
+	\cnodeput(5,2){d1}{Dup}
+	\cnodeput(5,4){d2}{Dup}
+	\cnodeput(8.5,3.5){o}{Output}
+	
+	\nccurve[angleA=270,angleB=270]{->}{a}{d1}	\aput(0.15){1} \aput(0.85){1}
+	\nccurve[angleA=180,angleB=0]{->}{d1}{a}	\bput(0.15){1} \bput(0.85){1}
+	\bput(0.5){$[0]$}
+	\nccurve[angleA=90,angleB=270]{->}{d1}{d2}	\aput(0.15){1} \aput(0.85){1}
+	\nccurve[angleA=180,angleB=90]{->}{d2}{a}	\bput(0.15){1} \bput(0.85){1}
+	\bput(0.5){$[1, 0]$}
+	\nccurve[angleA=0,angleB=180]{->}{d2}{o}	\aput(0.15){1} \aput(0.85){1}
+
+\end{pspicture}

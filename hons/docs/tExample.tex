@@ -1,2 +1,149 @@
 \chapter{Working Example}
-Is this meant to be a running thing for the thesis or like a motivating type thing?
+
+To demonstrate the major stages and purpose of the simulator we shall make extensive use of this example.
+For simplicity we have chosen to use Bitonic Sotring.
+
+\section{Bitonic Sorting Overview}
+
+\begin{figure}
+\begin{center}
+	\includegraphics[width=12cm]{figures/egBitonicSort.eps}
+\caption{The major stages of bitonic sort.  Image from Wikipedia: Bitonic Sorter}
+\label{figBitonicNormal}
+\end{center}
+\end{figure}
+
+Bitonic sorting is a common distributed sorting network.
+Sorting is a well known and studied task, so it makes sense to use this as our working example.
+We choose this method over more well known algorithms (merge, quick, bubble, selection) because it has interesting distributed properties.
+In its basic form, a sequence is bitonic if it can be expressed in the form $x_0 \leq x_1 \leq ... \leq x_k \geq x_{k+1} \geq ... \geq x_{n-1}$ for $n$ elements and some $k$.
+
+Figure \ref{figBitonicNormal} shows a bitonic sorting network for sixteen items.
+This is a variation on the more well known bitonic sorting networks which allows us to ignore the up/down sorting complexity.
+In this diagram items cross frol left to right in line.
+When two items reach a crossbar they swap location of the lower one has a lesser value than the higher, otherwise they do not swap.
+This figure also shows the major stages of the sorting process.
+Each box (orage, pink and blue) is isolated from crossovers in the same box, in other words they may be scheduled in parallel.
+At the right edge of each blue box, all the exiting channels are sorted, this demonstartes the divide-and-conquer nature of the network, each box can therefore be though of as distributed merging steps.
+
+Bitonic sort was one of the first distributed parallel sorting algorithms known to take $O(log^2 n)$ time.
+However this bound requires some reasonable and some arguable naive assumptions.
+The time bound arises from the observations that each stage can sort twice as many elements as the last, for one more internal block.
+Hence at most $log n$ stages with the largets one having at most $log n$ blocks are required.
+But this assumes that communication can be dome in unit time, which in practice is not true due to overheads.
+More specifically for our analysis commuication overheads are larger when forming connections, so this sorting network will suffer somewhat from the proposed checkpoint-recovery scheme.
+Further, this time complexity requires $O(n)$ to work in parallel (more accurately, $n/2$).
+Indeed the total time complexity (on a single machine) is $O(n log^2 n)$, in other words $log n$ times worse than merge sort.
+So in order to sort 64 items quickly, a full 32 machines are required.
+This problem may be exacerbated by the requirement to also duplicate each actor for the replication fault-tolerance scheme.
+
+\section{SDF Graph}
+
+\begin{figure}
+\begin{center}
+	\input{figures/egBitonicGraph}
+\caption{The bitonic sort in SDF form.}
+\label{figBitonicGraph}
+\end{center}
+\end{figure}
+
+Figure \ref{figBitonicGraph} shows the bitonic sort for four elements as a SDF graph.
+For clarity the channel cardinalities are omitted, since they all have 1 production and 1 consumption per inovation.
+It should be said that this graph depicts the sort for four items, however in actual tests with the simulator (see Systems chapter) the sorting network is dynamically generated to sort $2^n$ items, for some n.
+
+The function of each actor (except the input and output nodes) is the same.
+The actor recieves inputs in some order, and emits the lesser token on its upper channel, and the other on its lower chanel.
+Unfortunately the horizontal chanels in Figure \ref{figBitonicNormal} become distorted in this depiction, however in function this graph is identical to the first two blue box stages for the upper four channels in that figure.
+Since it doesnt matter which of the input tokens is greater (only the output ones) the diagram joins the arcs where they enter the nodes, however this is simply for clarity and doesnt affect the computation.
+
+The input and output nodes have basic functionality.
+For convenience's sake we can think of the input node as generating random numbers for each of its channels, and the output node as printing the numbers from top to bottom.
+In the actual implementation the output node checks the correctness of the ordering, which may be wrong under certain faults.
+In a real-world use this graph would be a component of a larger system, and so it may not even have designated input and output nodes.
+
+\section{Issues}
+
+It may be useful at this point to analyse and consider the possible implications of the working example we have chosen.
+In this way we will be able to compare intuitive notions of the problem with actual results.
+
+Actors in this network are extremely light weight.
+Many SDF implementations, including StreamIt, are designed to allow user-coded actors, and these actors can in practice become quite heavy.
+In contrast the actors in our example do a comparison and then output the tokens immediately.
+This may hide complexities in fault-tolerance, however for now it is sufficient to treat the actors as black boxes regarding fault tolerance.
+
+Similarly, the channels in this network are well ordered, uniform and have no delays.
+Well ordered channels can be given definite precedence, i.e. we can say that tokens passing through parts ``later'' in the graph had to go through ``earlier'' channels.
+This ordering inhernanly means that there are no cycles, as this would require certain channels to preceed themselves.
+In the case of bitonic sort the ordering is very apparent (left to right as per Figure \ref{figBitonicGraph}), and allows us to saturate the network with delays easily with little buffering requirements.
+Certain SDF graphs are much harder to saturate than this example, however since scheduling and initialising are not focus areas for this work we can safely marginalise this issue.
+The uniformity in the channles is also unrepresentative of SDF graphs in general.
+In our case this causes the repetitions to be one for all actors per steady state invocation.
+This may allow for some simplifications regarding the checkpointing mechanism, however it does not seem that it will make either method more or less clearly effective.
+Delays are an important feature of SDF programs, especially where cycles are involved.
+In the case where our graph has no delays this simplifies the partitioning and assignment problems, however we presume it does not noticably affect the faultiness in the system.
+
+\section{Other examples}
+
+Thoush these examples will not feature prominently in the remainder of this work, it may be helpful to consider them.
+
+\subsection{High Cardinality Repetitions}
+
+\begin{figure}
+\begin{center}
+	\input{figures/egCardinality}
+\caption{A SDF graph with deceptively high cardinality.}
+\label{figCardinality}
+\end{center}
+\end{figure}
+
+Figure \ref{figCardinality} shows an artificial SDF graph with an important property.
+If we calculate the repetitions vector of this graph, as shown in \ref{figCardinalityMaths} we see that the number of times each actor is invoked far exceeds the number needed to fulfil the invocation of any one actor.
+Indeed the buffer for the left-most channel may require storage for up to 105 tokens if the left actor executes all thirty five times before the middle actor executes at all.
+
+We have contrived this example by chaining channles with prime consumption and production ammounts together.
+However this explosion in repetitions can be brought about simply by having monotonically increasing channels.
+For example if each actor requires two tokens from its left neighbour and provides one to its right, then a chain of eight actors will require the left most to execute 256 times.
+
+Graphs of this kind are not of much direct interest to our work.
+Admittedly larger invocation vectors cause difficulties in checkpointing due to sheer volume of data, it may be interesting to gauge by how much.
+However graphs with this property are of interest to performance-seeking optimizations, which may indirectly affect fault tolerance.
+
+One strategy for dealing with huge invocation ammounts is to {\em fiss} the actors.
+Fissing is described by Thies et al and Malke in \cite{thies02, mal08} as splitting stateless actors into multiple versions of themselves.
+This technique would inevitably cause overheads for fault tolerance, checkpointing of fissed actors may require extra detail to account for the split, and since these actors are split for performance reasons, duplicating their computations may be unappealing.
+
+\begin{figure}
+\begin{center}
+\[
+ \Gamma = \begin{bmatrix}
+	3 & -7 & 0 \\
+	0 & 2 & -5 \\
+     \end{bmatrix}
+	q = \begin{bmatrix}
+	35 \\
+	15 \\
+	6 \\
+     \end{bmatrix}
+\]
+\caption{The topology matrix and repetitions vector for the graph in Figure \ref{figCardinality}}
+\label{figCardinalityMaths}
+\end{center}
+\end{figure}
+
+\subsection{Feedback}
+
+\begin{figure}
+\begin{center}
+	\input{figures/egFibonacci}
+\caption{A SDF graph to compute the Fibonacci sequence.}
+\label{figFibonacci}
+\end{center}
+\end{figure}
+
+Figure \ref{figFibonacci} shows a SDF graph which emmits the fibonacci sequence to the output node.
+The functions of the actors is fairly self explanatory, however we can see cycles (add-dup, add-dup-dup) and delays (in square brackets) in this graph.
+These features are once again important for performance analysis reasons, however we can largely ignore them.
+
+The main difficulty that feedback introduces is that saturating the network becomes difficult.
+One strategy is to treat the SDF graph as a directed graph agregate the strongly connectedd components using Tarjan's algorithm to obtain a directed acyclic graph, however that is outside the scope of this thesis.
+Cycles in the graph do not directly increase the communication requirements or dependencies, so out fault-tolerance mechanisms are unaffected by this property where it exists.

@@ -1,0 +1,33 @@
+\begin{pspicture}(10,6)
+	
+	\cnode(3,4.2){0.4}{a}
+	\cnode(3,1.8){0.4}{b}
+	\cnode(5,4.2){0.4}{c}
+	\cnode(5,1.8){0.4}{d}
+	\cnode(7,4.2){0.4}{e}
+	\cnode(7,1.8){0.4}{f}
+	
+	\cnodeput(1,3){i}{Input}
+	\cnodeput(9,3){o}{Output}
+	
+	\nccurve[angleA=60,angleB=180]{->}{i}{a}
+	\nccurve[angleA=20,angleB=180]{->}{i}{a}
+	\nccurve[angleA=-20,angleB=180]{->}{i}{b}
+	\nccurve[angleA=-60,angleB=180]{->}{i}{b}
+	
+	\nccurve[angleA=20,angleB=180]{->}{a}{c}
+	\nccurve[angleA=-20,angleB=180]{->}{a}{d}
+	\nccurve[angleA=20,angleB=180]{->}{b}{d}
+	\nccurve[angleA=-20,angleB=180]{->}{b}{c}
+	
+	\nccurve[angleA=20,angleB=180]{->}{c}{e}
+	\nccurve[angleA=-20,angleB=180]{->}{c}{f}
+	\nccurve[angleA=20,angleB=180]{->}{d}{e}
+	\nccurve[angleA=-20,angleB=180]{->}{d}{f}
+	
+	\nccurve[angleA=20,angleB=120]{->}{e}{o}
+	\nccurve[angleA=-20,angleB=160]{->}{e}{o}
+	\nccurve[angleA=20,angleB=200]{->}{f}{o}
+	\nccurve[angleA=-20,angleB=240]{->}{f}{o}
+
+\end{pspicture}
