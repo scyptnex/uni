@@ -1,0 +1,53 @@
+Inefficiency of equilibrium
+	payoffs and objective functions
+	selfish routing, routing
+	price of anarchy/stability
+	atomic and nonatomic
+	
+prisoner's dilema
+	unstable, not 'socially' or pareto optimal
+	equilibria != optimality
+	(not LP, requires nonlinear quadratic constraints, zerosum games are LP)
+	social (global payoff/cost for all players) - global (minimise total) egalitarian (minimise maximum)
+	diff between equilibrium social cost and optiml social cost
+	worst eq / optimal = price of anarchy, best eq / optimal = price of stability
+	
+Pigou's netork
+	2 verts 2 directed edges
+	traffic goes from source to terminal, splitable, 1 arc costs 1, other costs x
+	equilibrium, all cars on x arc (wardrop)
+	optimal, 1/2 1/2
+	anarchy = stability : 4/3
+	
+shapley network design game
+	directed graph g, every edge has cost C_e
+	k players, each player at vertices s_i, t_i
+	player i wants to establish connectivity with t_i
+	player i must move from s_i to t_i along a path, paying c_e/f_e where f_e is number of players who decide to cross c_e
+	all players connect to target with 1 and node b with epsilon, b connects to target by 1
+		opt: all to b, ke + 1, each pays e+1/k, equilibrium as well as all alone
+	make path to b cost 0, direct costs 1/(k+i), common = 1+epsilon
+		opt 1+epsilon, each pays 1+epsilon/k BUT 
+	
+nonatomic selfish routing
+	multicommodity flow network g
+	source target pair commodities (s_k, t_k)
+	demands r_i must be sent from s_i to t_i
+	every edge has a delay function
+	P_i paths from s_i to t_i, P= Union(i)(S_i)
+	equilibrium: envy free, all flows use paths with the same delay (when split up)
+	optimal, min social cost over all paths, 
+	find potential function s.t. all minima are equilibria
+	c*(x) = (x c(X))'
+		i.e. make a new network with a cost function that makes people consider social cost
+		c*(x) = C_e(X) + xC'_e(X)
+		if you individually optimise for yourself + a social term then the equilibria is the optimal
+	
+	continuously decreasing, convex continuously differentiable
+	potential function h(x) = intg(0-x)(c(x))
+	all nonatomic has at least 1 equilibria, all equilibria have same cost
+
+scheduling games
+network formation games
+resource allocation games
+
