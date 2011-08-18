@@ -1,0 +1,34 @@
+f* optimal for (G, r, c) then f* is equilibrium for (G, r, c*), c*_e(x) = (xc_e(x))' = c_e(x) + xc'_e(x)
+	price of anarchy bounded by P, 
+	linear cost functions have constant bound (4/3)
+
+brass paradox
+	s (1) a (x) t
+	s (x) b (1) t
+	opt = eq = 3/2
+	add a new link a (0) b
+	opt = 3/2, eq = 2, anarchy = 4/3
+
+tolls
+	set to marginal cost of original network
+
+equilibirum never costs more than an optimal routing twice as much
+
+potential games
+	game where we can define a porential function
+	any potentiall game has pure equilibrium, best steps coverge to it
+
+	directed graph, k players w source and dest, choose edges in g so there is a path
+	player i wants a path s_i to t_i
+	C(e) share cost of choosing edge between all players that use it
+
+	exact potential function Phi(s1, s2...) - Phi(s1, s2...si'...) = ui(s1, s2...) - ui(s1, s2...si'...)
+	if C(S)/A <= Phi(S) <= BC(S) then eq/opt <= A.B price of stability
+	
+	connection game: phi_e(S) = H_k cost(s)
+
+chaps 18 19
+
+atomic cases (optimisation) market equilibria.
+
+mail him about speech choice
