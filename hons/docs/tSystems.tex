@@ -4,6 +4,7 @@
 \section{Simulator}
 
 \subsection{N-Process Machines}
+\label{secSystemNPM}
 
 Part of the motivation for this work is to examine fault tolerance on large systems, specifically cloud systems.
 To do this we shall use an abstraction from specific systems and talk about N-Process Machines (NPM).
@@ -93,7 +94,7 @@ Faults must be correctly identified by the processes themselves (which the execu
 The checkpointing FT mechanism is designed to recover either individual actors or the entire network in the event of a fault.
 Periodically during execution the processes in the NPM write their state (RAM in a conventional machine) to disk using conventional tools like databases.
 In the event of a fault, the system rolls back to the last successful state.
-This methodology makes the assumption that the faults occur independantly of the system's state, or that pervasive bugs wont cause faults later down the system's pipeline.
+This methodology makes the assumption that the faults occur independently of the system's state, or that pervasive bugs wont cause faults later down the system's pipeline.
 When the data itself is causing the faults, then suitable mechanisms would have to be in place to detect and correct for this, however this work will presume that the data is not fault-causing and the actor code is bug-free.
 In the event that these were not the case, the system would continually attempt to recover to a point which inevitably leads to fault, a possible solution to this would be to continually recover at earlier points in time, however this does not provide resilience against fault-causing data which happens to be input to the system anyway.
 
@@ -107,16 +108,16 @@ The checkpointing must be able to recover the system to a working state, which m
 This raises a minor issue regarding how to correctly save the state of stateful actors.
 Naively we would have to record the internal memory of each individual actor, as well as the content of all memory buffers (used for inter-actor communication) when checkpointing.
 However, with simple modifications to the code, any stateful actor can be converted to a stateless one with a communication channel to itself.
-This simplification allows us to ignore the existance of stateful actors and only record the content of memory buffers.
+This simplification allows us to ignore the existence of stateful actors and only record the content of memory buffers.
 
 Detection and recovery form an important part of the simulation.
-First the simulator cant use its oracular powers of knowing when a fault has occured.
+First the simulator cant use its oracular powers of knowing when a fault has occurred.
 The worker-threads described in Section \ref{secSystemComponents} can record faults in the other threads both upstream and downstream from themselves.
 Faults upstream lead to starvation of the communication channels.
 The simulator, and any steady state schedule, can make the guarantee that any invoked actor should have sufficient tokens to execute, however this is not the case when faulting actors fail to fill those buffers.
-Faults downstream break communication protocols, or put simply faulting actors dont acknowledge TCP packets during communication.
+Faults downstream break communication protocols, or put simply faulting actors don't acknowledge TCP packets during communication.
 For simplicity we can think of the consuming actor as hosting a connection and the producing actor as making the remote connection, which means we would expect an acknowledgement from the host when we send data.
-This behavious is modeled in the simulator.
+This behaviour is modelled in the simulator.
 
 Once detected, faults must be recovered from, which involves rolling back to the last checkpoint.
 First the faulting computer must be restarted with some overhead, this is modelled by creating a new Java thread to take over the job of the faulted one.
@@ -133,14 +134,14 @@ Before the network is executed or even assigned, each actor is duplicated severa
 During assignment, we ensure that duplicates do not run on the same processor.
 This means that if one processor dies, there are still duplicates of the actors on that processor running elsewhere.
 Under pathological cases this mechanism does not guarantee fault-less execution, however this requires the statistically improbable faulting of all computers hosting duplicates of the same actor.
-As a result, this method is only viable due to overprovision of processors and having many duplicates.
+As a result, this method is only viable due to over-provision of processors and having many duplicates.
 
 One important consideration with duplicates is how to facilitate communication.
 There are several ways we can handle this, one is to not duplicate communication.
 Under this scheme all actors are duplicated the same number of times and communicate in parallel only with the correct duplicate.
 In affect we treat the entire SDF computation as a single program and run it several times in parallel.
 This causes a linear increase in communication volume, however the entire duplicate network can be broken by faulting a single actor.
-This means the system is only more resilient (the probability of failing is lowered) by a relatively small ammount.
+This means the system is only more resilient (the probability of failing is lowered) by a relatively small amount.
 We can make a tradeoff on communication to gain significantly higher resilience, by making each duplicate send data to all the duplicates of the next.
 This causes quadratic increase in the communication volume (so three duplicates cause nine times the volume), however now the network will function so long as at least one duplicate of every actor remains, a significant improvement.
 A more thorough description of the mathematics behind this is presented in Chapter \ref{chapModel}
@@ -165,8 +166,8 @@ For simplicity we shall exclude the kind of errors caused by hardware imprecisio
 Faults of this kind occur in the major hardware components of the system, CPUs, disk, Ethernet cables etc.
 The results are either that a computer in the network crashes and stops working, or that communication between nodes is broken where wires have excessive interference or breaks.
 In the simulator the computers are replaced with worker threads and the wires by FIFO buffers, so they must become the targets of our simulated faults.
-Wireing faults, or communication faults, are simulated by blocking writes to the FIFO buffers.
-This will cause both the producing and consuming actors to flag the other as faulted (the consumer starves and the procuder receives no acknowledgement).
+Wiring faults, or communication faults, are simulated by blocking writes to the FIFO buffers.
+This will cause both the producing and consuming actors to flag the other as faulted (the consumer starves and the producer receives no acknowledgement).
 This is expected behaviour, since the inability of two computers to communicate with each other makes them both unsuitable for use.
 Computer faults are simulated by terminating worker threads.
 This will cause actors upstream and downstream of the fault to flag it.
@@ -175,15 +176,15 @@ Again such behaviour is expected.
 The frequency of faults is dealt with on a per-experiment basis.
 Experiments which emulate real computations are difficult to run on the simulator, as they require thousands of worker threads each with simulated up-times of $10^5$ hours.
 The probability of faults is skewed to greater frequency so as to examine the effects of single faults on the network.
-Faults can also be scripted to occur at certain times or on certain threads, again this is used for experimentation and reproducability reasons.
-We accept the slightly unrealistic frequency of faulting in these cases because we arent concerned in this thesis with the vast majority of real-world computations which run flawlessly.
+Faults can also be scripted to occur at certain times or on certain threads, again this is used for experimentation and reproducibility reasons.
+We accept the slightly unrealistic frequency of faulting in these cases because we aren't concerned in this thesis with the vast majority of real-world computations which run flawlessly.
 This work aims to analyse the resilience of fault tolerance mechanisms to faults and their overhead costs, the question of whether these tradeoffs are acceptable given the frequency of faults is debatable.
 
 \section{Statistical Measurements}
 \label{secSystemStatistics}
 \subsection{Recorded Figures}
 
-Recorded figures includes actual data from the execution fo dthe SDF network in the simulator.
+Recorded figures includes actual data from the execution of the SDF network in the simulator.
 These recoded figures are important in their own right, but they are also used to estimate the metrics in Section \ref{secSystemMetrics}.
 
 \begin{itemize}
@@ -192,7 +193,7 @@ These recoded figures are important in their own right, but they are also used t
 			This includes every FIFO buffer and every token passed between every pair of actors.
 	\item {\bf Invocation counts} record the number, and order, of actor invocations.
 			Invocation count is not particularly interesting except again in analysing how the FT mechanisms affect the system.
-	\item {\bf Fault counts} are recorded to ensure reproducability and fairness in experiments.
+	\item {\bf Fault counts} are recorded to ensure reproducibility and fairness in experiments.
 			This figure also records where and when the fault was simulated, and if/how it was detected by the network.
 	\item {\bf Recovery time} is recorded to put some real world figures on the overheads of recovery.
 			Like the other recorded timings, this time does not represent real-world numbers, as it all takes place in a simulator.
@@ -227,37 +228,80 @@ This section describes how the simulator works using our bitonic sort example.
 \subsection{Automatic Generation}
 
 The first step is to generate an SDF graph for bitonic sorting.
+As stated in Chapter \ref{chapExample} we generate sorting networks to handle the sorting of as many items as we need.
+We do this in isolation from the simulator, and generate a description of all the network nodes and the channels between them.
+The actual executing actor code is included in this description, which is given to the simulator to run.
 
+The simulator does some of the automatic generation for us.
+We know for example that all actors in this network are identical, so we can tell them simulator to give them unit invocation costs.
+The Input and Output nodes are not really meant for analysis, so we can ignore them by giving them zero invocation costs.
+Each channel carries a single token per steady-state invocation, so we can give every channel unit communication cost.
 
-make the example
-
-procedurally generate graph
-
-all actors identical, have unit cost, IO nodes have 0 cost
-
-n computers to exploit parallelism
-computers roughly same, varies for experiment
+In order to fully exploit parallelism in this sorting network we must simulate sufficient computers.
+The simulator can pretend to have computers based on an arbitrary specification of the NPM, however for testing purposes we simply tell it to randomly generate some reasonable computers.
+These random computers have roughly equal processing time, with costs based on a random normally distributed variable.
+Since these costs are artificial anyway this is an acceptable shortcut, though the SDFSimulator can be given specifications based on real cloud systems when necessary.
 
 \subsection{Assignment}
 
-simulator converts network to matrix
+To begin assigning actors to processors the simulator creates the costs matrices for invocation and communication (See section \ref{secSystemNPM}).
+Our example is using a randomly generated cloud machine specification and unit costs for actors and communication, so we would expect to see a reasonably even spread of random values in these matrices.
 
-use AMPL model to get assignment
+For a real assignment we would use our AMPL model or a heuristic to determine the assignment.
+To use the GLPK we write these matrices to a .dat file and run glpsol on this data using the model described in Chapter \ref{chapModel}.
+Once solved we read in the assignment from the output of glpsol.
 
-we can also do this manually since all actors are same, comm ammount is same
+However since we know that all actors are the same, and all communicating channels carry the same information, we can simplify the assignment process by spreading actors evenly over the computers.
+Assignment done manually in this way doesn't affect the later stages of the simulation, however if replication FT is being used then we must ensure the non-overlapping duplicates constraint is upheld.
+
+Once assigned, the simulator spawns a worker thread for each of its actors (or duplicates) and places them in the work queue.
+The worker thread is also told how many times each actor should execute per steady state invocation.
+Finally a FIFO buffer is made for each communication channel.
+These buffers are stored as class wide variables, so all worker threads can access them.
+If applicable, the initial delays for the network are injected into the right buffers.
 
 \subsection{Execution}
 
-actors executed by worker threads
+The executor now begins the process of allowing worker threads to run.
+We begin by performing quick initialisation for our network by saturating it.
+The process is quite simple, while a channel whose producer can execute is not saturated, execute the producer.
+Not all networks are able to be saturated in this way, however our example is so the simulator is told to do so.
 
-schedule based on availability
+Once saturated each worker thread can execute its actors in any order with any interleaving, so long as they halt after each steady-state execution.
+The executor gives the instruction for all workers to proceed through a single steady-state.
+To do this each worker executes its actors in any order, in our case each actor will be executed once.
+For networks which are not amenable to saturation, the execution schedule is based on availability.
 
-fifo buffers read and written written
+The execution of a single actor is based on the code we wrote for them.
+The input node generates a new set of items to be sorted.
+The output node reads a set of items and ensures they are sorted.
+The intermediate nodes read one token from each of 2 channels, then write the lesser token to their ``upper'' channel and the greater to their ``lower'' channel.
+Reading and writing to channels involves making a call to the executor to enqueue or dequeue a token in the right FIFO buffer.
+The executor may refuse to do this if it is simulating a wire failure or the processor at the ``end'' of that channel is supposed to have faulted.
+
+This continues possibly indefinitely.
 
 \subsection{Fault Analysis}
 
-fault injected
+During execution we will probably decide to simulate a fault, and how our working example responds will depend on the fault and the kind of FT mechanism being used.
+Faults come in two main varieties, wire failures and computer failures.
+When a wire failure is being simulated the executor will refuse to write tokens to the broken channel, however it will still read tokens from it until there are none, when it starts returning null.
+When an actor suspects a wire failure has occurred it flags this by calling a \begin{verbatim}faultDiscovered(processor)\end{verbatim} call to the executor, providing the processor it suspects is faulty as an argument,
+Computer failures are simulated by terminating the worker thread simulating that process, again the executor will refuse to write tokens if the process at the end of the channel is supposed to be dead.
+The faults are flagged by the actors in the same way as wire faults.
 
-checkpoint recovery
+If our example is using a checkpoint recovery mechanism, then it must try to recover.
+We presume that after each steady state invocation, the actors were writing the contents of memory buffers they consume from onto disk.
+Faults are discovered usually by upstream actors and flagged to the executor.
+Next a call is made to the executor to spawn a new worker thread.
+The contents of disk are read and the last successful state is retrieved and injected into the worker thread.
+Finally the checkpointed contents of disk are read by every other thread and the whole network rolls back.
+Once rollback is finished an actor on the recovered process will call \begin{verbatim}faultRecovered(processor)\end{verbatim} on the executor to indicate the computation can restart.
 
-replication
+If our example is using a replication tolerance mechanism, then recovery is irrelevant.
+However, our actor executions will be slightly different.
+Each actor is encased in a wrapper which performs the fault detection and token duplication tasks.
+These wrappers are themselves an extension of the inbuilt Actor class, and so are invisible to the simulator itself.
+The wrappers receive multiple tokens for each logical channel they have, they pick one of those and use it as input to the actor they encapsulate, that actor's outputs are read, duplicated, and sent to all the duplicates of the actor at the logical end of that channel.
+These wrappers also flag the executor when faults are detected.
+Once detected they immediately call \begin{verbatim}faultRecovered(processor)\end{verbatim} if there are still duplicates executing, otherwise they never recover from the fault and execution terminates.
