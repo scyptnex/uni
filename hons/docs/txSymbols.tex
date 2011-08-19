@@ -1,3 +1,8 @@
+%The function which measures the cost of invoking actor #1 on processor #2.
+\newcommand{\invoke}[2]{Inv(#1, #2)}
+%The function which measures the cost of communication between actor #1 if it is on processor #3 and actor #2 if it is on processor #4
+\newcommand{\commu}[4]{Com(#1, #2, #3, #4)}
+
 %The predicate determining whether nodes #2 and #3 are connected in the graph #1.
 \newcommand{\path}[3]{\pi_{#1}(#2, #3)}
 %The negation of the path predicate $\path{#1}{#2}{#3}$.
