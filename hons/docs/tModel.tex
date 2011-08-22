@@ -1,20 +1,17 @@
 \chapter{Mathematical Model}
 \label{chapModel}
 
-section needs:
-
-description of AMPL model
-
-Mathematics of actor duplication vv resilience vs communication increase
+This chapter details the mathematical background for various processes used in the SDFSimulator.
 
 \section{Checkpoint Recomputation}
 The checkpoint recomputation (CR) method keeps a checkpoint for the last successful execution's state.
 When a steady-state schedule is completed correctly the checkpoint is updated.
 If it fails the system can return to the last successful state and continue.
 
+As stated in Chapter \ref{chapSystems} several assumptions are made as to the nature of CR fault tolerance.
 We understand the expected steady-state execution time of a CR fault tolerant system as follows:
 \begin{itemize}
-	\item The makespan of a single successful execution is known statically, we shall call this $m$.
+	\item The makespan (including the overhead of making checkpoints) of a single successful execution is known statically, we shall call this $m$.
 	\item For the duration of any makespan, the probability of any single processor or communication failure is known statically.
 			Hence the probability that at least one component fails can be worked out, we shall call this $p$.
 	\item The time required to reset the system to the last checkpointed state is known statically, we shall call this $r$.
@@ -30,3 +27,69 @@ This makes calculating the total expected execution time $t$ simple.
 	\nonumber & = (m+r)\left({{1}\over{1-p}}\right) - r\\
 	\nonumber & = {{m+rp}\over{1-p}}
 \end{align}
+
+\section{Task Replication}
+
+The replication method initiates multiple versions of the same computations and runs them in parallel.
+The schedule is executed as though there were only one version of each actor, however extra communication and computation is taken up by each actor: first to distribute output tokens to all versions of their successor nodes, and second to analyse each input token and choose only those that come from non-faulty predecessors.
+For our implementation, the system only totally fails if all duplicates of one actor reside on faulting processors.
+
+We understand the failure probability of a replication FT system as follows:
+\begin{itemize}
+	\item We are distributing $a$ actors, each duplicated $d$ times, hence $n = ad$ nodes in total, onto $m$ processors or machines.
+	\item The probability of any processor failing during one steady-state execution is $p$, for simplicity we assume failures are independent and uniformly likely.
+\end{itemize}
+
+This leads to some useful observations about the costs of this FT method:
+\begin{itemize}
+	\item Communication between nodes increases with more duplicates.
+			Every version of each actor communicates with every version of its predecessor, hence the communication increases by $d^2$.
+	\item The system's throughput decreases with more duplicates if $m < n$.
+			This leads to assigning multiple actors to the same processor, again it is a trivial observation.
+\end{itemize}
+
+We are interested with the probability of the system failing completely.
+Each computer has a small chance of failing per steady-state execution $p$, then the probability that the computer is still running after i iterations is $P = p_i = (1-p)^i$.
+In the case where each processor only executes one node, the system will fail if all duplicates of any one actor fail after i iterations.
+All duplicates of a single actor fail with probability $(1-P)^d$.
+One or more actors fail if not no actors fail.
+A single actor does not fail with probability $1-(1-P)^d$ as above, hence at least one actor fails with probability $1-(1-(1-P)^d)^a$.
+In summary, the system fails before $i$ iterations with probability:
+\begin{align}
+	\nonumber 1-(1-(1-(1-p)^i)^d)^a
+\end{align}
+
+\section{AMPL model}
+
+The actor assignment is done using an ILP solver in the GLPK.
+Task assignment is known to be a hard problem, a more complete proof of the hardness of our particular version of assignment can be found in Chapter \ref{chapHardness}.
+The solver is used to computer a cost-optimal mapping from nodes to processors such that duplicates of the same node are not assigned to the same processor.
+For simplicity we do not computer time-optimal assignment.
+Each processor will be assigned so as to minimise the cost of the computation, but the makespan may be large as only the constraint that duplicates are not mapped to the same processor forces the use of multiple processors.
+This simplification reduces many of the advantages of parallel computation, however it is sufficient for testing fault-tolerance.
+
+We form the linear programme below to solve this problem.
+Here we abuse subscript notation to index matrices, where $A_{i,j}$ is the element in row $i$ and column $j$ of the matrix $A$.
+For information on the meaning on the functions \invoke{x}{y} and \commu{w}{x}{y}{z} see Section \ref{secSystemNPM}
+\begin{itemize}
+	\item Every duplicate of every actor is stored in the set $N = {0, 1, ..., n-1}$.
+	\item Every processor is stored in the set $P = {0, 1, ..., p-1}$
+	\item The cost of invoking actor $a$ on processor $p$, is the matrix $I$, where $I_{a,p} = \invoke{a}{p}$.
+	\item The cost of communication between actors $a$ and $b$ on processors $p$ and $q$ respectively is the matrix $C$, where $C_{a,b,p,q} = \commu{a}{b}{p}{q}$.
+	\item Which actors are duplicates of which is recorded in the matrix $D$, where $D_{i,j} = \mbox{$\left\{ 
+		\begin{array}{l l}
+			1 \quad & \mbox{if $i$ is a duplicate of $j$}\\
+			0 & \mbox{otherwise}\\ \end{array} \right.$} \\$
+	\item The solution to the assignment problem is $X$, an $|N| \times |P|$ matrix.
+\end{itemize}
+For this model, the solution is the $X$ matrix.
+
+\begin{align}
+	\nonumber \min & \sum_{a \in N; p \in P} I_{a,p}X_{a,p} + \sum_{a,b \in N; p,q \in P} X_{a,p}X_{b,q}C_{a,b,p,q} \\
+	\nonumber s.t. &  \\
+	\nonumber & \forall a \in N : \sum_{p \in P}X_{a,p} = 1 \\
+	\nonumber & \forall a,b \in N : \sum_{p \in P}X_{a,p}X_{b_p}D_{a,b} = 0
+\end{align}
+
+In this form the ILP has quadratic terms, which are unsuitable for solving.
+This formulation is linearised for use in glpsol and the full code can be found in {\em The appendix i have not done yet}.%CHEESE do this
