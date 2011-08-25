@@ -1,0 +1,33 @@
+markets w divisible goods
+	n agents, k commodities, bi = (bi^1 bi^2 bi^3...,bi^k) Basket <- agent i buys bi^j of commodify j
+	utility function on baskets maps goods to non-negative numbers
+	ei=(ei^1...ei^k) agents start with some product, set a price for products so agents can exchange
+	price vector p
+	max ui(x) s.t. p.x <= p.ei, x \in R+^k <- every agent has own optimisation
+	fractional knapsack, best utility/price <- currently cant be done since u function is absurd
+	set p so that all individuals can solve their own problem
+	equilibrium market, everyone can buy their opt basket
+	
+fischer markets
+	linear utility functions, initial endowment is money
+	n buyers, k goods, ei money for buyer, uij utility for i if buys k
+	cj ammount of comodify j available
+	ui = sum(j=1 to k)(uij.xij)
+	assume all cj = 1, all commods have at least 1 buyer
+	
+	Eisenberg-Gale convex program
+		start with n diff optimization probs, can combine to one and optimize it
+		max: (PROD(i)(ui^{ei}))^{1/{sum(i)(ei)}}
+		equilibrium prices exist, unique as far as optimal utility, vbad polytime
+	given p we can check if it is equilibrium
+		build bipartite graph commods -> buyers, connect if alpha(p) = uij.pj with infi edge
+		price vector at equilibrium if comod side to source and endow side to sink are min cuts
+	to compute:
+		start with v low prices, money left over at opt, raise prices til no money left
+		maintain left as min cut, at some point right equals it
+		as prices increase, sets go tight, new equality edges pop up, only buyers for some items become tight
+		inflate prices by same ammount, all eql edges same, new ones popup
+			either set goes tight or new eql edge between tight comods and untight buyers
+			add new edge endpoints to active subgraph or add tight set to tight set
+		if we increase too much we loose left side as min cut
+		Terrible runtime O(M n^2 nU^n)
