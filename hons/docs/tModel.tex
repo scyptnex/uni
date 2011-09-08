@@ -59,30 +59,53 @@ In summary, the system fails before $i$ iterations with probability:
 	\nonumber 1-(1-(1-(1-p)^i)^d)^a
 \end{align}
 
-\section{AMPL model}
+\section{AMPL Model}
 
-The actor assignment is done using an ILP solver in the GLPK.
-Task assignment is known to be a hard problem, a more complete proof of the hardness of our particular version of assignment can be found in Chapter \ref{chapHardness}.
-The solver is used to computer a cost-optimal mapping from nodes to processors such that duplicates of the same node are not assigned to the same processor.
-For simplicity we do not computer time-optimal assignment.
-Each processor will be assigned so as to minimise the cost of the computation, but the makespan may be large as only the constraint that duplicates are not mapped to the same processor forces the use of multiple processors.
-This simplification reduces many of the advantages of parallel computation, however it is sufficient for testing fault-tolerance.
+An integer programming formulation of the Robust Actor Assignment Problem (RAAP, formalised in chapter \ref{chapHardness}) is one of the contributions of this thesis.
+This section describes the model, its meaning and formulation.
 
-We form the linear programme below to solve this problem.
-Here we abuse subscript notation to index matrices, where $A_{i,j}$ is the element in row $i$ and column $j$ of the matrix $A$.
-For information on the meaning on the functions \invoke{x}{y} and \commu{w}{x}{y}{z} see Section \ref{secSystemNPM}
+\subsection{Description}
+
+The AMPL model is used to compute a cost optimal assignment of actors to processors whilst ensuring that duplicate actors are not assigned to the same processor.
+Though designed for the replication FT mechanism, this model can also be used to assign actors optimally in the recomputation FT mechanism by removing the duplicate constraints (see Section \ref{secModVars}).
+
+An ILP solver (in our case, glpsol) is used in conjunction with the model to generate optimal solutions to the RAAP.
+For simplicity ``optimal'' refers to cost-optimal rather than time-optimal.
+Possible future work may include reformulating this problem to minimise makespan, that is, by distributing actors in such a way that no single processor performs a disproportionately large number of computations.
+The optimal solution can be compared with assignments derived from other heuristics for experimental purposes, however due to the intractable nature of the problem only small instances can be compared in this way.
+
+In general terms we are trying to place computing actors onto the various processors such that each actor is placed on a processor which can execute it quickly, and the actors do not need to send much data over the network.
+When an actor is placed on a processor, it incurs some cost to execute, these costs may vary between actors and processors without constraint.
+Every pair of actors also incurs some cost depending on how much they communicate with each other and which processors they are placed on.
+Intuitively we might say that two actors assigned to the same processor do not incur this communication cost, however we may wish to make actors pay different amounts for reserving space in a machine's memory buffer, so once again no limitations are placed on these communication costs.
+
+\subsection{Problem variables}
+\label{secModVars}
+
+
+The parameters and variables for this model are explained below.
+To simplify the notation of matrices we use the notation $\mathbf{A}_{r,c}$ to denote the value in row $r$ and column $c$ of the $\mathbf{A}$ matrix.
+
 \begin{itemize}
+	\item There are $n$ duplicates of all actors, that is, if there were $a$ actors being duplicated $d$ times each then $n = ad$.
+	\item There are $p$ processors.
 	\item Every duplicate of every actor is stored in the set $N = {0, 1, ..., n-1}$.
 	\item Every processor is stored in the set $P = {0, 1, ..., p-1}$
-	\item The cost of invoking actor $a$ on processor $p$, is the matrix $I$, where $I_{a,p} = \invoke{a}{p}$.
-	\item The cost of communication between actors $a$ and $b$ on processors $p$ and $q$ respectively is the matrix $C$, where $C_{a,b,p,q} = \commu{a}{b}{p}{q}$.
-	\item Which actors are duplicates of which is recorded in the matrix $D$, where $D_{i,j} = \mbox{$\left\{ 
+	\item The cost of invoking actor $a$ on processor $p$, is stored in the matrix $\mathbf{I}$, a $n \times p$ matrix where $\mathbf{I}_{a,p} = \invoke{a}{p}$.
+	\item The cost of communication between actors $a$ and $b$ on processors $p$ and $q$ respectively is the matrix $\mathbf{C}$, a $n \times n \times p \times p$ tensor where $\mathbf{C}_{a,b,p,q} = \commu{a}{b}{p}{q}$.
+	\item Which actors are duplicates of which is recorded in the matrix $\mathbf{D}$, a $n \times n$ matrix where $\mathbf{D}_{i,j} = \mbox{$\left\{ 
 		\begin{array}{l l}
 			1 \quad & \mbox{if $i$ is a duplicate of $j$}\\
-			0 & \mbox{otherwise}\\ \end{array} \right.$} \\$
-	\item The solution to the assignment problem is $X$, an $|N| \times |P|$ matrix.
+			0 & \mbox{otherwise}\\ \end{array} \right.$}$ \\ Note $\forall i, j \in N : D_{i,j} = D_{j,i}$ 
+	\item The assignment of actors is determined by the solver in the matrix $\mathbf{X}$, a $n \times p$ matrix where $\mathbf{X}_{a,p} = \mbox{$\left\{ 
+		\begin{array}{l l}
+			1 \quad & \mbox{if $a$ will be run on $p$}\\
+			0 & \mbox{otherwise}\\ \end{array} \right.$}$
 \end{itemize}
-For this model, the solution is the $X$ matrix.
+
+\subsection{ILP Formulation}
+
+In its simplest form the RAAP is modelled as:
 
 \begin{align}
 	\nonumber \min & \sum_{a \in N; p \in P} I_{a,p}X_{a,p} + \sum_{a,b \in N; p,q \in P} X_{a,p}X_{b,q}C_{a,b,p,q} \\
@@ -91,5 +114,35 @@ For this model, the solution is the $X$ matrix.
 	\nonumber & \forall a,b \in N : \sum_{p \in P}X_{a,p}X_{b_p}D_{a,b} = 0
 \end{align}
 
-In this form the ILP has quadratic terms, which are unsuitable for solving.
-This formulation is linearised for use in glpsol and the full code can be found in {\em The appendix i have not done yet}.%CHEESE do this
+The objective function minimises the cost of invoking all actors on their assigned processors and communicating between all actors on their processors.
+The constraints are, first all actors must be assigned to exactly one processor, second all actors which are duplicates of each other cannot be assigned to the same processor (this lower sum will be zero unless $a$ and $b$ are both assigned to $p$ and they are duplicates).
+
+\subsection{Constraint Linearisation}
+
+Viewing the model above we immediately see the problem of quadratic terms.
+The minimisation of the objective function is determined by the minimisation of two dependant assignments (for the communication cost part of the sum).
+In order to solve this problem we must linearise this quadratic term.
+
+We use the standard method for linearising this quantity.
+Since the $\mathbf{X}$ matrix can only take values $\{0, 1\}$, the multiplication of these numbers can be represented by linear constraints.
+We let $\mathbf{Y}$ be the $n \times n \times p \times p$ tensor, where $\mathbf{Y}_{a,b,p,q} = \mathbf{X}_{a,p} \times \mathbf{X}_{b,q}$.
+The equivalent expression in linear form is:
+\begin{align}
+	\nonumber \forall a,b \in N : \forall p,q \in P : \quad & \mathbf{Y}_{a,b,p,q} \leq \mathbf{X}_{a,p} \\
+	\nonumber \forall a,b \in N : \forall p,q \in P : & \mathbf{Y}_{a,b,p,q} \leq \mathbf{X}_{p,q} \\
+	\nonumber \forall a,b \in N : \forall p,q \in P : & \mathbf{X}_{a,p} + \mathbf{X}_{p,q} - 1 \leq \mathbf{Y}_{a,b,p,q}
+\end{align}
+
+The equivalence of this linearised form to the quadratic term can be shown trivially by enumerating all the possible combinations of the $\mathbf{X}$ parts, which can only be zero and one.
+
+Hence the modified ILP formulation without quadratic terms is:
+\begin{align}
+	\nonumber \min & \sum_{a \in N; p \in P} I_{a,p}X_{a,p} + \sum_{a,b \in N; p,q \in P} \mathbf{Y}_{a,b,p,q}C_{a,b,p,q} \\
+	\nonumber s.t. &  \\
+	\nonumber & \forall a \in N : \sum_{p \in P}X_{a,p} = 1 \\
+	\nonumber & \forall a,b \in N : \forall p,q \in P : \quad \mathbf{Y}_{a,b,p,q} \leq \mathbf{X}_{a,p} \\
+	\nonumber & \forall a,b \in N : \forall p,q \in P : \quad \mathbf{Y}_{a,b,p,q} \leq \mathbf{X}_{p,q} \\
+	\nonumber & \forall a,b \in N : \forall p,q \in P : \quad \mathbf{X}_{a,p} + \mathbf{X}_{p,q} - 1 \leq \mathbf{Y}_{a,b,p,q} \\
+	\nonumber & \forall a,b \in N : \sum_{p \in P}\mathbf{Y}_{a,b,p,p}D_{a,b} = 0
+\end{align}
+The Mathprog-encoded version of this ILP can be found in {\em The appendix i have not done yet}.%CHEESE do this
