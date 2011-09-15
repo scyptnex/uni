@@ -1,0 +1,48 @@
+\documentclass{article}
+
+\usepackage{graphicx}
+
+\author{Nic Hollingum - 308193415}
+\title{Algorithmic Game Theory - Problem Set 1}
+
+%\addtolength{\oddsidemargin}{-.875in}
+%\addtolength{\evensidemargin}{-.875in}
+%\addtolength{\textwidth}{1.75in}
+%\addtolength{\topmargin}{-0.5in}
+%\addtolength{\textheight}{1.5in}
+
+\begin{document}
+\maketitle
+
+\section {Multiple Firms}
+\begin{center}
+\begin{tabular}{ | c | c | c | c |}
+\hline
+ & 				{\bf A} & 				{\bf B} & 			{\bf None} \\ \hline
+{\em A} &		{\bf -10},{\em -10} &	{\bf 10},{\em 10} &	{\bf 0},{\em 15} \\ \hline
+{\em B} &		{\bf 10},{\em 10} &		{\bf 5},{\em 5} &	{\bf 0},{\em 30} \\ \hline
+{\em None} &	{\bf 15},{\em 0} &		{\bf 30},{\em 0} &	{\bf 0},{\em 0} \\ \hline
+\end{tabular}
+\end{center}
+
+The employee is correct, producing B will make [10, 5, 30] whether the other firm chooses [A, B, None] which is strictly better than [0, 0, 0].
+Also B is the smart choice, since entering A nets the payoffs [-10, 10, 15] which may be unacceptable for a business, the difference between payoffs is [-20, 5, -15] and hence is likely unprofitable.
+
+No.
+The Nash equilibria for this game are \{{\bf A}, {\em B}\} and \{{\bf B}, {\em A}\}, and hence if both firms entered B, they would have the incentive to swap to A, though if both firms did swap to A, they would loose money.
+
+As above, the pure strategy equilibria are \{{\bf A}, {\em B}\} and \{{\bf B}, {\em A}\}.
+In any other case, one firm would have the incentive to change strategies.
+
+Yes.
+The pure strategy equilibria net profits of 10 each, meaning a total of 20 profit.
+However the social optimal are \{{\bf None}, {\em B}\} and \{{\bf B}, {\em None}\}, which net 30, or 15 each.
+This optimal is not an equilibria, as the non-entering firm has the incentive to switch strategies and produce A (since $10 > 0$), so the only way to ensure this optimal arose would be to force one firm to produce B and the other to not enter, which only happens when one firm is not competing.
+Another way to effect this, which may be allowed by the regulators, would be to approach the other firm with an ultimatum offer to shut down our own production for 19.99999 million.
+
+\section {Equilibrium Probability}
+\section {Tree-based Games}
+\section {Shapley Network}
+\section {Atomic Selfish Routing}
+
+\end{document}

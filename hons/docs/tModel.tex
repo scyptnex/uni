@@ -56,12 +56,12 @@ One or more actors fail if not no actors fail.
 A single actor does not fail with probability $1-(1-P)^d$ as above, hence at least one actor fails with probability $1-(1-(1-P)^d)^a$.
 In summary, the system fails before $i$ iterations with probability:
 \begin{align}
-	\nonumber 1-(1-(1-(1-p)^i)^d)^a
+	\nonumber 1-(1-(1-(1-p)^i)^d)^a.
 \end{align}
 
 \section{AMPL Model}
 
-An integer programming formulation of the Robust Actor Assignment Problem (RAAP, formalised in chapter \ref{chapHardness}) is one of the contributions of this thesis.
+An integer programming formulation of the Robust Actor Assignment Problem (RAAP, formalised in Chapter \ref{chapHardness}) is one of the contributions of this thesis.
 This section describes the model, its meaning and formulation.
 
 \subsection{Description}
@@ -70,8 +70,8 @@ The AMPL model is used to compute a cost optimal assignment of actors to process
 Though designed for the replication FT mechanism, this model can also be used to assign actors optimally in the recomputation FT mechanism by removing the duplicate constraints (see Section \ref{secModVars}).
 
 An ILP solver (in our case, glpsol) is used in conjunction with the model to generate optimal solutions to the RAAP.
-For simplicity ``optimal'' refers to cost-optimal rather than time-optimal.
-Possible future work may include reformulating this problem to minimise makespan, that is, by distributing actors in such a way that no single processor performs a disproportionately large number of computations.
+For simplicity {\em optimal} in relation to the global sum of costs, rather than the more complicated, though useful method, of counting only the cost of the most expensive parallel unit.
+Possible future work may include reformulating this problem to minimise parallel makespan, that is, by distributing actors in such a way that no single processor performs a disproportionately large number of computations.
 The optimal solution can be compared with assignments derived from other heuristics for experimental purposes, however due to the intractable nature of the problem only small instances can be compared in this way.
 
 In general terms we are trying to place computing actors onto the various processors such that each actor is placed on a processor which can execute it quickly, and the actors do not need to send much data over the network.
@@ -84,13 +84,14 @@ Intuitively we might say that two actors assigned to the same processor do not i
 
 
 The parameters and variables for this model are explained below.
+Some parameters make use of the \invoke{a}{p} and \commu{a}{b}{p}{q} functions, these are described in Section \ref{secSystemNPM}.
 To simplify the notation of matrices we use the notation $\mathbf{A}_{r,c}$ to denote the value in row $r$ and column $c$ of the $\mathbf{A}$ matrix.
 
 \begin{itemize}
 	\item There are $n$ duplicates of all actors, that is, if there were $a$ actors being duplicated $d$ times each then $n = ad$.
 	\item There are $p$ processors.
-	\item Every duplicate of every actor is stored in the set $N = {0, 1, ..., n-1}$.
-	\item Every processor is stored in the set $P = {0, 1, ..., p-1}$
+	\item The set of all duplicates of all actors is represented by $N = [0, 1, ..., n-1]$.
+	\item The set of all processors is represented by $P = [0, 1, ..., p-1]$
 	\item The cost of invoking actor $a$ on processor $p$, is stored in the matrix $\mathbf{I}$, a $n \times p$ matrix where $\mathbf{I}_{a,p} = \invoke{a}{p}$.
 	\item The cost of communication between actors $a$ and $b$ on processors $p$ and $q$ respectively is the matrix $\mathbf{C}$, a $n \times n \times p \times p$ tensor where $\mathbf{C}_{a,b,p,q} = \commu{a}{b}{p}{q}$.
 	\item Which actors are duplicates of which is recorded in the matrix $\mathbf{D}$, a $n \times n$ matrix where $\mathbf{D}_{i,j} = \mbox{$\left\{ 
@@ -108,10 +109,10 @@ To simplify the notation of matrices we use the notation $\mathbf{A}_{r,c}$ to d
 In its simplest form the RAAP is modelled as:
 
 \begin{align}
-	\nonumber \min & \sum_{a \in N; p \in P} I_{a,p}X_{a,p} + \sum_{a,b \in N; p,q \in P} X_{a,p}X_{b,q}C_{a,b,p,q} \\
+	\nonumber \min & \sum_{a \in N; p \in P} \mathbf{I}_{a,p}\mathbf{X}_{a,p} + \sum_{a,b \in N; p,q \in P} \mathbf{C}_{a,b,p,q}\mathbf{X}_{a,p}\mathbf{X}_{b,q} \\
 	\nonumber s.t. &  \\
-	\nonumber & \forall a \in N : \sum_{p \in P}X_{a,p} = 1 \\
-	\nonumber & \forall a,b \in N : \sum_{p \in P}X_{a,p}X_{b_p}D_{a,b} = 0
+	\nonumber & \forall a \in N : \sum_{p \in P}\mathbf{X}_{a,p} = 1 \\
+	\nonumber & \forall a,b \in N : \sum_{p \in P}\mathbf{X}_{a,p}\mathbf{X}_{b,p}\mathbf{D}_{a,b} = 0
 \end{align}
 
 The objective function minimises the cost of invoking all actors on their assigned processors and communicating between all actors on their processors.
@@ -128,21 +129,23 @@ Since the $\mathbf{X}$ matrix can only take values $\{0, 1\}$, the multiplicatio
 We let $\mathbf{Y}$ be the $n \times n \times p \times p$ tensor, where $\mathbf{Y}_{a,b,p,q} = \mathbf{X}_{a,p} \times \mathbf{X}_{b,q}$.
 The equivalent expression in linear form is:
 \begin{align}
-	\nonumber \forall a,b \in N : \forall p,q \in P : \quad & \mathbf{Y}_{a,b,p,q} \leq \mathbf{X}_{a,p} \\
-	\nonumber \forall a,b \in N : \forall p,q \in P : & \mathbf{Y}_{a,b,p,q} \leq \mathbf{X}_{p,q} \\
-	\nonumber \forall a,b \in N : \forall p,q \in P : & \mathbf{X}_{a,p} + \mathbf{X}_{p,q} - 1 \leq \mathbf{Y}_{a,b,p,q}
+	\nonumber \forall a,b \in N : \forall p,q \in P : & \mathbf{Y}_{a,b,p,q} \leq \mathbf{X}_{a,p} \\
+	\nonumber \forall a,b \in N : \forall p,q \in P : & \mathbf{Y}_{a,b,p,q} \leq \mathbf{X}_{b,q} \\
+	\nonumber \forall a,b \in N : \forall p,q \in P : & \mathbf{X}_{a,p} + \mathbf{X}_{b,q} - 1 \leq \mathbf{Y}_{a,b,p,q}
 \end{align}
 
 The equivalence of this linearised form to the quadratic term can be shown trivially by enumerating all the possible combinations of the $\mathbf{X}$ parts, which can only be zero and one.
 
 Hence the modified ILP formulation without quadratic terms is:
+
 \begin{align}
-	\nonumber \min & \sum_{a \in N; p \in P} I_{a,p}X_{a,p} + \sum_{a,b \in N; p,q \in P} \mathbf{Y}_{a,b,p,q}C_{a,b,p,q} \\
+	\nonumber \min & \sum_{a \in N; p \in P} \mathbf{I}_{a,p}\mathbf{X}_{a,p} + \sum_{a,b \in N; p,q \in P} \mathbf{C}_{a,b,p,q}\mathbf{Y}_{a,b,p,q} \\
 	\nonumber s.t. &  \\
 	\nonumber & \forall a \in N : \sum_{p \in P}X_{a,p} = 1 \\
 	\nonumber & \forall a,b \in N : \forall p,q \in P : \quad \mathbf{Y}_{a,b,p,q} \leq \mathbf{X}_{a,p} \\
-	\nonumber & \forall a,b \in N : \forall p,q \in P : \quad \mathbf{Y}_{a,b,p,q} \leq \mathbf{X}_{p,q} \\
-	\nonumber & \forall a,b \in N : \forall p,q \in P : \quad \mathbf{X}_{a,p} + \mathbf{X}_{p,q} - 1 \leq \mathbf{Y}_{a,b,p,q} \\
+	\nonumber & \forall a,b \in N : \forall p,q \in P : \quad \mathbf{Y}_{a,b,p,q} \leq \mathbf{X}_{b,q} \\
+	\nonumber & \forall a,b \in N : \forall p,q \in P : \quad \mathbf{X}_{a,p} + \mathbf{X}_{b,q} - 1 \leq \mathbf{Y}_{a,b,p,q} \\
 	\nonumber & \forall a,b \in N : \sum_{p \in P}\mathbf{Y}_{a,b,p,p}D_{a,b} = 0
 \end{align}
-The Mathprog-encoded version of this ILP can be found in {\em The appendix i have not done yet}.%CHEESE do this
+
+The AMPL-encoded version of this ILP can be found in {\em The appendix i have not done yet}.%CHEESE do this
