@@ -145,7 +145,7 @@ Hence the modified ILP formulation without quadratic terms is:
 	\nonumber & \forall a,b \in N : \forall p,q \in P : \quad \mathbf{Y}_{a,b,p,q} \leq \mathbf{X}_{a,p} \\
 	\nonumber & \forall a,b \in N : \forall p,q \in P : \quad \mathbf{Y}_{a,b,p,q} \leq \mathbf{X}_{b,q} \\
 	\nonumber & \forall a,b \in N : \forall p,q \in P : \quad \mathbf{X}_{a,p} + \mathbf{X}_{b,q} - 1 \leq \mathbf{Y}_{a,b,p,q} \\
-	\nonumber & \forall a,b \in N : \sum_{p \in P}\mathbf{Y}_{a,b,p,p}D_{a,b} = 0
+	\nonumber & \forall a,b \in N : \sum_{p \in P}\mathbf{Y}_{a,b,p,p}\mathbf{D}_{a,b} = 0
 \end{align}
 
 The AMPL-encoded version of this ILP can be found in {\em The appendix i have not done yet}.%CHEESE do this

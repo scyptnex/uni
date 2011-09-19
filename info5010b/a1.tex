@@ -41,8 +41,77 @@ This optimal is not an equilibria, as the non-entering firm has the incentive to
 Another way to effect this, which may be allowed by the regulators, would be to approach the other firm with an ultimatum offer to shut down our own production for 19.99999 million.
 
 \section {Equilibrium Probability}
+
+First the probability that there is at least one equilibrium $p_e$ is the same as not the probability that there are none $1-p_{\not e}$.
+Now we look at the occurances of equilibria in the game.
+
+Each player chooses one of n strategies, forming an $n \times n$ matrix.
+A given choice of row/collumn is an equilibria if the value is both the highest for the row player in that column, and the column player in that row.
+The payoffs are chosen independently at random, meaning there is a $1 \over n$ chance that a given payoff will be the highest in its row or column.
+Let us suppose the row player chooses, then the colum player will pick the highest value in that row, the row player then looks at all the values in that collumn and decides if they want to swap to a different row.
+In other words, there is a chance that the column player will choose a column that forces the row player to swap, otherwise the column player chooses the column with the highest value for the row player also, which is equilibrium.
+Which means that for a given choice by the row player, there is a $1 \over n$ chance that the column player can choose an equilibrium value.
+Therefore the is a $1 - {1 \over n}$ chance that the value chosen will force the row player to reconsider.
+
+However that is for given choices of the row player, and if even one row/collumn choice does not force the row player to reconsider then there is equilibrium.
+The probability that none of the row choices cause this is ${(1 - {1 \over n})}^n = {1 \over e}$.
+And hence the chance that there is at least one equilibrium is $1 - {1 \over e}$.
+
 \section {Tree-based Games}
+
+When a tree-based game such as this has an equilibrium, it means that the moves of every player can be solved based on the move of one player.
+That is, if we can solve all players' moves from one player, then there can be equilibrium.
+If any one player's moves cannot be solved, then there is no equilibrium.
+Here {\em can not be solved} means that a pair of players will constantly decide to swap moves because of the other.
+In a general game this could occur between any pair of players, however we have a tree-based game, which means only adjacent pairs can do this.
+Therefore if we can find any adjacent pair whose moves cannot be solved, then there is no equilibrium.
+
+We start by looking at leaves of the tree.
+A queue of leaves can be found in linear time.
+For each leaf, presume that the parent (other) player plays either strategy, and determine what this leaf will play based on the parent.
+We can therefore modify the parent's utility function to ignore this leaf based on its own move.
+In other words, we have worked out what the leaf plays based on the parent's play, so now we can add these payoffs straight to the parent and remove the leaf from consideration entirely.
+Once the leaf is solved, it is removed from the graph.
+We continue in this fashion up to the point where we start trying to remove leaves which were not leaves to begin with.
+
+Such a node has a more complicated nonlinear utility function.
+This node us unsolvable if one pure strategy modifies the utility so that the other is preferable, but then choosing the other modifies the utility again so that the former is preferable.
+Computing these nonlinear utility functions can be done in constant time, since a node will have at most three nonlinear terms (since the degree of the tree is at most three).
+Once computed, we can simply try each of the 2 strategies.
+If any node has this unsolvable property, then there is no equilibrium.
+Therefore equilibrium exists if we can collapse the tree until there are no nodes left.
+
+In short:
+\begin{itemize}
+	\item Find a leaf. ($1 \times O(n)$).
+	\item Check that the leaf's strategy can be determined from the parent's and its own utility function ($O(1)$).
+	\item If it can
+	\begin{itemize}
+		\item collapse the leaf's solution into the parent's utility function ($O(1)$).
+		\item remove the leaf ($O(1)$).
+		\item if the parent is now a leaf, add it to the pool of leaves ($O(1)$).
+	\end{itemize}
+	\item Otherwise return ``No Equilibrium''
+	\item If there are no more leaves, return ``Has Equilibrium''
+\end{itemize}
+This algorithm runs is linear in the size of the graph.
+
 \section {Shapley Network}
+
+1
+
+This question is deceptively simple and what remains is to be shown that in such a network the optimal solution is an equilibrium.
+
+The optimal solution has total cost $1/k$, this occurs when all players route from their node to the $v$ node (with 0 cost) then up to the $s_k$ node (with 0 cost) then from $s_k$ to $t$ (sharing the $1/k$ cost $k$ times).
+
+This solution is optimal as performing similar strategies with other $s$ nodes will share a larger ammount, ranging between $1/(k-1)$ and $1+\epsilon$.
+It may be helpful to view the $(v,t)$ edge as being similar to the other $s$ nodes, all players may move to any $s$ node with 0 cost, then move directly to the terminal.
+
+This solution is also an equilibrium.
+Each player pays $1/{k^2}$, which is (much) smaller than the $1/i$ for that $i$th player, or the next smallest direct path to the terminal $1/(k-1)$.
+
+Hence one equilibrium is the optimal solution, and the price of stability is therefore 1.
+
 \section {Atomic Selfish Routing}
 
 \end{document}
