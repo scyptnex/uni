@@ -1,6 +1,8 @@
 \documentclass{article}
 
 \usepackage{graphicx}
+\usepackage{amssymb,amsmath}
+\usepackage{pst-all}
 
 \author{Nic Hollingum - 308193415}
 \title{Algorithmic Game Theory - Problem Set 1}
@@ -113,5 +115,100 @@ Each player pays $1/{k^2}$, which is (much) smaller than the $1/i$ for that $i$t
 Hence one equilibrium is the optimal solution, and the price of stability is therefore 1.
 
 \section {Atomic Selfish Routing}
+
+\subsection{Four Players}
+
+To achieve a price of anarchy of exactly $(3 + \sqrt{5})/2$ we follow this form:
+\begin{align}
+	\nonumber a + b + c + d & = 2 \quad \mbox{Optimal} \\
+	\nonumber 3a + 3b + 2c + 2d & = 3 + \sqrt{5} \quad \mbox{Worst Eq.} \\
+	\nonumber a + b & = \sqrt{5} - 1 \\
+	\nonumber a = b & = (\sqrt{5}-1)/2 \\
+	\nonumber c + d + (\sqrt{5} - 1) & = 2 \\
+	\nonumber c + d & = 3 - \sqrt{5} \\
+	\nonumber c = d & =(3 - \sqrt{5})/2
+\end{align}
+\noindent Therefore the weights should be:
+\begin{align}
+	\nonumber s_1 & = (\sqrt{5}-1)/2 \\
+	\nonumber s_2 & = (\sqrt{5}-1)/2 \\
+	\nonumber s_3 & = (3 - \sqrt{5})/2 \\
+	\nonumber s_4 & = (3 - \sqrt{5})/2
+\end{align}
+\noindent These weights preserve the optimal and worst equilibrium from the unweighted example, therefore the price of anarchy is the desired ammount.
+
+\subsection{Three Players}
+
+We can apply a similar procedure to games with 3 players to achieve $5/2$ PoA in the unweighted case and $(3 + \sqrt{5})/2$ in the weighted case.
+This network is shown in Figure \ref{figThree}.
+
+\begin{figure}
+\begin{center}
+\begin{pspicture}(10,6)
+	
+	\cnodeput(2,5){A}{$s_1, s_2$}
+	\cnodeput(8,5){B}{$s_3, t_1$}
+	\cnodeput(5,1){C}{$t_2, t_3$}
+	
+	\ncarc{->}{A}{B}
+	\aput(0.5){$x$}
+	\ncarc{->}{B}{A}
+	\aput(0.5){0}
+	\ncarc{->}{A}{C}
+	\aput(0.5){$x-1$}
+	\ncarc{->}{B}{C}
+	\aput(0.5){$x$}
+	\ncarc{->}{C}{B}
+	\aput(0.5){$x$}
+
+\end{pspicture}
+\caption{The Three player network}
+\label{figThree}
+\end{center}
+\end{figure}
+
+\noindent With similar analysis to the four player network we see that each player has a one-hop route and a two-hop route.
+If all players take the direct route the cost is $1 + 1 + 1 - 1 = 2$ and no player gains by switching to the 2 hop route.
+If all players take the 2 hop route the cost is $2 + 1 + 2 = 5$ and again no player gains by switching to the 1 hop route (though for player $s_2$ switching is of no consequence, if she does switch then the result is not equilibrium as both other players can then switch to improve their score).
+So in the unweighted case the price of anarchy is $5/2$.
+We can use a similar method as the 4 player game to derive the weights:
+\begin{align}
+	\nonumber s_1 & = \sqrt{5}-1\\
+	\nonumber s_2 & = (4 - \sqrt{5})/2 \\
+	\nonumber s_3 & = (4 - \sqrt{5})/2
+\end{align}
+\noindent However note that applying these weights is not an equilibrium ($s_2$ has incentive to route through the $x-1$ path).
+We therefore conclude that this network cannot have a price of anarchy that high.
+
+\subsection{Two Players}
+
+The maximal PoA for 2 player networks is 2, as demonstrated by the network in Figure \ref{figTwo}.
+\begin{figure}
+\begin{center}
+\begin{pspicture}(10,6)
+	
+	\cnodeput(2,5){A}{$s_1$}
+	\cnodeput(8,5){B}{$s_2$}
+	\cnodeput(5,1){C}{$t_1, t_2$}
+	
+	\ncarc{->}{A}{B}
+	\aput(0.5){1}
+	\ncarc{->}{B}{A}
+	\aput(0.5){1}
+	\ncline{->}{A}{C}
+	\aput(0.5){$x$}
+	\ncline{->}{B}{C}
+	\aput(0.5){$x$}
+
+\end{pspicture}
+\caption{The Two player network}
+\label{figTwo}
+\end{center}
+\end{figure}
+\noindent in this network the optimal strategy is for both players to route directly to the terminal, paying 2 total.
+There is also equilibrium where each player routes to the other (paying 1 each) then down to the terminal, paying 4 total, leaving a PoA of 2.
+For the PoA to be greater than 2 requires that the individual players pay superlinearly to switch to the optimal solution (i.e. if the optimal was less than half an equilibrium, by the pigeonhole principal either one player can switch to their optimal path to reduce her cost, or that player must pay more than a linear ammount to do so, which contradicts the affine function assumption).
+Therefore Figure \ref{figTwo} is an upper bound on the price of anarchy for 2 player games.
+
 
 \end{document}

@@ -1,0 +1,9 @@
+\begin{align}
+	\nonumber \min & \sum_{a \in N; p \in P} \mathbf{I}_{a,p}\mathbf{X}_{a,p} + \sum_{a,b \in N; p,q \in P} \mathbf{C}_{a,b,p,q}\mathbf{Y}_{a,b,p,q} \\
+	\nonumber s.t. &  \\
+	\nonumber & \forall a \in N : \sum_{p \in P}\mathbf{X}_{a,p} = 1 \\
+	\nonumber & \forall a,b \in N : \forall p,q \in P : \quad \mathbf{Y}_{a,b,p,q} \leq \mathbf{X}_{a,p} \\
+	\nonumber & \forall a,b \in N : \forall p,q \in P : \quad \mathbf{Y}_{a,b,p,q} \leq \mathbf{X}_{b,q} \\
+	\nonumber & \forall a,b \in N : \forall p,q \in P : \quad \mathbf{X}_{a,p} + \mathbf{X}_{b,q} - 1 \leq \mathbf{Y}_{a,b,p,q} \\
+	\nonumber & \forall a,b \in N : \sum_{p \in P}\mathbf{Y}_{a,b,p,p}\mathbf{D}_{a,b} = 0
+\end{align}

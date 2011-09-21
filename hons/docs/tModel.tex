@@ -119,6 +119,7 @@ The objective function minimises the cost of invoking all actors on their assign
 The constraints are, first all actors must be assigned to exactly one processor, second all actors which are duplicates of each other cannot be assigned to the same processor (this lower sum will be zero unless $a$ and $b$ are both assigned to $p$ and they are duplicates).
 
 \subsection{Constraint Linearisation}
+\label{secModLin}
 
 Viewing the model above we immediately see the problem of quadratic terms.
 The minimisation of the objective function is determined by the minimisation of two dependant assignments (for the communication cost part of the sum).
@@ -138,14 +139,6 @@ The equivalence of this linearised form to the quadratic term can be shown trivi
 
 Hence the modified ILP formulation without quadratic terms is:
 
-\begin{align}
-	\nonumber \min & \sum_{a \in N; p \in P} \mathbf{I}_{a,p}\mathbf{X}_{a,p} + \sum_{a,b \in N; p,q \in P} \mathbf{C}_{a,b,p,q}\mathbf{Y}_{a,b,p,q} \\
-	\nonumber s.t. &  \\
-	\nonumber & \forall a \in N : \sum_{p \in P}X_{a,p} = 1 \\
-	\nonumber & \forall a,b \in N : \forall p,q \in P : \quad \mathbf{Y}_{a,b,p,q} \leq \mathbf{X}_{a,p} \\
-	\nonumber & \forall a,b \in N : \forall p,q \in P : \quad \mathbf{Y}_{a,b,p,q} \leq \mathbf{X}_{b,q} \\
-	\nonumber & \forall a,b \in N : \forall p,q \in P : \quad \mathbf{X}_{a,p} + \mathbf{X}_{b,q} - 1 \leq \mathbf{Y}_{a,b,p,q} \\
-	\nonumber & \forall a,b \in N : \sum_{p \in P}\mathbf{Y}_{a,b,p,p}\mathbf{D}_{a,b} = 0
-\end{align}
+\input{txILP}
 
 The AMPL-encoded version of this ILP can be found in {\em The appendix i have not done yet}.%CHEESE do this
