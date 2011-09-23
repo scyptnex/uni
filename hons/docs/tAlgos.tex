@@ -102,15 +102,15 @@ An alternate formulation may attempt to have the solver working with the $\mathb
 
 The linearisation of quadratic terms for the ILP solver also causes difficulties in running experiments.
 It is well known that solving hard problems to optimality can take a long time for even small instances, however the linearisation makes this problem particularly acute, as the solver must deal with an incredibly large search space.
-For the RAAP, the naive search space should be $p^n$, where we exhaustively check each actor by allocating it to each processor.
-The mathematical programme formulation must deal with the quadratic term, which increases the search space to $2^{np}$, significantly larger than the naive brute-force way.
+For the RAAP, the brute force complexity is $O(p^n)$, where we exhaustively check each actor by allocating it to each processor.
+The mathematical programme formulation must deal with the quadratic term, which has a large search space of $2^{np}$.
 Smart use of branch-and-bound in the solver deals with this problem somewhat, still, on experimentation machines, the assignment of trivial SDF programs (12 actors, 4 processors) can take up to two hours.
 
 The need for a faster means of assignment is therefore clear.
 When dealing with problems of this nature the typical step is to use a known-worst-case approximation scheme which performs the task in polynomial time.
 As the previous section mentioned, this step was unavailable to us, due again to the linearisation of quadratic constraints.
 
-We therefore choose to implement a {\em heuristic} with unknown (or, unproven) approximation ratio.
+We therefore choose to implement a {\em heuristic} with unknown approximation ratio.
 For this thesis we use the term heuristic to mean a feasible solution generator, where the solutions generated have unbounded costs in comparison to the optimal.
 We distinguish this from an approximation scheme, such as relaxation and rounding techniques described in Section \ref{secAlgRelax}, where the solutions cost at worst better than some function of the optimal solution.
 In practice heuristics are typically faster to run and simpler to implement than approximations.
@@ -132,7 +132,7 @@ That said the non-overlapping constraint is an important one which the heuristic
 
 \begin{figure}
 \begin{center}
-	\begin{tabular}{|c|}
+	\fbox{
 	\begin{minipage}{0.8\linewidth}
 	\begin{algorithmic}
 		\STATE $A$, set of actors
@@ -154,13 +154,13 @@ That said the non-overlapping constraint is an important one which the heuristic
 		\STATE return $\rSolution$
 	\end{algorithmic}
 	\end{minipage}
-	\end{tabular}
+	}
 \caption{Processor Assignment Heuristic}
 \label{figAlgAlg}
 \end{center}
 \end{figure}
 
-The actual heuristic is in Figure \ref{figAlgAlg} as pseudocode.
+The actual heuristic is shown in Figure \ref{figAlgAlg} as pseudocode.
 As with the ILP itself, this algorithm can be used to assign graphs which do not have replication-type FT, this is done by simply presuming that no actors are duplicates.
 This heuristic runs in time $O(np)$ when there are $n$ actors and $p$ processors.
 
