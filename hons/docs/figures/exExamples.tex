@@ -1,0 +1,51 @@
+\begin{pspicture}(10,6)
+	
+	\cnode(1,2){0.3}{a3}
+	\cnode(2.5,1){0.3}{a1}
+	\cnode(4,2){0.3}{a4}
+	\cnode(1.5,5){0.3}{a2}
+	\cnode(3.5,5){0.3}{a0}
+
+	\cnode(5.5,1.5){0.3}{b5}
+	\cnode(7.5,4.5){0.3}{b6}
+	\cnode(5.5,4.5){0.3}{b7}
+	\cnode(7.5,1.5){0.3}{b8}
+	\cnode(9.5,4.5){0.3}{b9}
+	\cnode(9.5,1.5){0.3}{b10}
+	
+	\ncline{->}{a0}{a2}
+	\bput(0.15){3}
+	\bput(0.85){3}
+	\ncline{->}{a0}{a4}
+	\aput(0.15){6}
+	\aput(0.85){4}
+	\ncline{->}{a1}{a4}
+	\bput(0.15){6}
+	\bput(0.85){2}
+	\ncline{->}{a1}{a3}
+	\aput(0.15){12}
+	\aput(0.85){12}
+	\ncline{->}{a2}{a3}
+	\bput(0.15){3}
+	\bput(0.85){6}
+	
+	\ncline{->}{b5}{b8}
+	\bput(0.15){4}
+	\bput(0.85){12}
+	\ncline{->}{b7}{b8}
+	\bput(0.15){3}
+	\bput(0.85){6}
+	\ncline{->}{b6}{b7}
+	\bput(0.15){2}
+	\bput(0.85){6}
+	\ncline{->}{b8}{b10}
+	\bput(0.15){6}
+	\bput(0.85){3}
+	\ncline{->}{b6}{b10}
+	\bput(0.15){1}
+	\bput(0.85){3}
+	\ncline{->}{b6}{b9}
+	\bput(0.15){2}
+	\bput(0.85){2}
+	
+\end{pspicture}

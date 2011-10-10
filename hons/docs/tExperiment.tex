@@ -7,11 +7,142 @@
 
 First we must show the correct recovery of the system after thee occurance of a fault.
 These are the most basic kinds of experiments and are very controlled.
-Our simulator uses mostly randomly-generated graphs as problem instances, so we devise a simple deterministic invocation behaviour which allows us to determine if the fault-tolerant are working correctly.
+Our simulator uses mostly randomly-generated graphs as problem instances, so we devise a simple deterministic invocation behaviour which allows us to determine if the fault-tolerance is working correctly.
 
+Our simple program works like this:
+\begin{itemize}
+	\item Actors which do not consume from any channels have an internal state.
+			These actors write the state as a double object for each token, and increment it after each write.
+			So an actor with no input channels and two output channels each producing two tokens per invocation, will write $(0,1)$ on the first channel, then $(2,3)$ on the second, on its first invocation, then $(4, 5)$ and $(6, 7)$ on its second.
+	\item Actors with some inputs and some outputs consume all tokens and average them to determine their state.
+			Next they write the state in increasing fashion as described above.
+	\item Actors with no outputs print the average of all input tokens to standard output.
+\end{itemize}
+\noindent This arbitrary choice of functionality allows us to observe deterministic outputs from arbitrary graphs.
+Note that the output will vary with graph topology and repetition counts.
+For this experiment we use simple acyclic graphs such as the ones shown in Figure \ref{figRGraph}.
 
+\begin{figure}
+\begin{center}
+	\input{figures/exExamples}
+\caption{Examples of the kind of graphs used for random tests}
+\label{figRGraph}
+\end{center}
+\end{figure}
+
+We run the simulator as described in Chapter \ref{chapSystems}.
+For this test we choose a graph with four nodes to be run on five simulated machines over 3 steady state cycles.
+The output of this program is shown here:
+\begin{multicols}{2}
+\begin{verbatim}
+-- Steady State 0 --
+{2} - 5.083333333333333
+{2} - 11.25
+{2} - 17.416666666666668
+-- Steady State 1 --
+{2} - 26.083333333333336
+{2} - 32.25
+{2} - 38.41666666666667
+-- Steady State 2 --
+{2} - 47.08333333333333
+{2} - 53.25
+{2} - 59.41666666666667
+\end{verbatim}
+\end{multicols}
+\noindent In each steady state the actor called \verb={2}= is invoked three times, and each time averages the inputs of its tokens to print a result to standard output.
+
+Now we run the simulator on the same graph which is duplicated twice (left) and three times (right) to produce the following:
+\input{figures/exOutput}
+\noindent Note that the actor formerly called \verb={2}= has been duplicated by the actors \verb={4}= and \verb={5}= in the first case, and \verb={6}=, \verb={7}= and \verb={8}= in the second.
+Since these actors are duplicates, the simulator appends their names with an index numbering their order amongst duplicates.
+We can see that the duplicated output is identical to the output for single executions.
+The actors execute in parallel, so the order that machines print to standard out varies.
+
+Now that we have our expected output, we will introduce a fault in one of the machines during the second steady state.
+First when the actors are duplicated, using replication FT:
+\begin{multicols}{2}
+\begin{verbatim}
+-- Steady State 0 --
+{4}[0] - 5.083333333333333
+{4}[0] - 11.25
+{4}[0] - 17.416666666666668
+{5}[1] - 5.083333333333333
+{5}[1] - 11.25
+{5}[1] - 17.416666666666668
+-- Steady State 1 --
+{5}[1] - 26.083333333333336
+{5}[1] - 32.25
+{5}[1] - 38.41666666666667
+## 4> Farewell cruel world!
+-- Steady State 2 --
+processor 4 is dead
+## Fault Detected
+{5}[1] - 47.08333333333333
+{5}[1] - 53.25
+{5}[1] - 59.41666666666667
+## Fault Detected
+## Fault Detected
+\end{verbatim}
+\end{multicols}
+\noindent Since the processor where the actor called \verb={4}= has faulted, it does not print output, however the other processor executes its actors, which inform the server that they detect faults while trying to communicate with that processor.
+For this test we simply print the detection message to standard output.
+Note the output is still correct.
+
+Next we use recomputation FT on the original (single duplicate) example:
+\begin{multicols}{2}
+\begin{verbatim}-- Steady State 0 --
+{2} - 5.083333333333333
+{2} - 11.25
+{2} - 17.416666666666668
+-- Steady State 1 --
+{2} - 26.083333333333336
+{2} - 32.25
+## 0> Farewell cruel world!
+== Begin checkpoint recovery ==
+restarting machine 0
+initialise machine 0
+machine 0 reloading state 0
+machine 1 reloading state 0
+machine 2 reloading state 0
+machine 3 reloading state 0
+machine 4 reloading state 0
+Recovery complete
+-- Steady State 1 --
+{2} - 26.083333333333336
+{2} - 32.25
+{2} - 38.41666666666667
+-- Steady State 2 --
+{2} - 47.08333333333333
+{2} - 53.25
+{2} - 59.41666666666667
+\end{verbatim}
+\end{multicols}
+\noindent Under recomputation FT the fault detection immediately begins the recovery process.
+The faulted machine is restarted and the fill-state for each processor is reloaded from disk for all machines.
+Since the last successful steady state was 0, this state is reloaded and recomputation begins again at state 1, even though state 1 was partially completed before the machine faulted.
 
 \subsection{Multiple Failure Experiments}
+
+We run our SDF programs now under multiple-fault simulations.
+Again these tests are designed to demonstrate the robustness of the FT mechanisms, as such we will for brevity only point out that the simulation goes as expected.
+Since these tests involve failing processors at random, they are run multiple times and the results discussed are for the average case.
+
+The replication FT mechanism is known to fail when all duplicates of any one actor are on machines which fail.
+In experiments we observe that for few duplicates the probability of failure different from what is expected.
+The estimates in presented in Chapter \ref{chapModel} make the assumption that actors are assigned to processors uniformly at random.
+Whilst this simplifies the model, in practice this is seldom true.
+In order to minimise communication costs, processors are typically assigned all actors, or in other words, only as many processors as duplicates are used.
+So long as all the actors are assigned to fewer processors, this affects the probability of failure.
+When processors significantly outnumber actors and the actors are sufficiently spread out, we have to fail most of the processors to be guaranteed of failing one set of duplicates, whereas if the actors are not spread out, only the few processors with actors on them need to be failed.
+When actors significantly outnumber processors this has the effect of improving robustness, since the {\em significant proportion} required is less than the number of processors to which the actors were assigned (typically the number of duplicates).
+
+The recomputation FT mechanism is guaranteed to terminate correctly no matter how many processors fail.
+However under tests with multiple failures a weakness was exposed for recurring failures.
+Again this weakness is related to how spread-out the actors are on the processors.
+When a fault is encountered the simulator must rollback to the last successful execution, however occasionally failures would occur again before another steady state had completed.
+With sufficiently high probability of failure and sufficiently spread out processors, the simulator rarely completes an entire steady-state execution.
+In contrast, when the actors were grouped to fewer processors (especially to only one processor) the performance improved significantly, due to the relative improbability of that important processor failing.
+Experimentally, executing five steady states on five machines with probability failure of 0.1 per machine per steady state, required on average 3.2 resets when the actors were spread out, and 0.9 resets when the actors were not.
 
 \section{Heuristic and Optimal Assignment Costs}
 
