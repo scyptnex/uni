@@ -58,7 +58,7 @@
 	\item General picture of security
 	\item Protect resources in the system \cite{network}
 	\item Protecting agents are resources
-	\item Ancillary services (cameras/walkie talkies) are resources
+	\item Anciliary services (cameras/walkie talkies) are resources
 	\item Must end the game with as much resources intact or unspent
 \end{itemize}
 \end{column}
@@ -79,7 +79,7 @@
 	\item Malarie not Eve
 	\item Attempt to deal damage to system
 	\begin{itemize}
-		\item Asymmetric
+		\item Asymetric
 		\item Disparate
 		\item Temporal
 	\end{itemize}
@@ -160,7 +160,7 @@
 \begin{columns}
 \begin{column}{5cm}
 \begin{itemize}
-	\item Multi-agent Markov Decision Problem
+	\item Multiagent Markov Decision Problem
 	\item $(S, A, P, R, C1, C2, T1, T2, N, Q)$
 	\begin{itemize}
 		\item State set
@@ -252,7 +252,7 @@
 	\item Real world application of game theory
 	\item Provide security for Los Angeles International Airport
 	\item Calculate optimal routes for security agents
-	\item Uses randomisation
+	\item Uses randomization
 \end{itemize}
 \end{column}
 \begin{column}{5cm}
@@ -294,7 +294,7 @@
 \end{columns}
 \end{frame}
 
-\begin{frame}{Sub-optimality}
+\begin{frame}{Suboptimality}
 \begin{columns}
 \begin{column}{5cm}
 \center{\includegraphics[width=5cm]{coyote.jpg}}
@@ -303,7 +303,7 @@
 \begin{itemize}
 	\item Perfect guards are less effective against imperfect attackers
 	\item Attacker actions are modelled with some randomness \cite{stackelberg}
-	\item System takes into account sub-optimality of follower strategy
+	\item System takes into account suboptimality of follower strategy
 \end{itemize}
 \end{column}
 \end{columns}
