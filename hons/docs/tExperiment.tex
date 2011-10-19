@@ -241,10 +241,100 @@ It is possible to devise pathological cases where the heuristic performs arbitra
 
 \subsection{Multiple Duplicate Assignments}
 
+This section analyses how the optimal solver and heuristic perform when their problem's actor-set is duplicated.
+We analyse the same problem under various k-way duplications with the same processor description (and therefore invocation times), however the duplicated instances will require more communication cost in general.
+
+\begin{table}
+\begin{center}
+	\input{figures/exFrequency}
+\caption{Number of tests run on duplicate assignments}
+\label{figExFreq}
+\end{center}
+\end{table}
+
+These experiments by necessity constituted larger problem sizes.
+As such, certain experiments were not run due to time limitations.
+Optimal assignment formulations which exceed 10 hours in run time were excluded from these tests.
+The number of tests which could be completed in the time limit given the un-duplicated actor size (row) and k-way duplication (column) are shown in Table \ref{figExFreq}.
+
+\begin{table}
+\begin{center}
+	\input{figures/exRampup}
+\caption{Average optimal assignment cost}
+\label{figExRamp}
+\end{center}
+\end{table}
+
+First we look at the cost of optimal assignment over various k-way duplications.
+Table \ref{figExRamp} shows the average of all optimal assignment costs for the given $n$-actor $k$-duplicate cases.
+As we would expect, when we look down the columns for the 1 and 2-way duplications, we see linearly increasing costs.
+This is the intuitive result since we have a linearly increasing problem sizes.
+However when we look across the rows we see much faster cost increases.
+According to the Model discussed in Chapter \ref{chapModel}, we would expect to see polynomially increasing costs.
+Unfortunately only the $n = 3$ tests have enough samples to show the such an increase, and in that case we see such an increase.
+
+\begin{table}
+\begin{center}
+	\input{figures/exAccuracy}
+\caption{Average performance (heuristic cost/optimal cost) of heuristic assignment}
+\label{figExAcc}
+\end{center}
+\end{table}
+
+Now we see if the heuristic's performance degrades as the number of duplicates increases.
+Table \ref{figExAcc} shows the proportional increase in cost of the heuristic against the optimal solution.
+On examination we see few patterns in the heuristic performance as the number of duplicates increases.
+That is to say that while we see increases in the $n=4, 6$ cases, we see decreases in the $n=3, 5$ cases, and we also see no uniform increase or decrease in all the k-way duplications of the $n=3$ case.
+The lack of a pattern here is surprising, given the results of the experiment in Table \ref{figSTable}.
+In that experiment we saw that the heuristic's performance worsened as the problem size increased, however when we duplicate (and therefore increase the problem size) we do not loose out on the heuristic.
+
+An explanation for this finding is that the heuristic has less of an ability to err when there are more duplicates.
+In the un-duplicated case the assignment was essentially to one processor, and so as the problem size increased the chance of assigning to that one correct processor was less.
+However in the duplicate case there are $k$ correct processors, and the heuristic is likely to randomly choose at least some of the correct ones.
+Hence the number of correct processors scales with the number of duplicates, which accounts for the lack of a performance drop-off with problem size in the heuristic.
+
 \section{Assignment Properties}
 
-\subsection{Cost Varying Assignments}
+In this section we use the experiments to confirm some of the more basic properties of the assignment problem.
+These observations are noteworthy, though it is quite clear why the problem has those traits.
 
-\subsection{Processor Varying Assignments}
+Processor utilisation is an issue of some importance in this problem's context.
+In basic terms, the cost of communication is high or comparable to the cost of invocation, but whereas invocation is unavoidable, communication can be avoided by assigning all actors to one processor.
+This is an artefact of the simplification of the model discussed in Chapter \ref{chapModel}.
+A more complex, and useful, model would be accounting for the parallel makespan, rather than the total cost.
+This would encourage a tradeoff which assigns some actors even to bad processors so as to ensure a shorter runtime.
 
-varied number of processors
+In practice the only way to encourage processor utilisation with the simplified model is to suppose heterogeneous architectures in the target machine.
+In the real world, certain kinds of processors are more suited to different tasks.
+A GPGPU may be able to perform matrix multiplications quickly, but has much less speedup for sorting tasks, a CPU in contrast is good at sorting and less efficient at the highly parallelisable task of matrix multiplication.
+To this end we can rely on highly divergent invocation times for the different processors.
+This, coupled with increasing the cost of invocation in comparison to communication, should encourage utilisation of more processors.
+
+\begin{table}
+\begin{center}
+	\input{figures/exScale}
+\caption{Processor utilisation with increasing invocation cost}
+\label{figExScale}
+\end{center}
+\end{table}
+
+Table \ref{figExScale} shows the average utilisation of processors with increasing costs of communication.
+These experiments are run to assign eight actors to five processors, where in half the tests the eight actors are all stand-alone, and in the other half they are the 2-way duplication of four stand-alone actors.
+Utilisation shows the average proportion of the processors that were used.
+The columns of this table show:
+\begin{itemize}
+	\item {\bf Scale}: The multiplicative factor for the invocation times.
+	\item {\bf Range}: The actual range of invocation times for all experiments in this scale.
+	\item {\bf Av Opt}: The average optimal assignment processor utilisation for all experiments in this scale.
+	\item {\bf Sg Opt}: As above for only the un-duplicated test cases.
+	\item {\bf Dp Opt}: As above for only the duplicated test cases.
+	\item {\bf Av Heu}: The average heuristic assignment processor utilisation for all experiments in this scale.
+	\item {\bf Sg Heu}: As above for only the un-duplicated test cases.
+	\item {\bf Dp Heu}: As above for only the duplicated test cases.
+\end{itemize}
+
+Examining this data we see what we expected.
+The processor utilisation increases as we increase the cost of invocation compared with communication.
+For these experiments the proportion of communication cost remains constant, so eventually the tradeoff to distribute processors becomes viable.
+However, we see no pattern when comparing the heuristic to the optimal utilisations, and heuristic assignments will sporadically use more or less processors than the optimal.
+
