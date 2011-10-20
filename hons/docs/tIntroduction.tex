@@ -1,4 +1,120 @@
 \chapter{Introduction}
 
-This is an intro.
-Skeleton is skeletal.
+This thesis analyses the costs and overheads of introducing robust, fault-tolerant mechanisms on synchronous dataflow graphs.
+The motivation and goals of the project are discussed in this chapter.
+An overview of the structure of the work, and its specific contributions, are outlined.
+
+\section{Problem Context}
+
+A brief introduction to the problem context is necessary first.
+Chapter \ref{chapBack} will provide a more thorough background.
+
+In the modern context of high-performance computing, single-core architectures are proving insufficient.
+Multicore platforms and even so-called {\em cloud} computers (networked heterogeneous clusters) are more common, however to access their full potential requires effort on the part of the programmer to parallelise code.
+One method of achieving explicit parallelisation for certain kinds of computations, is to decompose the program to an interconnected network of functions, called a computational graph.
+Synchronous Dataflow graphs are a subset of computational graphs where the amount of data which moves between the computing nodes (called {\em actors}) is known statically.
+
+The ease of distributing these actors onto multiple-processor machines lends them well to cloud architectures.
+However cloud machines in practice have a high probability of failing.
+Well-known cloud applications like Map-Reduce must have explicit controls to ensure correct output, even when parts of the machine they are being run on crash.
+The method by which applications ensure correct functioning is called its {\em fault tolerance mechanism}.
+
+\section{Motivation}
+
+Though they offer opportunities for high performance, cloud computers have some problems.
+In the context of a single machine, failure is rare, however when a computer does fail we do not expect reasonable output.
+For cloud computers, we still expect reasonable output when small parts of the computer die.
+Work by Reed et al in \cite{ree06} points out that cloud computers may have as little as 100 hours between node failures.
+It is therefore quite likely that a computer which is running during a program's execution will fail.
+
+The streaming domain is of particular interest for certain kinds of application.
+Many large-scale data analytic applications can be efficiently decomposed into streams.
+In particular, streaming applications can be thought of as a generalisation of Map-Reduce, in the sense that any Map-Reduce computation can be modelled by a stream graph.
+However if stream programs are to be used in place of Map-Reduce, they must ensure a level of fault tolerance at least as robust as that of Map-Reduce \cite{dea08}.
+
+The current research on parallel streaming programs deals with partitioning (assigning) actors for performance gains or data locality.
+Whilst the high failure probability on cloud machines is well known, little research has been done on dealing with this specifically for stream programs.
+A clear presentation of how SDF programs specifically can be adapted to resist failure does not to the best of our knowledge exist in the literature.
+
+\section{Thesis Goals}
+\label{secInGoal}
+
+The primary aim of this work is to analyse the mechanisms, costs and tradeoffs required to ensure fault tolerance on cloud-based stream programs.
+We deal only with theoretical cloud-machines, the N-Process machine, which is a generalisation of networked heterogeneous clusters.
+More explicitly this work aims to answer the research questions:
+
+\begin{itemize}
+	\item What are the strategies available to SDF programs specifically?
+			We must have an understanding of how fault tolerance can be assured for stream graphs in order to analyse them.
+	\item What do the fault tolerance mechanisms cost is?
+			This refers both to the costs of implementing the fault tolerance, as well as the overheads of assuring it for stream graphs.
+	\item What tradeoffs must be made for fault tolerance?
+			Though related to costs, this refers to performance, accuracy, speed or buffer requirement tradeoffs.
+			We are also interested in whether these metrics directly affect robustness.
+	\item How can we assign actors to processors in a robust way?
+			What limitations must be imposed on the normal assignment of actors to processors must be understood.
+	\item How easily can we assign actors?
+			Including fault tolerance constraints in the assignment problem may make it difficult to solve.
+	\item How do we execute a stream program with robustness?
+			This includes both the normal running of programs and the actual execution of fault-recovery systems (if applicable).
+	\item What assurances can be made?
+			We look at whether faults can be avoided completely, or only with probability, and we wish to formalise these concepts.
+\end{itemize}
+
+\section{Contributions}
+
+In order to fulfil the goals stated in section \ref{secInGoal} this thesis makes the following contributions to the literature:
+
+\begin{itemize}
+	\item A formal understanding of the fault tolerance mechanisms as applicable to stream graphs.
+			This understanding is used to asses some of the properties of these mechanisms.
+	\item A mathematical model for use in ILP and LP solvers to determine optimal assignment of actors with robustness requirements.
+			Our model is actually encoded in AMPL and used to run experiments (see Chapter \ref{chapExperiment})
+	\item Proof of the NP-Completeness for the robust assignment of actors.
+			This proof is shown for the simple assignment case, however it follows that more complex variants of the assignment problem are also NP-Complete.
+	\item A simulator which executes arbitrary SDF graphs with user-coded filters on a virtual cloud-machine.
+			This simulator implements the fault-tolerance mechanisms discussed in the thesis.
+	\item A heuristic for the assignment of actors to processors with run-time bounded polynomially in the size of the problem.
+			Though this heuristic has unknown approximation bounds, it runs in $O(n^2 p)$ time, for computational graphs with $n$ actors and $p$ processors.
+	\item Experimental analysis of the heuristic's performance using the simulator.
+			Performance is analysed both during executions which fault an those which run smoothly.
+			The experiments also verify some of the properties which the model predicts.
+\end{itemize}
+
+\section{Thesis Structure}
+
+This thesis presents the methodologies involved in, and results of, the analysis of fault tolerance for SDF graphs.
+
+Chapter \ref{chapBack} provides a thorough background for the thesis.
+The current trends in the SDF paradigm are examined and explained.
+This chapter also introduces the concepts behind industry standard fault tolerance mechanisms.
+
+Chapter \ref{chapExample} gives the user an example SDF program which will be used throughout the thesis.
+This example is a real-world sorting algorithm, implemented in SDF.
+The intention is to show the reader how this paradigm is used practically, as well as some of its finer points.
+
+Chapter \ref{chapSystems} describes the systems, particularly the simulator, used in this thesis.
+The inner workings of the simulator are explained and some justification is provided for its design choices.
+We also show how the simulator deals with the working example.
+
+Chapter \ref{chapModel} contains the mathematical formalisms of some of the key concepts in this thesis.
+First this chapter models the execution time of programs with fault tolerance guarantees.
+The probabilistic understanding of failure and the requirements for some fault tolerance mechanisms are presented next.
+Finally the ILP formulation of the assignment problem is presented.
+
+Chapter \ref{chapHardness} proves the complexity of the assignment problem in the simple case.
+This chapter also explains how the simple proof is extended to prove NP-Completeness for more complex variations of the assignment problem.
+
+Chapter \ref{chapAlgos} details the heuristic algorithm.
+Some of the mathematics behind the heuristic are also presented here.
+
+Chapter \ref{chapExperiment} analyses the actual execution of SDF programs in the simulator.
+These experiments are used to verify properties of the heuristic and optimal assignments, as well as discover some unintuitive ones.
+These experiments make use of the simulator described in Chapter \ref{chapSystems}.
+
+Chapter \ref{chapRelated} surveys the current literature related to this thesis.
+The works examined in this section were used throughout the development of the simulator.
+
+Chapter \ref{chapConclusion} examines the effectiveness of this thesis in answering the research questions it set out to.
+Reference is made to the results gained during experimentation and development.
+Possibilities for future work are also detailed here.
