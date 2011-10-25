@@ -205,7 +205,7 @@ The columns of this table show:
 \begin{itemize}
 	\item {\bf n}: The number of actors in the problem.
 	\item {\bf c}: The number of instances tested where the random generation produced a graph with $n$ nodes.
-	\item {\bf div}: The number of times the heuristic did not match the optimal assignment.
+	\item {\bf Div}: The number of times the heuristic did not match the optimal assignment.
 	\item {\bf Avg Opt}: The average cost of optimal assignments.
 	\item {\bf Avg Heu}: The average cost of heuristic assignments.
 	\item {\bf Avg Prop}: The average proportion between heuristic and optimal.
@@ -228,7 +228,7 @@ Since this significantly reduces the assignment cost, the heuristic and optimal 
 However whereas the optimal is choosing the best processor for all actors, the heuristic is choosing the best processor for the first actor it finds, then assigning all other actors to that processor to avoid communication cost.
 The heuristic can be thought of as choosing an actor at random and assigning all actors to the processor that that actor happens to run best on.
 Unsurprisingly then, the heuristic is unlikely to choose this actor when there are more actors to choose from.
-Thus we see when we look at the Div column in Table \ref{figSTable} that when we only have 4-5 actors, we have suboptimal heuristic assignments 16\%-25\% of the time, but when we have 9-10 actors, we have 37\%-50\% suboptimal heuristic assignments.
+Thus we see when we look at the Div column in Table \ref{figSTable} that when we only have 5-6 actors, we have suboptimal heuristic assignments 16\%-25\% of the time, but when we have 9-10 actors, we have 37\%-50\% suboptimal heuristic assignments.
 
 This experiment also shows an interesting property in the degree of suboptimality.
 When we look at only suboptimal assignments, although the likelyhood of a suboptimal assignment increases, we see that the optimal to heuristic ratio does not necessarily increase with problem size.
@@ -240,9 +240,10 @@ The experiments in Table \ref{figSTable} have an equal number of both kinds of e
 It is possible to devise pathological cases where the heuristic performs arbitrarily worse than the optimal, however such instances do not capture realistic problems.
 
 \subsection{Multiple Duplicate Assignments}
+\label{secExMulAssign}
 
 This section analyses how the optimal solver and heuristic perform when their problem's actor-set is duplicated.
-We analyse the same problem under various k-way duplications with the same processor description (and therefore invocation times), however the duplicated instances will require more communication cost in general.
+We analyse the same problem under various k-way duplications with the same processor description (and therefore invocation times), however, the duplicated instances will require more communication cost in general.
 
 \begin{table}
 \begin{center}
@@ -271,7 +272,7 @@ As we would expect, when we look down the columns for the 1 and 2-way duplicatio
 This is the intuitive result since we have a linearly increasing problem sizes.
 However when we look across the rows we see much faster cost increases.
 According to the Model discussed in Chapter \ref{chapModel}, we would expect to see polynomially increasing costs.
-Unfortunately only the $n = 3$ tests have enough samples to show the such an increase, and in that case we see such an increase.
+Unfortunately only the $n = 3$ tests have enough samples to show such an increase, and in that case we see such an increase.
 
 \begin{table}
 \begin{center}
@@ -286,7 +287,7 @@ Table \ref{figExAcc} shows the proportional increase in cost of the heuristic ag
 On examination we see few patterns in the heuristic performance as the number of duplicates increases.
 That is to say that while we see increases in the $n=4, 6$ cases, we see decreases in the $n=3, 5$ cases, and we also see no uniform increase or decrease in all the k-way duplications of the $n=3$ case.
 The lack of a pattern here is surprising, given the results of the experiment in Table \ref{figSTable}.
-In that experiment we saw that the heuristic's performance worsened as the problem size increased, however when we duplicate (and therefore increase the problem size) we do not loose out on the heuristic.
+In that experiment we saw that the heuristic's performance worsened as the problem size increased, however when we duplicate (and therefore increase the problem size) we do not lose out on the heuristic.
 
 An explanation for this finding is that the heuristic has less of an ability to err when there are more duplicates.
 In the un-duplicated case the assignment was essentially to one processor, and so as the problem size increased the chance of assigning to that one correct processor was less.
@@ -320,16 +321,17 @@ This, coupled with increasing the cost of invocation in comparison to communicat
 
 Table \ref{figExScale} shows the average utilisation of processors with increasing costs of communication.
 These experiments are run to assign eight actors to five processors, where in half the tests the eight actors are all stand-alone, and in the other half they are the 2-way duplication of four stand-alone actors.
+We fix the communication costs to a random range for all tests and increase the invocation costs for different tests.
 Utilisation shows the average proportion of the processors that were used.
 The columns of this table show:
 \begin{itemize}
-	\item {\bf Scale}: The multiplicative factor for the invocation times.
+	\item {\bf Scale}: The ratio of actor invocation costs over communication costs.
 	\item {\bf Range}: The actual range of invocation times for all experiments in this scale.
 	\item {\bf Av Opt}: The average optimal assignment processor utilisation for all experiments in this scale.
-	\item {\bf Sg Opt}: As above for only the un-duplicated test cases.
+	\item {\bf ND Opt}: As above for only the un-duplicated test cases.
 	\item {\bf Dp Opt}: As above for only the duplicated test cases.
 	\item {\bf Av Heu}: The average heuristic assignment processor utilisation for all experiments in this scale.
-	\item {\bf Sg Heu}: As above for only the un-duplicated test cases.
+	\item {\bf ND Heu}: As above for only the un-duplicated test cases.
 	\item {\bf Dp Heu}: As above for only the duplicated test cases.
 \end{itemize}
 

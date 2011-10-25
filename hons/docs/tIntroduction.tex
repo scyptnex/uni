@@ -1,6 +1,6 @@
 \chapter{Introduction}
 
-This thesis analyses the costs and overheads of introducing robust, fault-tolerant mechanisms on synchronous dataflow graphs.
+This thesis analyses the costs and overheads of introducing robust, fault-tolerant mechanisms on {\em synchronous dataflow} ({\em SDF}) graphs.
 The motivation and goals of the project are discussed in this chapter.
 An overview of the structure of the work, and its specific contributions, are outlined.
 
@@ -9,10 +9,10 @@ An overview of the structure of the work, and its specific contributions, are ou
 A brief introduction to the problem context is necessary first.
 Chapter \ref{chapBack} will provide a more thorough background.
 
-In the modern context of high-performance computing, single-core architectures are proving insufficient.
-Multicore platforms and even so-called {\em cloud} computers (networked heterogeneous clusters) are more common, however to access their full potential requires effort on the part of the programmer to parallelise code.
+Concurrency and parallelism have become critical in modern applications.
+The use of multicore platforms, in addition the so-called {\em cloud} computers (networked heterogeneous clusters), are becoming more common, in particular for data management in large data centers, however to access their full potential requires effort on the part of the programmer to parallelise code.
 One method of achieving explicit parallelisation for certain kinds of computations, is to decompose the program to an interconnected network of functions, called a computational graph.
-Synchronous Dataflow graphs are a subset of computational graphs where the amount of data which moves between the computing nodes (called {\em actors}) is known statically.
+SDF graphs are a subset of computational graphs where the amount of data which moves between the computing nodes (called {\em actors}) is known statically.
 
 The ease of distributing these actors onto multiple-processor machines lends them well to cloud architectures.
 However cloud machines in practice have a high probability of failing.
@@ -21,10 +21,10 @@ The method by which applications ensure correct functioning is called its {\em f
 
 \section{Motivation}
 
-Though they offer opportunities for high performance, cloud computers have some problems.
+Though they offer opportunities for high computational performance and data throughput, cloud computers have some problems.
 In the context of a single machine, failure is rare, however when a computer does fail we do not expect reasonable output.
 For cloud computers, we still expect reasonable output when small parts of the computer die.
-Work by Reed et al in \cite{ree06} points out that cloud computers may have as little as 100 hours between node failures.
+Reed et al point out that cloud computers may have as little as 100 hours between node failures \cite{ree06}.
 It is therefore quite likely that a computer which is running during a program's execution will fail.
 
 The streaming domain is of particular interest for certain kinds of application.
@@ -40,23 +40,22 @@ A clear presentation of how SDF programs specifically can be adapted to resist f
 \label{secInGoal}
 
 The primary aim of this work is to analyse the mechanisms, costs and tradeoffs required to ensure fault tolerance on cloud-based stream programs.
-We deal only with theoretical cloud-machines, the N-Process machine, which is a generalisation of networked heterogeneous clusters.
+We deal only with theoretical cloud-machines, the $N$-Process machine, which is a generalisation of networked heterogeneous clusters.
 More explicitly this work aims to answer the research questions:
 
 \begin{itemize}
 	\item What are the strategies available to SDF programs specifically?
 			We must have an understanding of how fault tolerance can be assured for stream graphs in order to analyse them.
-	\item What do the fault tolerance mechanisms cost is?
-			This refers both to the costs of implementing the fault tolerance, as well as the overheads of assuring it for stream graphs.
-	\item What tradeoffs must be made for fault tolerance?
-			Though related to costs, this refers to performance, accuracy, speed or buffer requirement tradeoffs.
-			We are also interested in whether these metrics directly affect robustness.
-	\item How can we assign actors to processors in a robust way?
+	\item What is the cost of the fault tolerance mechanisms?
+			This refers firstly to the costs of implementing the fault tolerance, whether there are features required on the target platform to guarantee correct execution.
+			It also is concerned with the overheads necessary for fault tolerance, what the tradeoffs are between execution times and communication requirements to provide for fault tolerance.
+			The costs may be in terms of performance, accuracy, speed or buffer requirements.
+	\item How can we assign actors to processors so as to minimise the chance of a crash?
 			What limitations must be imposed on the normal assignment of actors to processors must be understood.
 	\item How easily can we assign actors?
 			Including fault tolerance constraints in the assignment problem may make it difficult to solve.
 	\item How do we execute a stream program with robustness?
-			This includes both the normal running of programs and the actual execution of fault-recovery systems (if applicable).
+			This includes both the normal running of programs and the actual execution of fault-recovery systems, where recovery systems themselves may need to be exected on faulty machines.
 	\item What assurances can be made?
 			We look at whether faults can be avoided completely, or only with probability, and we wish to formalise these concepts.
 \end{itemize}
@@ -66,14 +65,14 @@ More explicitly this work aims to answer the research questions:
 In order to fulfil the goals stated in section \ref{secInGoal} this thesis makes the following contributions to the literature:
 
 \begin{itemize}
-	\item A formal understanding of the fault tolerance mechanisms as applicable to stream graphs.
-			This understanding is used to asses some of the properties of these mechanisms.
-	\item A mathematical model for use in ILP and LP solvers to determine optimal assignment of actors with robustness requirements.
-			Our model is actually encoded in AMPL and used to run experiments (see Chapter \ref{chapExperiment})
-	\item Proof of the NP-Completeness for the robust assignment of actors.
-			This proof is shown for the simple assignment case, however it follows that more complex variants of the assignment problem are also NP-Complete.
 	\item A simulator which executes arbitrary SDF graphs with user-coded filters on a virtual cloud-machine.
 			This simulator implements the fault-tolerance mechanisms discussed in the thesis.
+	\item A formal understanding of the fault tolerance mechanisms as applicable to stream graphs.
+			This understanding is used to asses some of the properties of these mechanisms.
+	\item A mathematical model for use in ILP solvers to determine optimal assignment of actors with robustness requirements.
+			Our model is actually encoded in AMPL (See Appendix \ref{CHEESE}) and used to run experiments (see Chapter \ref{chapExperiment}).
+	\item Proof of the NP-Hardness for the robust assignment of actors.
+			This proof is shown for the simple assignment case, however it follows that more complex variants of the assignment problem are also NP-Hard.
 	\item A heuristic for the assignment of actors to processors with run-time bounded polynomially in the size of the problem.
 			Though this heuristic has unknown approximation bounds, it runs in $O(n^2 p)$ time, for computational graphs with $n$ actors and $p$ processors.
 	\item Experimental analysis of the heuristic's performance using the simulator.
