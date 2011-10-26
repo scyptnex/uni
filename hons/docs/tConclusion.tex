@@ -2,10 +2,11 @@
 \label{chapConclusion}
 
 \section{Summary}
+\label{secConSum}
 
 The provision of fault tolerance over SDF programs is a challenge both in strategy and execution.
 This work analyses some of the mechanisms which can be implemented to achieve this goal.
-Progress has been made on the formalisms surrounding the problem, though much remains to be done on many of the implementation details (see Section \ref{secConFut}).
+Progress has been made on the formalisms surrounding the problem, though much remains to be done on many of the implementation details, as we will mention in Section \ref{secConFut}.
 
 The SDFSimulator as described in Chapter \ref{chapSystems} has verified some of the properties of the heuristic and fault tolerance mechanisms.
 We assessed the effectiveness of both recomputation and replication fault tolerance mechanisms, outlined in Chapter \ref{chapBack}, and found them to perform well under single-node and multiple-node failures.
@@ -13,17 +14,17 @@ These simulations also uncovered strengths, particularly in the recomputation fa
 The simulator also allowed us to verify the costs of actor-assignment, both for heuristic and optimal assignments.
 
 The model (Chapter \ref{chapModel}) formulation in this work provides optimal solutions to the Robust Actor Assignment Problem for small instances.
-We show that calculating optimal configurations for SDF programs of medium to larger size is computationally infeasible (unless $P = NP$).
+We show that calculating optimal configurations for SDF programs of medium to larger size is computationally intractable.
 This is backed up by a formal proof of the problem's hardness in Chapter \ref{chapHardness}, using a reduction from the Multi-Terminal Cut Problem.
 This result allows us to focus our efforts on approximation or heuristic schemes for this problem.
 
-The heuristic algorithm, described in Chapter \ref{chapAlgos}, was analysed experimentally in Chapter \ref{chapExperiment}.
+The heuristic algorithm, which is an iterated greedy bin-packing solution as described in Chapter \ref{chapAlgos}, was analysed experimentally in Chapter \ref{chapExperiment}.
 These experiments showed the key weakness in the current formulation of the problem, which does not necessitate parallel computation, that both the heuristic and optimal solvers typically assign most of the actors to few of the processors.
-In practice, on realistic and totally random instances of the assignment problem, the heuristic performs on average no worse than 10\% worse than the optimal (Table \ref{figSTable}).
+In practice, on realistic and totally random instances of the assignment problem, the heuristic performs on average no worse than 10\% of the optimal (Table \ref{figSTable}).
 
-The costs of ensuring fault tolerance on arbitrary SDF graphs were analysed.
-It was shown in Section \ref{secExMulAssign} that the cost of recomputation fault tolerance becomes excessive when the number of Replications increases.
-This cost is much higher than the (in the worst case) 3.2 fold increase in computation requirements caused by faulting a recomputation instance in Section \ref{secExMultiFail}.
+We also analysed the costs of ensuring fault tolerance on arbitrary SDF graphs.
+We demonstrated in Section \ref{secExMulAssign} that the cost of recomputation fault tolerance becomes excessive when the number of replications increases.
+This cost is much higher than the 3.2 fold increase in computational requirements caused by the recomputation mechanism in Section \ref{secExMultiFail}.
 However reducing the costs of communication may make replication a viable strategy either for speed of execution or to reduce secondary storage requirements.
 
 \section{Future Work}
@@ -32,10 +33,11 @@ However reducing the costs of communication may make replication a viable strate
 \subsection{Parallelism}
 
 One simplification to the model that was made early on was the removal of parallel costs.
+When we consider the running time of a program we only care about how long it takes to finish, rather than the sum of time it takes on every processor.
+This is called the parallel makespan, or paralel cost, and using this instead means only counting the cost of the single processor with the longest steady-state sub-schedule.
 In the model described in Chapter \ref{chapModel}, the cost of invocation is a total over all actors.
-However an alternative earlier formulation had accounted for only the cost of the most weighted processor, and would therefore optimise for a minimal parallel makespan.
 
-One weakness in the current formulation is its limited application to real-world high performance computing.
+One weakness of such a formulation is its limited application to real-world high performance computing.
 Though this work focused on, and indeed achieved, fault tolerance in this domain, a workable implementation must also take advantage of the parallelism available to programs in this domain.
 
 Achieving this goal will require a reformulation of the current model to account only for the most-weighted processor.
@@ -45,20 +47,20 @@ This is likely to affect the comparative performance between heuristic and optim
 \subsection{Hybrid Fault Tolerance Schemes}
 
 The fault tolerance mechanism study for this thesis was limited to the two methods described, recomputation and replication.
-As we observed in experiments, both techniques had limitations, though the recomputation method seemed more reasonable in experiments.
-There are, of course, other ways to provide fault to the system.
+As we observed in experiments, both techniques had limitations, which were assessed in Section \ref{secConSum}, though the recomputation method seemed more reasonable in experiments.
+There are, of course, other ways to provide fault tolerance to the system.
 
 One interesting option would be to make a tradeoff in the replication method between the amount of communication and the probability of failure.
 Replication fault tolerance in this work is exclusively the full replication, where all actors are duplicated the same number of times, and each duplicate communicates with all the duplicates of its consumers.
 It may be possible to remove some of these communication links, to save on communication cost, but this could affect the probability of failure.
-For example, a node does can avoid communicating with some of its predecessors if one of them is assigned to the same processor as it is, since it can always guarantee a link to its predecessor (otherwise both it and the predecessor are on a faulting node).
+For example, a node can avoid communicating with some of its predecessors if one of them is assigned to the same processor as it is, since it can always guarantee a link to its predecessor (otherwise both it and the predecessor are on a faulting node).
 Alternatively each duplicate may only communicate with a subset of its children, so long as a fault in one machine does not cascade to others.
 
 Hybridising the fault tolerance mechanisms is also an option.
 Normally replication, though faster, does not guarantee faultless execution.
 In contrast, recomputation is virtually unbreakable, though may require excessive recomputation under adverse conditions.
 It may be possible to hybridise these techniques and create a mechanism which replicates actors, but also saves its state and recomputes on those processors which fault during execution.
-Further it may be possible to avoid saving state to disk so long as the current state can be derived from those parts of the system which have not faulted.
+Further it may be possible to avoid saving state to disk so long as the current state can be derived from those parts of the system which have not faulted, or to only recompute and recover when all duplicates or at least one actor have failed.
 
 \subsection{Approximations}
 
@@ -67,14 +69,14 @@ The heuristic can be shown to perform arbitrarily badly under pathological cases
 Even so, the heuristic can still perform reasonably poorly in realistic cases under certain conditions, such as when it assigns an actor that performs well on a GPU-accelerated computer first, then will assign all actors to that computer no matter how poorly they perform on a GPU, to save on communication cost.
 
 Instead, an approximation with known bounds in comparison to the optimal solution is desired.
-De la Vega and Kenyon-Mathieu show the limitations of relying on LP relaxations to provide approximations, and it is suggested that Semi-Definite Programming could be used for problems like Mac-Cut \cite{fer07}.
+De la Vega and Kenyon-Mathieu show the limitations of relying on LP relaxations to provide approximations, and it is suggested that Semi-Definite Programming could be used for problems like Max-Cut \cite{fer07}.
 Such a technique would be necessary in our case as well, since normal formulations of the RAAP typically require quadratic terms.
-Approximations, unlike heuristics, do not perform arbitrarily badly even in pathological cases.
+Due to the bounds, approximations, unlike heuristics, do not perform arbitrarily badly even in pathological cases.
 
 \subsection{Cloud Deployment}
 
 Though the simulator proved useful for exploring the nature of the problem, there is more to be gained from actual deployment.
-The weakness of the simulator is in its inability to deal simulate the effects of real faults.
+The weakness of the simulator is in its inability to simulate the effects of real faults.
 For our purposes, a faulted computer simply stopped invoking actors or communicating, however real faults may take the form of data corruption, errors during invocation, partial communication, etc.
 To this end experimental evidence under real conditions is desirable.
 
@@ -84,5 +86,5 @@ Future solutions should use the output of the StreamIt compiler to formulate the
 
 Another crucial step is in proper interfacing with a cloud machine.
 Part of the assignment problem requires performance numbers (or estimates) for the execution times of actors on processors.
-These numbers may be difficult to determine in practice, and techniques to assign without them may be of interest.
-The actual assignment may also be difficult, as some cloud platforms (Amazon's EC2, Google's App Engine, etc) do not allow the kind of low-level control that SDF assignment requires.
+These numbers may be difficult to determine in practice, and techniques to assign without them, or to make educated guesses based on a limited amount of information, may be of interest.
+The actual assignment may also be difficult, as some cloud platforms (Amazon's EC2, IBM InfoSphere) do not allow the kind of low-level control that SDF assignment requires, and these platforms typically abstract this complexity away from the user.

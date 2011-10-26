@@ -9,14 +9,94 @@
 \usepackage{algorithmic}
 \usepackage{multicol}
 
+%\usepackage{hyperref}
+%\usepackage{url}
+
+%% Header & footer
+\usepackage{fancyhdr}
+%% Line spacing
+\usepackage{setspace}
+
+%% Acknowledgements environment
+\makeatletter
+\newcommand\ackname{Acknowledgements}
+\if@titlepage
+  \newenvironment{acknowledgements}{%
+      \titlepage
+      \null\vfil
+      \@beginparpenalty\@lowpenalty
+      \begin{center}%
+        \bfseries \ackname
+        \@endparpenalty\@M
+      \end{center}}%
+     {\par\vfil\null\endtitlepage}
+\else
+  \newenvironment{acknowledgements}{%
+      \if@twocolumn
+        \section*{\abstractname}%
+      \else
+        \small
+        \begin{center}%
+          {\bfseries \ackname\vspace{-.5em}\vspace{\z@}}%
+        \end{center}%
+        \quotation
+      \fi}
+      {\if@twocolumn\else\endquotation\fi}
+\fi
+\makeatother
+
+%============================================================================================================================
+% THESIS
+%============================================================================================================================
+
 \author{Nic Hollingum - 308193415}
 \title{Thesis working title}
 
 \input{txSymbols}
 
 \begin{document}
+\addtolength{\headheight}{2.5pt}
+\onehalfspace
+%\doublespace
+\pagestyle{fancy}
 
-\maketitle
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\begin{titlepage}
+\begin{center}
+
+	{\huge \bfseries Fault Tolerance for Cloud-Based}
+	\\[0.3cm]
+	{\huge \bfseries Streaming Programs}
+	\\[0.6cm]
+	
+	\textsc{\LARGE 	Nicholas Hollingum	\\
+					SID: 308193415		\\[0.6cm]}
+	
+	\includegraphics[width=0.50\textwidth]{figures/usyd.eps}\\[0.2cm]
+  
+  \textsc{\LARGE The University of Sydney}\\[0.8cm]
+  
+  
+  \begin{center}
+  \large Supervisor: Dr. Bernhard Scholz, Dr. Andrew Santosa\\[0.4cm]
+
+  This thesis is submitted in partial fulfillment of\\
+  the requirements for the degree of\\
+  Bachelor of Information Technology (Honours)\\[0.5cm]
+
+  \Large School of Information Technologies\\
+  The University of Sydney\\
+  Australia
+  \end{center}
+  \vfill
+  {\large November, 2011}
+\end{center}
+\end{titlepage}
+\newpage
+\newpage
+
+\input{tAbstract.tex}
+\input{tAck.tex}
 
 \tableofcontents
 
