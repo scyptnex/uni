@@ -6,7 +6,7 @@
 \subsection{Streaming Systems}
 The entire domain of streaming systems is diverse and loosely defined.
 For convenience streaming programs can be though of as those which deal with ``flows'' of data rather than the more traditional Von Neumann computational model.
-To that end streaming systems can range from dataflow type systems to signal processing.
+To that end streaming systems can range from dataflow systems \cite{gur85} to signal processing \cite{sdfBook}.
 
 \begin{figure}
 \begin{center}
@@ -33,7 +33,7 @@ To this end {\em streaming computation} is not a distinct theory for the compute
 \subsection{Synchronous Streaming}
 \label{BACK_SYNC}
 
-Synchronous streamins systems as the name would suggest are a subset of all streaming systems.
+Synchronous streaming systems as the name would suggest are a subset of all streaming systems.
 Specifically streaming systems where the execution (called {\em invocation}) of the nodes in the computational graph is related to or conrolled by the execution of others.
 This necessarily implies some kind of global or local logical discrete clock.
 
@@ -43,15 +43,13 @@ We shall look more closely at the synchronous streaming paradigm {\em synchronou
 \begin{figure}
 \begin{center}
 	\input{figures/backSimpleSDF}
-\caption{Some SDF programs represented as graphs}
+\caption{Some SDF programs represented as graphs, these graphs are reproduced from \cite{sdfBook}}
 \label{figSimpleSDF}
 \end{center}
 \end{figure}
 
-%CHEESE
-{\em i may change around the description below when i have a diagram to discuss/explain}
-
 In SDF the computational units (called {\em actors}) have limitations imposed on their execution by augmenting the channels with a ``production to consumption'' ratio.
+Figure \ref{figSimpleSDF} shows some sample SDF graphs.
 Suppose a channel streams data from actor $a$ to $b$, where one invocation of $a$ produces $i$ data items (called {\em tokens}) and one invocation of $b$ consumes $j$ tokens.
 Then we would annotate the SDF graph by writing $i$ near the $a$ end of the channel, and $j$ near the $b$ end.
 More formally this relation is between $producer$ and $consumer$ actos along a channel.
@@ -65,6 +63,7 @@ The first desirable property of SDF is how it maintains the fill state.
 Early work by Lee and Messerschmitt details the calculation of a comodity called the {\em repetitions vector} \cite{lee87}.
 To calculate this we first express the SDF graph as a {\em topological matrix}, which is an $n \times m$ matrix $\Gamma$ where $\Gamma_{i,j}$ is $productions(i, j)$ if actor i produces to channel j, $-consumptions(i, j)$ if actor i consumes from channel j, and zero otherwise.
 Importantly if the rank of this matrix is $n-1$ then the repetitions vector can be computed.
+Figure \ref{figSimpleTop} shows the topological matrix $\Gamma$ and repetitions vector $r$ for graph b) in figure \ref{figSimpleSDF}.
 For a description of the properties of the repetitions vector and its computation see \cite{sdfBook}.
 Importantly if we invoke each actor exactly the number of times the repetitions vector details, then the fill state of the graph remains unchanged.
 This solves two key problems associated with unrestricted streaming systems.
@@ -73,8 +72,25 @@ Secondly each actor is executed a finite number of times, which allows the memor
 When there are precisely enough tokens in every channel for every actor to execute the number of times required by the repetitions vector, then the channels are said to be {\em saturated}.
 Executing actors according to this vector is called the {\em steady state} schedule.
 
-%CHEESE
-{\em Here we put the topological matrix and repetitions vector of the above SDF program}
+\begin{figure}
+\begin{center}
+\[
+	\Gamma = \begin{bmatrix}
+	2 & -1 & 0 \\
+	0 & 1 & -1 \\
+	2 & 0 & -1 \\
+	2 & 0 & -1
+	\end{bmatrix}
+	r = \begin{bmatrix}
+		1 \\
+		2 \\
+		2
+	\end{bmatrix}
+\]
+\caption{The Topological Matrix and Repetitions vector for the graph in Figure \ref{figSimpleSDF} b.}
+\label{figSimpleTop}
+\end{center}
+\end{figure}
 
 \subsection{Applications}
 
@@ -142,7 +158,7 @@ In this mechanism, some information about the system's state is stored in a reli
 One way is to write the node's state to disk before performing a computation, in this way if a node fails during that computation the previous state can be recovered.
 However the recovery information need not be kept or tracked by individual nodes, in the case of Google's MapReduce the state is stored by the master controller, and in the case of a worker fault the master redistributes the task to a different worker \cite{dea08}.
 
-This kind of FT is well researched in the area of databases \cite{cheese}. %CHEESE need to cite this
+This kind of FT is well researched in the area of databases \cite{dbrec}.
 Modern databases use various checkpointing methodologies (called {\em commiting}) to make guarantees about the system's robustness.
 These mechanisms are interesting, because they must work on standalone machines, and are not specifically designed for parallel problems.
 Because of this individual computers are able to provide guarantees for robustness, and therefore can be orchestrated to provide robust parallel systems.

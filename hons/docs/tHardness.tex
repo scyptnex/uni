@@ -1,7 +1,15 @@
 \chapter{NP-Hardness}
 \label{chapHardness}
 
+In this chapter we formalise the problem of assigning actors to processors.
+This problem is called the {\em Robust Actor Allocation Problem} ({\em RAAP}).
+We reduce it to the well-known {\em Multi-Terminal Cut} problem ({\em MTC}) to demonstrate its NP-Hardness.
+This leads us into considering a heuristic which will be discussed in Chapter \ref{chapAlgos}.
+
 \section{Graph and Path Predicate}
+
+We must define these constructs for use later.
+These are the standard definitions, and are put here for convenience.
 
 \begin{definition}
 Graph $G$
@@ -11,15 +19,15 @@ Graph $G$
 	\nonumber E \subseteq & V^2 & (edges)
 \end{align}
 
-We shall deal exclusively with so-called ``undirected'' graphs, in which $\forall (u,v) \in E : (u,v) = (v,u)$.
+We shall deal exclusively with so-called ``undirected'' graphs, in which for all $(u,v) \in E : (u,v) = (v,u)$.
 
-Note: if $V' \subset V \vee E' \subset E$ then we may call the graph $G'=(V',E')$ a \emph{subgraph} of $G=(V,E)$.
+Note: if $V' \subseteq V$ or $E' \subseteq E$ then we may call the graph $G'=(V',E')$ a \emph{subgraph} of $G=(V,E)$.
 \end{definition}
 
 \begin{definition}
 Path Predicate.
 
-This predicate $\pi$ is true for the graph $G=(V,E)$ in the following cases:
+The predicate $\path{E'}{u}{v}$ is true for all $E' \subseteq E$ and $u, v \in V$ in the graph $G=(V,E)$ in the following cases:
 
 \begin{align}
 	\nonumber \forall (u,v) \in V^2 : \path{E}{u}{v} \Leftrightarrow & ( (u, v) \in E \\
@@ -30,7 +38,8 @@ This predicate $\pi$ is true for the graph $G=(V,E)$ in the following cases:
 Note also then that:
 
 \begin{align}
-	\nonumber \exists w \in V : \path{E}{u}{w} \wedge \path{E}{w}{v} \Rightarrow \path{E}{u}{v}.
+	\nonumber \forall u, v \in V: & \path{E}{u}{v} \Leftrightarrow \path{E}{v}{u} \\
+	\nonumber \forall u, v, w \in V: & \path{E}{u}{w} \wedge \path{E}{w}{v} \Rightarrow \path{E}{u}{v}.
 \end{align}
 
 For simplicity we shall use $\npath{E}{u}{v}$ when the predicate does not hold.
@@ -38,6 +47,8 @@ For simplicity we shall use $\npath{E}{u}{v}$ when the predicate does not hold.
 \end{definition}
 
 \section{RAAP and MTC}
+
+Next we formalise the problems that we are dealing with.
 
 \begin{definition}
 {\em Multi-Terminal Cut}
@@ -80,7 +91,7 @@ $G_r = (V, E \setminus S, w, T)$
 \begin{definition}
 {\em Robust Actor Allocation}
 
-Given a graph $G=(V,E,w_c,w_i, P, A)$, a partitioning of $V$ into $k$ subsets and a set of processors $P$, where $w_c : E \rightarrow \mathbb{Z}^+$ and $w_i : V \times P \rightarrow \mathbb{Z}^+$, find a mapping $\alpha : V \rightarrow P$ such that
+Given a graph $G=(V,E,w_c,w_i, P, A)$, a partitioning of $V$ into $k$ subsets and a set of processors $P$, where $w_c : E \rightarrow \mathbb{Z}^+$ and $w_i : V \times P \rightarrow \mathbb{Z}^+$, find a mapping $\rSolution : V \rightarrow P$ such that
 the cost function $\rCost(\rSolution)$ (detailed below) is minimised and no actors in the same partition are assigned to the same processor.
 
 \begin{align}
@@ -118,6 +129,10 @@ Optimal Solution Space: $\rOptimal \subseteq \rFeasible$
 
 \section{Mapping}
 
+To begin our reduction, we show the relationship between the two problems.
+This section defines the mapping, which is used to convert arbitrary instances of the MTC problem, into RAAP instances.
+The properties of this mapping will be examined in later sections.
+
 \begin{definition}
 Mapping
 
@@ -154,13 +169,17 @@ When talking about mapped instances we may therefore ignore this constraint.
 \end{definition}
 
 \section{Feasibility of the Mapping}
+\label{secHardFeas}
+
+First we must see that the mapping allows us to determine feasible solutions to the original MTC problem if we can solve the mapped RAAP instance feasibly.
+To do this we must have some mechanism to retrieve MTC solutions from the mapped RAAP solution.
 
 \begin{definition}
-Reversal Function $\gamma$
+Reversal Function $\reverse$
 
 \begin{align}
 	\nonumber \reverse & : V \rightarrow P \rightarrow 2^E \\
-	\nonumber \reverse(\rSolution) & = \{(u,v) \in E | \alpha(u) \neq \alpha(v)\}
+	\nonumber \reverse(\rSolution) & = \{(u,v) \in E | \rSolution(u) \neq \rSolution(v)\}
 \end{align}
 \end{definition}
 
@@ -169,11 +188,11 @@ Reversal Function $\gamma$
 The two nodes at the endpoint of any edge in the residual graph were assigned to the same processor:
 
 \begin{align}
-	\nonumber \forall(u, v) \in E \setminus \gamma(\alpha) : \alpha(u) = \alpha(v)
+	\nonumber \forall(u, v) \in E \setminus \reverse(\rSolution) : \rSolution(u) = \rSolution(v)
 \end{align}
 \end{lemma}
 \begin{proof}
-Immediate by definition of $\gamma$.
+Immediate by definition of $\reverse$.
 \end{proof}
 
 \begin{lemma}
@@ -181,7 +200,7 @@ Immediate by definition of $\gamma$.
 The two nodes for which the path predicate is true in the residual graph were assigned to the same processor:
 
 \begin{align}
-	\nonumber \forall (u, v) \in V^2 : \path{E \setminus \reverse(\rSolution)}{u}{v} \Rightarrow \alpha(u) = \alpha(v)
+	\nonumber \forall (u, v) \in V^2 : \path{E \setminus \reverse(\rSolution)}{u}{v} \Rightarrow \rSolution(u) = \rSolution(v)
 \end{align}
 \end{lemma}
 \begin{proof}
@@ -189,8 +208,8 @@ Using Lemma \ref{EDGEASSIGN} and induction on the path predicate, we take the ab
 
 In the trivial cases:
 \begin{align}
-	\nonumber \forall v \in V : \path{E \setminus \reverse(\rSolution)}{v}{v} & \Rightarrow \alpha(v) = \alpha(v) \\
-	\nonumber \forall (u, v) \in E \setminus \gamma(\alpha) : \path{E \setminus \reverse(\rSolution)}{u}{v} & \Rightarrow \alpha(u) = \alpha(v) \quad \mbox{From \ref{EDGEASSIGN}}
+	\nonumber \forall v \in V : \path{E \setminus \reverse(\rSolution)}{v}{v} & \Rightarrow \rSolution(v) = \rSolution(v) \\
+	\nonumber \forall (u, v) \in E \setminus \reverse(\rSolution) : \path{E \setminus \reverse(\rSolution)}{u}{v} & \Rightarrow \rSolution(u) = \rSolution(v) \quad \mbox{From \ref{EDGEASSIGN}}
 \end{align}
 
 Now we draw the recursive step from the definition of the path predicate: $\path{E}{u}{w} \wedge (w,v) \in E \Rightarrow \path{E}{u}{v}$.
@@ -202,16 +221,16 @@ Thus:
 	\nonumber & \Rightarrow \rSolution(u) = \rSolution(v)
 \end{align}
 
-Clearly by \ref{EDGEASSIGN} $\alpha(w) = \alpha(v)$ and the definition recurs backwards until it is satisfied by one of the trivial cases.
+Clearly by \ref{EDGEASSIGN} $\rSolution(w) = \rSolution(v)$ and the definition recurs backwards until it is satisfied by one of the trivial cases.
 
 \end{proof}
 
 \begin{lemma}
 \label{FORCEASSIGN}
-Any feasible assignment $\alpha$ maps all terminals to themselves:
+Any feasible assignment $\rSolution$ maps all terminals to themselves:
 
 \begin{align}
-	\nonumber \forall \alpha \in F' : \forall t \in T : \alpha(t) = t
+	\nonumber \forall \rSolution \in F' : \forall t \in T : \rSolution(t) = t
 \end{align}
 \end{lemma}
 \begin{proof}
@@ -221,7 +240,7 @@ Otherwise $\rCost(\rSolution) = \infty$ and therefore $\rSolution \not\in \rFeas
 
 \begin{lemma}
 \label{REVERSEFEASABLE}
-The reverse solution for any feasible $\alpha$ is also a feasible solution for the MTC instance.
+The reverse solution for any feasible $\rSolution$ is also a feasible solution for the MTC instance.
 
 \begin{align}
 	\nonumber \forall \rSolution \in \rFeasible : \reverse(\rSolution) \in \mFeasible
@@ -239,7 +258,7 @@ So since $s \neq t$ then $\beta(s) \neq \beta(t)$.
 
 Second from \ref{PATHASSIGN}:
 \begin{align}
-	\nonumber \forall (u, v) \in V^2 : \pi_{(V, E \setminus \gamma(\alpha))}(u,v) & \Rightarrow \alpha(u) = \alpha(v)
+	\nonumber \forall (u, v) \in V^2 : \path{E \setminus \reverse(\rSolution)}{u}{v} & \Rightarrow \rSolution(u) = \rSolution(v)
 \end{align}
 
 And therefore since $\path{E \setminus \reverse(\beta)}{s}{t}$, $\beta(s) = \beta(t)$.
@@ -248,6 +267,7 @@ But this is a contradiction.
 \end{proof}
 
 \section{Optimality of the mapping}
+\label{secHardOpt}
 
 We need to show that the mapping allows us to solve the MTC problem optimally if we can solve the RAAP mapped instance optimally.
 To do this we must show that all optimal solutions of the RAAP instance $\rInstance$ can be reversed using $\reverse$ to optimal solutions of the MTC instance $\mInstance$.
@@ -266,7 +286,7 @@ First we pick arbitrarily $t_0 \in T$ as a default processor.
 We use it to be able to assign vertices $v \in V'$ for which $\forall t \in T : \npath{}{v}{t}$.
 \begin{align}
 	\nonumber \inverse & : 2^E \rightarrow (V \rightarrow P) \\
-	\nonumber \inverse(S) & = \rSolution \mbox{ where } \forall v \in V' \alpha(v) = \mbox{$\left\{ 
+	\nonumber \inverse(S) & = \rSolution \mbox{ where } \forall v \in V' \rSolution(v) = \mbox{$\left\{ 
 		\begin{array}{l l}
 			t \quad & \mbox{if $t \in T \wedge \path{(V,E \setminus S)}{v}{t}$}\\
 			t_0 & \mbox{otherwise}\\ \end{array} \right.$} 
@@ -279,14 +299,14 @@ We use it to be able to assign vertices $v \in V'$ for which $\forall t \in T : 
 Any edge in the inversion of a feasible solution to a multiterminal cut with endpoints assigned to different processors had to be in the solution.
 
 \begin{align}
-	\nonumber & \forall \mSolution \in \mFeasible : \forall (u, v) \in E' : \gamma'(S)(u) \neq \gamma'(S)(v) \Rightarrow (u,v) \in S \\
+	\nonumber & \forall \mSolution \in \mFeasible : \forall (u, v) \in E' : \inverse(S)(u) \neq \inverse(S)(v) \Rightarrow (u,v) \in S \\
 	\nonumber \mbox{or} &\\
-	\nonumber & \forall S \in F : \{(u,v) |(u, v) \in E' \wedge \gamma'(S)(u) \neq \gamma'(S)(v)\} \subseteq S
+	\nonumber & \forall S \in F : \{(u,v) |(u, v) \in E' \wedge \inverse(S)(u) \neq \inverse(S)(v)\} \subseteq S
 \end{align}
 \end{lemma}
 \begin{proof}
 To prove this by contradiction we must show that there is no edge with differently assigned endpoints that is not in the solution.
-Assume $\exists (u,v) \in E' : \gamma'(S)(u) \neq \gamma'(S)(v) \wedge (u,v) \not\in S$.
+Assume $\exists (u,v) \in E' : \inverse(S)(u) \neq \inverse(S)(v) \wedge (u,v) \not\in S$.
 
 For the above assumption we are concerned with two possible cases, either neither $u$ nor $v$ has been assigned the default processor (1) $t_0$ or one of them has (2).
 It is possible that one of the nodes happened to be assigned the default processor because they are connected (rather than because it was disconnected from every terminal) but we can ignore this case as we only need to show the Lemma for all differently assigned nodes.
@@ -304,7 +324,7 @@ It is possible that one of the nodes happened to be assigned the default process
 	\nonumber \mbox{Let: } \inverse(S)(u) = t_0 & \\
 	\nonumber \exists s \in T \setminus \{t_0\} & : \path{E \setminus S}{v}{s} \\
 	\nonumber & \Rightarrow \path{E \setminus S}{u}{s} \\
-	\nonumber & \Rightarrow \gamma'(S)(u) = s = t_0
+	\nonumber & \Rightarrow \inverse(S)(u) = s = t_0
 \end{align}
 But that is a contradiction, since we assumed $v$ was assigned to a different terminal to $t_0$ and therefore $s \neq t_0$.
 
@@ -316,16 +336,16 @@ Hence both cases would lead to contradictions.
 Any feasible solution to a multiterminal cut is also a feasible solution to its inverted mapped instance:
 
 \begin{align}
-	\nonumber \forall S \in F : \gamma'(S) \in F'
+	\nonumber \forall S \in F : \inverse(S) \in F'
 \end{align}
 \end{lemma}
 \begin{proof}
 Since the mapping allows us to ignore the partitioning constraint on feasibility we are only concerned with the cost.
 
-Immediately from the path predicate and definition of $\gamma'$ we see that $\forall t \in T : \gamma'(S)(t) = t$.
+Immediately from the path predicate and definition of $\inverse$ we see that $\forall t \in T : \inverse(S)(t) = t$.
 
 \begin{align}
-	\nonumber \rCost(\inverse(\mSolution)) & = \displaystyle\sum\limits_{(u,v) \in E' : \gamma'(S)(u) \neq \gamma'(S)(v)} w_c(u,v) + 0 \\
+	\nonumber \rCost(\inverse(\mSolution)) & = \displaystyle\sum\limits_{(u,v) \in E' : \inverse(S)(u) \neq \inverse(S)(v)} w_c(u,v) + 0 \\
 	\nonumber \rCost(\inverse(\mSolution)) & \leq \displaystyle\sum\limits_{(u,v) \in E'} w_c(u,v) \\
 	\nonumber \rCost(\inverse(\mSolution)) & \neq \infty \\
 	\nonumber \inverse(\mSolution) & \in F'
@@ -337,18 +357,18 @@ Immediately from the path predicate and definition of $\gamma'$ we see that $\fo
 The inverted solution to a multiterminal cut problem costs the same or less than the cut.
 
 \begin{align}
-	\nonumber \forall S \in F : C(S) \geq C'(\gamma'(S))
+	\nonumber \forall S \in F : C(S) \geq C'(\inverse(S))
 \end{align}
 \end{lemma}
 \begin{proof}
 \begin{align}
 	\nonumber C(S) & = \displaystyle\sum\limits_{(u,v) \in S} w(u,v)\\
-	\nonumber C'(\gamma'(S)) & = \displaystyle\sum\limits_{(u,v) \in E' : \gamma'(S)(u) \neq \gamma'(S)(v)} w_c(u,v) + \displaystyle\sum\limits_{v \in V'} w_i(v, \gamma'(S)(v)) \\
-	\nonumber & = \displaystyle\sum\limits_{(u,v) \in E' : \gamma'(S)(u) \neq \gamma'(S)(v)} w_c(u,v) + 0 \\
+	\nonumber C'(\inverse(S)) & = \displaystyle\sum\limits_{(u,v) \in E' : \inverse(S)(u) \neq \inverse(S)(v)} w_c(u,v) + \displaystyle\sum\limits_{v \in V'} w_i(v, \inverse(S)(v)) \\
+	\nonumber & = \displaystyle\sum\limits_{(u,v) \in E' : \inverse(S)(u) \neq \inverse(S)(v)} w_c(u,v) + 0 \\
 	\nonumber \mbox{And from \ref{INVERSESUBSET}} \\
-	\nonumber & \{(u,v) | (u,v) \in E' \wedge \gamma'(S)(u) \neq \gamma'(S)(v)\} \subseteq S \\
-	\nonumber & \Rightarrow \displaystyle\sum\limits_{(u,v) \in S} w(u,v) \geq \displaystyle\sum\limits_{(u,v) \in E' : \gamma'(S)(u) \neq \gamma'(S)(v)} w_c(u,v) \\
-	\nonumber & \Rightarrow C(S) \geq C'(\gamma'(S))
+	\nonumber & \{(u,v) | (u,v) \in E' \wedge \inverse(S)(u) \neq \inverse(S)(v)\} \subseteq S \\
+	\nonumber & \Rightarrow \displaystyle\sum\limits_{(u,v) \in S} w(u,v) \geq \displaystyle\sum\limits_{(u,v) \in E' : \inverse(S)(u) \neq \inverse(S)(v)} w_c(u,v) \\
+	\nonumber & \Rightarrow C(S) \geq C'(\inverse(S))
 \end{align}
 \end{proof}
 
@@ -357,18 +377,18 @@ The inverted solution to a multiterminal cut problem costs the same or less than
 The solution to the RAAP instance of a mapped MTC problem costs the same as the reverse solution.
 
 \begin{align}
-	\nonumber \forall \alpha \in F' : C'(\alpha) = C(\gamma(\alpha))
+	\nonumber \forall \rSolution \in F' : C'(\rSolution) = C(\reverse(\rSolution))
 \end{align}
 \end{lemma}
 \begin{proof}
-Immediately by the definitions of the mapping, $\gamma$ and Lemma \ref{FORCEASSIGN}.
+Immediately by the definitions of the mapping, $\reverse$ and Lemma \ref{FORCEASSIGN}.
 
 From \ref{FORCEASSIGN} we know $\forall t \in T : \rSolution(t) = t$ hence $\displaystyle\sum\limits_{v \in V'} w_i(v, \rSolution(v)) = 0$.
 
 Then:
 \begin{align}
-	\nonumber \rCost(\rSolution) & = \displaystyle\sum\limits_{(u,v) \in E' : \alpha(u) \neq \alpha(v)} w_c(u,v) + 0 \\
-	\nonumber \mCost(\reverse(\rSolution)) & = \displaystyle\sum\limits_{(u,v) \in E' : \alpha(u) \neq \alpha(v)} w(u,v) \\
+	\nonumber \rCost(\rSolution) & = \displaystyle\sum\limits_{(u,v) \in E' : \rSolution(u) \neq \rSolution(v)} w_c(u,v) + 0 \\
+	\nonumber \mCost(\reverse(\rSolution)) & = \displaystyle\sum\limits_{(u,v) \in E' : \rSolution(u) \neq \rSolution(v)} w(u,v) \\
 	\nonumber \rCost(\rSolution) & = \mCost(\reverse(\rSolution))
 \end{align}
 \end{proof}
@@ -378,24 +398,40 @@ Then:
 Any optimal solution to RAAP can be reversed to give an optimal solution to MTC.
 
 \begin{align}
-	\nonumber \forall \alpha \in O' : \gamma(\alpha) \in O
+	\nonumber \forall \rSolution \in O' : \reverse(\rSolution) \in O
 \end{align}
 \end{lemma}
 \begin{proof}
 This uses a contradiction that would arise otherwise because of lemmas \ref{INVERSEFEASIBLE}, \ref{REVERSECOST} and \ref{INVERSECOST}.
 \begin{align}
-	\nonumber \mbox{Assume:} \quad & \exists \alpha \in O' : \gamma(\alpha) \not\in O \\
-	\nonumber & \Rightarrow \exists S \in F : C(S) < C(\gamma(\alpha)) \quad \mbox{Definition of optimal space} \\
+	\nonumber \mbox{Assume:} \quad & \exists \rSolution \in O' : \reverse(\rSolution) \not\in O \\
+	\nonumber & \Rightarrow \exists S \in F : C(S) < C(\reverse(\rSolution)) \quad \mbox{Definition of optimal space} \\
 	\nonumber \\
-	\nonumber \alpha \in \rOptimal & \Rightarrow \forall \beta \in \rFeasible : \rCost(\alpha) \leq \rCost(\beta) \quad (*)\\
+	\nonumber \rSolution \in \rOptimal & \Rightarrow \forall \beta \in \rFeasible : \rCost(\rSolution) \leq \rCost(\beta) \quad (*)\\
 	\nonumber \\
 	\nonumber \mbox{from \ref{INVERSEFEASIBLE}}\quad & \inverse(\mSolution) \in \rFeasible \\
 	\nonumber \mbox{from \ref{INVERSECOST}}\quad & \rCost(\inverse(\mSolution)) \leq \mCost(S) \\
 	\nonumber & \mCost(S) < \mCost(\reverse(\rSolution)) \\
 	\nonumber \mbox{from \ref{REVERSECOST}}\quad & \mCost(\reverse(\rSolution)) = \rCost(\rSolution)\\
-	\nonumber & \Rightarrow C'(\gamma'(S)) < C'(\alpha) \\
-	\nonumber & \Rightarrow \alpha \not\in O'
+	\nonumber & \Rightarrow C'(\inverse(S)) < C'(\rSolution) \\
+	\nonumber & \Rightarrow \rSolution \not\in O'
 \end{align}
 But this contradicts (*).
 
+\end{proof}
+
+\section{Complexity}
+
+Sections \ref{secHardFeas} and \ref{secHardOpt} show that there exists a relationship between the problems.
+We have a polynomial time mechanism to convert instances of the MTC problem to the RAAP.
+We also have a polynomial time algorithm to retrieve the solution to the original MTC problem from a solution to the RAAP.
+The retrieved solution is feasible if it was a feasible solution to the RAAP, and optimal in the same fashion.
+
+This proves the reduction, and shows that the RAAP is at least as hard as MTC.
+Hence:
+\begin{theorem}
+The RAAP is in the class of NP-Hard problems.
+\end{theorem}
+\begin{proof}
+By reduction from MTC.
 \end{proof}

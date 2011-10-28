@@ -190,6 +190,7 @@ The purpose of these experiments is two-fold:
 \begin{itemize}
 	\item To examine the performance of the heuristic on more general graphs.
 			These tests are run on randomly generated graphs, whereas the duplication process produces graphs of a distinct kind.
+			Figure \ref{figDupComppare} shows how the general structure of duplicated graphs compares to the original.
 			The graphs produced are more connected, and the requirement that certain nodes be assigned to different processors forces communication, which, as we observed in Section \ref{secExMultiFail}, the heuristic and optimal solvers typically avoid in the un-duplicated case.
 	\item To obtain experimental results on stream graphs with a small number of processors.
 			In practice the processing requirements for instances larger than 15 nodes exceed reasonable running times (roughly 24 hrs on a Quad-Core i7 1.6GHz).
@@ -197,7 +198,14 @@ The purpose of these experiments is two-fold:
 			Tests on duplicated instances will be presented in the next section but these have typically fewer actors than the no-duplication instances shown here.
 \end{itemize}
 
-%CHEESE Make a diagram showing the difference between a normal instance and a duplicated instance
+
+\begin{figure}
+\begin{center}
+	\input{figures/exCompare}
+\caption{Diagram shows a random graph and its duplicated instance}
+\label{figDupCompare}
+\end{center}
+\end{figure}
 
 We generate multiple instances with varying actor count and connectedness, though we keep the number of processors constant.
 Table \ref{figSTable} shows the assignment costs of the heuristic in comparison with the optimal solution.
