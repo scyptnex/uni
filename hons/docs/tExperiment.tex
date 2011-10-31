@@ -280,7 +280,7 @@ As we would expect, when we look down the columns for the 1 and 2-way duplicatio
 This is the intuitive result since we have a linearly increasing problem sizes.
 However when we look across the rows we see much faster cost increases.
 According to the Model discussed in Chapter \ref{chapModel}, we would expect to see polynomially increasing costs.
-Unfortunately only the $n = 3$ tests have enough samples to show such an increase, and in that case we see such an increase.
+Unfortunately only the $n = 3$ and $n = 4$ tests have enough samples to show such an increase, and in those cases we see such an increase.
 
 \begin{table}
 \begin{center}
@@ -293,12 +293,13 @@ Unfortunately only the $n = 3$ tests have enough samples to show such an increas
 Now we see if the heuristic's performance degrades as the number of duplicates increases.
 Table \ref{figExAcc} shows the proportional increase in cost of the heuristic against the optimal solution.
 On examination we see few patterns in the heuristic performance as the number of duplicates increases.
-That is to say that while we see increases in the $n=4, 6$ cases, we see decreases in the $n=3, 5$ cases, and we also see no uniform increase or decrease in all the k-way duplications of the $n=3$ case.
+That is to say that while we see increases in the $n=4, 6$ cases, we see decreases in the $n=3, 5$ cases.
+We also see no uniform increase or decrease in all the k-way duplications of the $n=3$ case.
 The lack of a pattern here is surprising, given the results of the experiment in Table \ref{figSTable}.
 In that experiment we saw that the heuristic's performance worsened as the problem size increased, however when we duplicate (and therefore increase the problem size) we do not lose out on the heuristic.
 
 An explanation for this finding is that the heuristic has less of an ability to err when there are more duplicates.
-In the un-duplicated case the assignment was essentially to one processor, and so as the problem size increased the chance of assigning to that one correct processor was less.
+In the un-duplicated case, the assignment was essentially to one processor, and so as the problem size increased the chance of assigning to that one correct processor was less.
 However in the duplicate case there are $k$ correct processors, and the heuristic is likely to randomly choose at least some of the correct ones.
 Hence the number of correct processors scales with the number of duplicates, which accounts for the lack of a performance drop-off with problem size in the heuristic.
 

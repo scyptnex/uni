@@ -25,14 +25,14 @@ Note: if $V' \subseteq V$ or $E' \subseteq E$ then we may call the graph $G'=(V'
 \end{definition}
 
 \begin{definition}
+\label{defHardPath}
 Path Predicate.
 
 The predicate $\path{E'}{u}{v}$ is true for all $E' \subseteq E$ and $u, v \in V$ in the graph $G=(V,E)$ in the following cases:
 
 \begin{align}
-	\nonumber \forall (u,v) \in V^2 : \path{E}{u}{v} \Leftrightarrow & ( (u, v) \in E \\
-	\nonumber & \vee \langle \exists w \in V : \path{E}{u}{w} \wedge (w, v) \in E \rangle \\
-	\nonumber & \vee u = v ).
+	\nonumber \forall (u,v) \in V^2 : \path{E}{u}{v} \Leftrightarrow & ( u = v \\
+	\nonumber & \vee \langle \exists w \in V : \path{E}{u}{w} \wedge (w, v) \in E \rangle).
 \end{align}
 
 Note also then that:
@@ -83,7 +83,7 @@ Optimal Solution Space: $O \subseteq F$
 \end{definition}
 
 \begin{definition}
-The {\em residual graph} ($G_r$) is a subgraph of $MTC(V,E,w,T)$ with some subset of edges $S \subseteq E$ removed:
+The {\em residual graph} ($G_r$) is a subgraph of MTC graph $G=(V,E,w,T)$ with some subset of edges $S \subseteq E$ removed:
 
 $G_r = (V, E \setminus S, w, T)$
 \end{definition}
@@ -117,12 +117,12 @@ Feasible Solution Space: $\rFeasible \subseteq V \rightarrow P$
 	\nonumber \mbox{(2)} \quad & \forall A_i \in A : \forall u , v \in A_i : u \neq v \Rightarrow \rSolution(u) \neq  \rSolution(v)
 \end{align}
 
-The feasibility constraint (1) here is used as a means of excluding parts of the solution space known to be non-optimal from the feasible region too.
+\noindent The feasibility constraint (1) here is used as a means of excluding parts of the solution space known to be non-optimal from the feasible region too.
 It is simply a shortcut but does not affect the results.
 
 Optimal Solution Space: $\rOptimal \subseteq \rFeasible$
 \begin{align}
-	\nonumber 	\forall \rSolution_o \in \rOptimal : \forall \rSolution_f \in \rFeasible : \rCost(\rSolution_o) \leq \rCost(\rSolution_f)
+	\nonumber 	\forall \rSolution_o \in \rOptimal : \forall \rSolution_f \in \rFeasible : \rCost(\rSolution_o) \leq \rCost(\rSolution_f).
 \end{align}
 
 \end{definition}
@@ -134,12 +134,13 @@ This section defines the mapping, which is used to convert arbitrary instances o
 The properties of this mapping will be examined in later sections.
 
 \begin{definition}
-Mapping
+\label{defHardMap}
+Mapping ($\mapsto$)
 
 \begin{align}
 	\nonumber I \in & MTC(V,E,w,T) &\\
 	\nonumber I' \in & RAAP(V', E', w_c, w_i, P, A) &\\
-	\nonumber & I \mapsto I' if: &\\
+	\nonumber & I \mapsto I' if and only if: &\\
 	\nonumber V' & = V\\
 	\nonumber E' & = E\\
 	\nonumber P & = T\\
@@ -155,27 +156,27 @@ Mapping
 Note that $w_i(v, p)$ may take infinity where $v$ is a terminal that doesnt map to $p$.
 This is simply a way of forcing all terminals to be mapped to themselves, as we shall see.
 
-We have used ``$=$'' to keep future descriptions simple, where we really mean:
+We have used ``$=$'' to keep future descriptions simple, where we really mean that there is a function $f : V \rightarrow V'$ such that
 \begin{align}
-	\nonumber \langle \exists f : V \rightarrow V' \quad s.t. & \\
-	\nonumber & V' = \{f(v) | v \in V\} \\
-	\nonumber & E' = \{(f(u), f(v)) | (u,v) \in E\} \\
-	\nonumber & P = \{f(t) | t \in T\} \\
-	\nonumber & \forall (u, v) \in E : w_c(f(u), f(v)) = w(u, v) \rangle
+	\nonumber & V' = \{f(v) | v \in V\} , \\
+	\nonumber & E' = \{(f(u), f(v)) | (u,v) \in E\} , \\
+	\nonumber & P = \{f(t) | t \in T\} , \mbox{and} \\
+	\nonumber & \langle \forall (u, v) \in E : w_c(f(u), f(v)) = w(u, v) \rangle
 \end{align}
-
-The above mapping constrains $A$ to be singletons of vertices, which makes it impossible to violate feasibility constraint (2).
-When talking about mapped instances we may therefore ignore this constraint.
 \end{definition}
+
+Note that the mapping \ref{defHardMap} constrains $A$ to be singletons of vertices, which makes it impossible to violate feasibility constraint (2).
+When talking about mapped instances we may therefore ignore this constraint.
 
 \section{Feasibility of the Mapping}
 \label{secHardFeas}
 
-First we must see that the mapping allows us to determine feasible solutions to the original MTC problem if we can solve the mapped RAAP instance feasibly.
+Referring to Definition \ref{defHardMap} we must see if the mapping allows us to determine feasible solutions to the original MTC problem ($\mInstance$) when we find a feasible solution to the mapped RAAP instance ($\rInstance$).
 To do this we must have some mechanism to retrieve MTC solutions from the mapped RAAP solution.
 
 \begin{definition}
-Reversal Function $\reverse$
+Reversal Function $\reverse$.
+Given an assignment function $\rSolution$, $\reverse$ returns a list of edges $(u, v)$ when $u$ and $v$ are differently assigned.
 
 \begin{align}
 	\nonumber \reverse & : V \rightarrow P \rightarrow 2^E \\
@@ -188,9 +189,10 @@ Reversal Function $\reverse$
 The two nodes at the endpoint of any edge in the residual graph were assigned to the same processor:
 
 \begin{align}
-	\nonumber \forall(u, v) \in E \setminus \reverse(\rSolution) : \rSolution(u) = \rSolution(v)
+	\nonumber \forall(u, v) \in E \setminus \reverse(\rSolution) : \rSolution(u) = \rSolution(v).
 \end{align}
 \end{lemma}
+
 \begin{proof}
 Immediate by definition of $\reverse$.
 \end{proof}
@@ -200,29 +202,23 @@ Immediate by definition of $\reverse$.
 The two nodes for which the path predicate is true in the residual graph were assigned to the same processor:
 
 \begin{align}
-	\nonumber \forall (u, v) \in V^2 : \path{E \setminus \reverse(\rSolution)}{u}{v} \Rightarrow \rSolution(u) = \rSolution(v)
+	\nonumber \forall (u, v) \in V^2 : \path{E \setminus \reverse(\rSolution)}{u}{v} \Rightarrow \rSolution(u) = \rSolution(v).
 \end{align}
 \end{lemma}
+
 \begin{proof}
-Using Lemma \ref{EDGEASSIGN} and induction on the path predicate, we take the above to be the inductive hypothesis.
+We assume that $\path{E \setminus \reverse(\rSolution)}{u}{v}$ holds, now we establish that in such cases $\rSolution(u) = \rSolution(v)$ by induction.
 
-In the trivial cases:
-\begin{align}
-	\nonumber \forall v \in V : \path{E \setminus \reverse(\rSolution)}{v}{v} & \Rightarrow \rSolution(v) = \rSolution(v) \\
-	\nonumber \forall (u, v) \in E \setminus \reverse(\rSolution) : \path{E \setminus \reverse(\rSolution)}{u}{v} & \Rightarrow \rSolution(u) = \rSolution(v) \quad \mbox{From \ref{EDGEASSIGN}}
-\end{align}
-
-Now we draw the recursive step from the definition of the path predicate: $\path{E}{u}{w} \wedge (w,v) \in E \Rightarrow \path{E}{u}{v}$.
-Thus:
+By definition \ref{defHardPath}, when $\path{E \setminus \reverse(\rSolution)}{u}{v}$ holds there can be two cases:
 
 \begin{align}
-	\nonumber \path{E \setminus \reverse(\rSolution)}{u}{w} & \Rightarrow \rSolution(u) = \rSolution (w) \quad \mbox{from the hypothesis}\\
-	\nonumber (w, v) \in E \setminus \reverse(\rSolution) & \Rightarrow \rSolution(w) = \rSolution(v) \quad \mbox{from \ref{EDGEASSIGN}}\\
-	\nonumber & \Rightarrow \rSolution(u) = \rSolution(v)
+	\nonumber \mbox{1)} \quad & u = v \quad \mbox{(base case)} \\
+	\nonumber & \quad \mbox{obviously $\rSolution(u) = \rSolution(v)$} \\
+	\nonumber \mbox{2)} \quad & \exists w \in V: \path{E \setminus \reverse(\rSolution)}{u}{w} \wedge (w, v) \in E \setminus \reverse(\rSolution)
 \end{align}
 
-Clearly by \ref{EDGEASSIGN} $\rSolution(w) = \rSolution(v)$ and the definition recurs backwards until it is satisfied by one of the trivial cases.
-
+\noindent We may deduce that $\rSolution(u) = \rSolution(w)$ inductively.
+Also, since $(w, v) \in E \setminus \reverse(\rSolution)$, from Lemma \ref{EDGEASSIGN} we have that $\rSolution(w) = \rSolution(v)$, and therefore that $\rSolution(u) = \rSolution(v)$.
 \end{proof}
 
 \begin{lemma}
@@ -230,9 +226,10 @@ Clearly by \ref{EDGEASSIGN} $\rSolution(w) = \rSolution(v)$ and the definition r
 Any feasible assignment $\rSolution$ maps all terminals to themselves:
 
 \begin{align}
-	\nonumber \forall \rSolution \in F' : \forall t \in T : \rSolution(t) = t
+	\nonumber \forall \rSolution \in F' : \forall t \in T : \rSolution(t) = t.
 \end{align}
 \end{lemma}
+
 \begin{proof}
 Immediate by the definition of the mapping.
 Otherwise $\rCost(\rSolution) = \infty$ and therefore $\rSolution \not\in \rFeasible$.
@@ -273,10 +270,10 @@ We need to show that the mapping allows us to solve the MTC problem optimally if
 To do this we must show that all optimal solutions of the RAAP instance $\rInstance$ can be reversed using $\reverse$ to optimal solutions of the MTC instance $\mInstance$.
 
 We intuit a surjection on the reversal function.
-If we were to name processors in the assignment, we can have a different assignment by switching the names of 2 processors that would yield the same reversed solution.
+If we were to name processors in the assignment, we can have a different assignment by switching the names of two processors that would yield the same reversed solution.
 This intuition brings us to look at a way of retreiving at least one $\rSolution$ from a given $\mSolution$ and working with that.
 
-We do this using the so called ``inversion function'' $\inverse$, which has some useful properties.
+We do this using an {\em inversion function} $\inverse$, which has some useful properties.
 Most importantly we can say something about the cost of inverted solutions which we use to prove the optimality proposition.
 
 \begin{definition}
