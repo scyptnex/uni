@@ -5,8 +5,8 @@
 
 \subsection{Streaming Systems}
 The entire domain of streaming systems is diverse and loosely defined.
-For convenience streaming programs can be though of as those which deal with ``flows'' of data rather than the more traditional Von Neumann computational model.
-To that end streaming systems can range from dataflow systems \cite{gur85} to signal processing \cite{sdfBook}.
+For convenience streaming programs can be thought of as those which deal with ``flows'' of data rather than the more traditional Von Neumann computational model.
+To that end, streaming systems can range from dataflow systems \cite{gur85} to signal processing \cite{sdfBook}.
 
 \begin{figure}
 \begin{center}
@@ -16,7 +16,7 @@ To that end streaming systems can range from dataflow systems \cite{gur85} to si
 \end{center}
 \end{figure}
 
-Stream programs can be though of as computational graphs, often visualised as directed graphs, such as the one in Figure \ref{figSimpleDG}.
+Stream programs can be thought of as computational graphs, often visualised as directed graphs, such as the one in Figure \ref{figSimpleDG}.
 In future we shall say that such a graph has $n$ nodes and $m$ arcs.
 In general systems the graphs have some nodes which provide inputs for the system, other nodes which transform data, and finally nodes which publish this data.
 In such graphs data is not a discrete finite unit but rather a (possibly infinite) stream, where each node in the graph performs an atomic computation, possibly consuming a subsequence of its inputs and possibly producing more data on its outputs.
@@ -33,8 +33,8 @@ To this end {\em streaming computation} is not a distinct theory for the compute
 \subsection{Synchronous Streaming}
 \label{BACK_SYNC}
 
-Synchronous streaming systems as the name would suggest are a subset of all streaming systems.
-Specifically streaming systems where the execution (called {\em invocation}) of the nodes in the computational graph is related to or conrolled by the execution of others.
+Synchronous streaming systems, as the name would suggest, are a subset of all streaming systems.
+Specifically streaming systems where the execution (called {\em invocation}) of the nodes in the computational graph is related to or controlled by the execution of others.
 This necessarily implies some kind of global or local logical discrete clock.
 
 The reason synchronous systems are noteworthy is that they have some useful properties relating to the size of streams, the execution of nodes and the allocation of memory buffers.
@@ -56,8 +56,8 @@ More formally this relation is between $producer$ and $consumer$ actos along a c
 If we called that channel $e$ then $prod(e) = a$, $cons(e) = b$, $productions(e, prod(e)) = i$ and $consumptions(e, cons(e)) = j$.
 
 At any given point in time there are some number of tokens in buffers in the system waiting to be consumed by actors.
-Tokens which exist on an actor's input channels before invocation are called $delays$, note that given the actor must have sufficient delays on its channel (that is, $>= consumptions(c, cons(c))$) before it can be invoked.
-The gloabl configuration of delays on all channels is called the {\em fill state}.
+Tokens which exist on an actor's input channels before invocation are called $delays$, note that an actor must have sufficient delays on its channel (that is, $>= consumptions(c, cons(c))$) before it can be invoked.
+The global configuration of delays on all channels is called the {\em fill state}.
 The first desirable property of SDF is how it maintains the fill state.
 
 Early work by Lee and Messerschmitt details the calculation of a comodity called the {\em repetitions vector} \cite{lee87}.

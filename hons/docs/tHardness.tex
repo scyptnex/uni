@@ -271,21 +271,22 @@ To do this we must show that all optimal solutions of the RAAP instance $\rInsta
 
 We intuit a surjection on the reversal function.
 If we were to name processors in the assignment, we can have a different assignment by switching the names of two processors that would yield the same reversed solution.
-This intuition brings us to look at a way of retreiving at least one $\rSolution$ from a given $\mSolution$ and working with that.
+This intuition brings us to look at a way of retreiving at least one $\rSolution$ to $\rInstance$ from a given $\mSolution$ for $\mInstance$ and working with that.
 
 We do this using an {\em inversion function} $\inverse$, which has some useful properties.
-Most importantly we can say something about the cost of inverted solutions which we use to prove the optimality proposition.
+Most importantly, we can say something about the cost of inverted solutions which we use to prove the optimality proposition.
 
 \begin{definition}
 Inversion Function $\inverse$
 
 First we pick arbitrarily $t_0 \in T$ as a default processor.
 We use it to be able to assign vertices $v \in V'$ for which $\forall t \in T : \npath{}{v}{t}$.
+Note however it is possible to assign a vertex to $t_0$ when it is not the case that this vertex is disconnected from all vertices.
 \begin{align}
 	\nonumber \inverse & : 2^E \rightarrow (V \rightarrow P) \\
-	\nonumber \inverse(S) & = \rSolution \mbox{ where } \forall v \in V' \rSolution(v) = \mbox{$\left\{ 
+	\nonumber \inverse(S) & = \rSolution \mbox{ where for all } v \in V', \rSolution(v) = \mbox{$\left\{ 
 		\begin{array}{l l}
-			t \quad & \mbox{if $t \in T \wedge \path{(V,E \setminus S)}{v}{t}$}\\
+			t \quad & \mbox{if $t \in T \wedge \path{E \setminus S}{v}{t}$}\\
 			t_0 & \mbox{otherwise}\\ \end{array} \right.$} 
 \end{align}
 
@@ -298,30 +299,35 @@ Any edge in the inversion of a feasible solution to a multiterminal cut with end
 \begin{align}
 	\nonumber & \forall \mSolution \in \mFeasible : \forall (u, v) \in E' : \inverse(S)(u) \neq \inverse(S)(v) \Rightarrow (u,v) \in S \\
 	\nonumber \mbox{or} &\\
-	\nonumber & \forall S \in F : \{(u,v) |(u, v) \in E' \wedge \inverse(S)(u) \neq \inverse(S)(v)\} \subseteq S
+	\nonumber & \forall S \in F : \{(u,v) |(u, v) \in E' \wedge \inverse(S)(u) \neq \inverse(S)(v)\} \subseteq S.
 \end{align}
 \end{lemma}
+
 \begin{proof}
 To prove this by contradiction we must show that there is no edge with differently assigned endpoints that is not in the solution.
 Assume $\exists (u,v) \in E' : \inverse(S)(u) \neq \inverse(S)(v) \wedge (u,v) \not\in S$.
 
-For the above assumption we are concerned with two possible cases, either neither $u$ nor $v$ has been assigned the default processor (1) $t_0$ or one of them has (2).
-It is possible that one of the nodes happened to be assigned the default processor because they are connected (rather than because it was disconnected from every terminal) but we can ignore this case as we only need to show the Lemma for all differently assigned nodes.
+For the above assumption we are concerned with two possible cases, either:
+\begin{enumerate}
+	\item neither $u$ nor $v$ has been assigned the default processor$t_0$
+	\item one of them has been assigned the default processor
+\end{enumerate}
 
-1) When neither node was assigned the default processor we have the following:
+\noindent It is possible that one of the nodes happened to be assigned the default processor because they are connected (rather than because it was disconnected from every terminal) but we can ignore this case as we only need to show the lemma for all differently assigned nodes.
+
+1) When neither node was assigned the default processor we have the following, where $(u, v) \in E \setminus S$
 \begin{align}
 	\nonumber \exists s \neq t \in T  & : \path{E \setminus S}{u}{s} \wedge \path{E \setminus S}{v}{t} \\
-	\nonumber \exists (u, v) \in E \setminus S& \\
-	\nonumber & \Rightarrow \path{E \setminus S}{u}{t} \wedge \path{E \setminus S}{v}{s} \\
-	\nonumber & \Rightarrow S \not\in F
+	\nonumber & \Rightarrow \path{E \setminus S}{u}{t} \wedge \path{E \setminus S}{v}{s} \quad \mbox{from the definition of the path predicate}\\
+	\nonumber & \Rightarrow S \not\in F \quad \mbox{from the definition of the MTC}
 \end{align}
 
 2) When one of the nodes was assigned the default processor we have the following:
 \begin{align}
 	\nonumber \mbox{Let: } \inverse(S)(u) = t_0 & \\
-	\nonumber \exists s \in T \setminus \{t_0\} & : \path{E \setminus S}{v}{s} \\
-	\nonumber & \Rightarrow \path{E \setminus S}{u}{s} \\
-	\nonumber & \Rightarrow \inverse(S)(u) = s = t_0
+	\nonumber \exists s \in T \setminus \{t_0\} & : \path{E \setminus S}{v}{s} \quad \mbox{from the definition of $\inverse$}\\
+	\nonumber & \Rightarrow \path{E \setminus S}{u}{s} \quad \mbox{from the path predicate}\\
+	\nonumber & \Rightarrow \inverse(S)(u) = s = t_0 \quad \mbox{from Lemman \ref{PATHASSIGN}}
 \end{align}
 But that is a contradiction, since we assumed $v$ was assigned to a different terminal to $t_0$ and therefore $s \neq t_0$.
 
@@ -333,18 +339,23 @@ Hence both cases would lead to contradictions.
 Any feasible solution to a multiterminal cut is also a feasible solution to its inverted mapped instance:
 
 \begin{align}
-	\nonumber \forall S \in F : \inverse(S) \in F'
+	\nonumber \forall S \in F : \inverse(S) \in F'.
 \end{align}
 \end{lemma}
+
 \begin{proof}
-Since the mapping allows us to ignore the partitioning constraint on feasibility we are only concerned with the cost.
+Since the mapping allows us to ignore the partitioning constraint $A$, from the definition of the RAAP, we are only concerned with the cost.
 
 Immediately from the path predicate and definition of $\inverse$ we see that $\forall t \in T : \inverse(S)(t) = t$.
+This means the assignment portion of the costs must be 0, as per the definitions of the mapping and the RAAP.
 
 \begin{align}
-	\nonumber \rCost(\inverse(\mSolution)) & = \displaystyle\sum\limits_{(u,v) \in E' : \inverse(S)(u) \neq \inverse(S)(v)} w_c(u,v) + 0 \\
+	\nonumber \rCost(\inverse(\mSolution)) & = \displaystyle\sum\limits_{(u,v) \in E' : \inverse(S)(u) \neq \inverse(S)(v)} w_c(u,v) + 0
+\end{align}
+\noindent Given positive costs ($w_c$), we relax the constraints on this summation to yield.
+\begin{align}
 	\nonumber \rCost(\inverse(\mSolution)) & \leq \displaystyle\sum\limits_{(u,v) \in E'} w_c(u,v) \\
-	\nonumber \rCost(\inverse(\mSolution)) & \neq \infty \\
+	\nonumber \rCost(\inverse(\mSolution)) & < \infty \\
 	\nonumber \inverse(\mSolution) & \in F'
 \end{align}
 \end{proof}
@@ -354,29 +365,34 @@ Immediately from the path predicate and definition of $\inverse$ we see that $\f
 The inverted solution to a multiterminal cut problem costs the same or less than the cut.
 
 \begin{align}
-	\nonumber \forall S \in F : C(S) \geq C'(\inverse(S))
+	\nonumber \forall S \in F : C(S) \geq C'(\inverse(S)).
 \end{align}
 \end{lemma}
+
 \begin{proof}
+From the definitions of the MTC and RAAP we have that:
 \begin{align}
 	\nonumber C(S) & = \displaystyle\sum\limits_{(u,v) \in S} w(u,v)\\
 	\nonumber C'(\inverse(S)) & = \displaystyle\sum\limits_{(u,v) \in E' : \inverse(S)(u) \neq \inverse(S)(v)} w_c(u,v) + \displaystyle\sum\limits_{v \in V'} w_i(v, \inverse(S)(v)) \\
-	\nonumber & = \displaystyle\sum\limits_{(u,v) \in E' : \inverse(S)(u) \neq \inverse(S)(v)} w_c(u,v) + 0 \\
-	\nonumber \mbox{And from \ref{INVERSESUBSET}} \\
+	\nonumber & = \displaystyle\sum\limits_{(u,v) \in E' : \inverse(S)(u) \neq \inverse(S)(v)} w_c(u,v) + 0
+\end{align}
+\begin{align}
+	\nonumber \mbox{And from \ref{INVERSESUBSET}} & \\
 	\nonumber & \{(u,v) | (u,v) \in E' \wedge \inverse(S)(u) \neq \inverse(S)(v)\} \subseteq S \\
-	\nonumber & \Rightarrow \displaystyle\sum\limits_{(u,v) \in S} w(u,v) \geq \displaystyle\sum\limits_{(u,v) \in E' : \inverse(S)(u) \neq \inverse(S)(v)} w_c(u,v) \\
-	\nonumber & \Rightarrow C(S) \geq C'(\inverse(S))
+	\nonumber \Rightarrow & \displaystyle\sum\limits_{(u,v) \in S} w(u,v) \geq \displaystyle\sum\limits_{(u,v) \in E' : \inverse(S)(u) \neq \inverse(S)(v)} w_c(u,v) \\
+	\nonumber \Rightarrow & C(S) \geq C'(\inverse(S)).
 \end{align}
 \end{proof}
 
 \begin{lemma}
 \label{REVERSECOST}
-The solution to the RAAP instance of a mapped MTC problem costs the same as the reverse solution.
+The solution to the RAAP instance of a mapped MTC problem costs the same as the reverse ($\reverse$) solution.
 
 \begin{align}
-	\nonumber \forall \rSolution \in F' : C'(\rSolution) = C(\reverse(\rSolution))
+	\nonumber \forall \rSolution \in F' : C'(\rSolution) = C(\reverse(\rSolution)).
 \end{align}
 \end{lemma}
+
 \begin{proof}
 Immediately by the definitions of the mapping, $\reverse$ and Lemma \ref{FORCEASSIGN}.
 
@@ -384,9 +400,9 @@ From \ref{FORCEASSIGN} we know $\forall t \in T : \rSolution(t) = t$ hence $\dis
 
 Then:
 \begin{align}
-	\nonumber \rCost(\rSolution) & = \displaystyle\sum\limits_{(u,v) \in E' : \rSolution(u) \neq \rSolution(v)} w_c(u,v) + 0 \\
-	\nonumber \mCost(\reverse(\rSolution)) & = \displaystyle\sum\limits_{(u,v) \in E' : \rSolution(u) \neq \rSolution(v)} w(u,v) \\
-	\nonumber \rCost(\rSolution) & = \mCost(\reverse(\rSolution))
+	\nonumber \rCost(\rSolution) & = \displaystyle\sum\limits_{(u,v) \in E' : \rSolution(u) \neq \rSolution(v)} w_c(u,v) + 0,\quad  \mbox{meanwhile,} \\
+	\nonumber \mCost(\reverse(\rSolution)) & = \displaystyle\sum\limits_{(u,v) \in E' : \rSolution(u) \neq \rSolution(v)} w(u,v), \quad \mbox{and therefore,} \\
+	\nonumber \rCost(\rSolution) & = \mCost(\reverse(\rSolution)).
 \end{align}
 \end{proof}
 
@@ -395,14 +411,15 @@ Then:
 Any optimal solution to RAAP can be reversed to give an optimal solution to MTC.
 
 \begin{align}
-	\nonumber \forall \rSolution \in O' : \reverse(\rSolution) \in O
+	\nonumber \forall \rSolution \in O' : \reverse(\rSolution) \in O.
 \end{align}
 \end{lemma}
+
 \begin{proof}
 This uses a contradiction that would arise otherwise because of lemmas \ref{INVERSEFEASIBLE}, \ref{REVERSECOST} and \ref{INVERSECOST}.
 \begin{align}
 	\nonumber \mbox{Assume:} \quad & \exists \rSolution \in O' : \reverse(\rSolution) \not\in O \\
-	\nonumber & \Rightarrow \exists S \in F : C(S) < C(\reverse(\rSolution)) \quad \mbox{Definition of optimal space} \\
+	\nonumber \Rightarrow & \exists S \in F : C(S) < C(\reverse(\rSolution)) \quad \mbox{Definition of optimal space} \\
 	\nonumber \\
 	\nonumber \rSolution \in \rOptimal & \Rightarrow \forall \beta \in \rFeasible : \rCost(\rSolution) \leq \rCost(\beta) \quad (*)\\
 	\nonumber \\
@@ -410,8 +427,7 @@ This uses a contradiction that would arise otherwise because of lemmas \ref{INVE
 	\nonumber \mbox{from \ref{INVERSECOST}}\quad & \rCost(\inverse(\mSolution)) \leq \mCost(S) \\
 	\nonumber & \mCost(S) < \mCost(\reverse(\rSolution)) \\
 	\nonumber \mbox{from \ref{REVERSECOST}}\quad & \mCost(\reverse(\rSolution)) = \rCost(\rSolution)\\
-	\nonumber & \Rightarrow C'(\inverse(S)) < C'(\rSolution) \\
-	\nonumber & \Rightarrow \rSolution \not\in O'
+	\nonumber & \Rightarrow C'(\inverse(S)) < C'(\rSolution).
 \end{align}
 But this contradicts (*).
 
@@ -430,5 +446,5 @@ Hence:
 The RAAP is in the class of NP-Hard problems.
 \end{theorem}
 \begin{proof}
-By reduction from MTC.
+By reduction from MTC, completed with Lemma \ref{REVERSEOPTIMAL}.
 \end{proof}

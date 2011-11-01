@@ -19,10 +19,15 @@ We understand the expected steady-state execution time of a CR fault tolerant sy
 
 Since we are only concerned if a single component fails, we can take the generous presumption of failure independence (only the first failure matters).
 This makes calculating the total expected execution time $t$ simple.
+
 \begin{align}
 	\nonumber t_i & = (1-p)m + p(m + r + t_{i+1}) \\
-	\nonumber t & = t_0 \\
-	\nonumber \mbox{Which can be re-written as:}& \\
+	\nonumber t & = t_0
+\end{align}
+
+\noindent Which can be written as:
+
+\begin{align}
 	\nonumber t & = \left({(m+r)\displaystyle\sum\limits_{i=0}^\infty p^i }\right) - r \\
 	\nonumber & = (m+r)\left({{1}\over{1-p}}\right) - r\\
 	\nonumber & = {{m+rp}\over{1-p}}
@@ -40,7 +45,8 @@ We understand the failure probability of a replication FT system as follows:
 	\item The probability of any processor failing during one steady-state execution is $p$, for simplicity we assume failures are independent and uniformly likely.
 \end{itemize}
 
-This leads to some useful observations about the costs of this FT method:
+\noindent This leads to some useful observations about the costs of this FT method:
+
 \begin{itemize}
 	\item Communication between nodes increases with more duplicates.
 			Every version of each actor communicates with every version of its predecessor, hence the communication increases by $d^2$.
@@ -49,12 +55,15 @@ This leads to some useful observations about the costs of this FT method:
 \end{itemize}
 
 We are interested with the probability of the system failing completely.
-Each computer has a small chance of failing per steady-state execution $p$, then the probability that the computer is still running after i iterations is $P = p_i = (1-p)^i$.
-In the case where each processor only executes one node, the system will fail if all duplicates of any one actor fail after i iterations.
+Each computer has a small chance of failing per steady-state execution $p$, then the probability that the computer is still running after $i$ iterations is $P = p_i = (1-p)^i$.
+In the case where each processor only executes one node, the system will fail if all duplicates of any one actor fail before $i$ iterations.
 All duplicates of a single actor fail with probability $(1-P)^d$.
 One or more actors fail if not no actors fail.
-A single actor does not fail with probability $1-(1-P)^d$ as above, hence at least one actor fails with probability $1-(1-(1-P)^d)^a$.
-In summary, the system fails before $i$ iterations with probability:
+A single actor does not fail with probability $1-(1-P)^d$ as above, hence at least one actor out of $a$ actors fails with probability $1-(1-(1-P)^d)^a$.
+
+In summary, our system begins with $a$ actors, duplicates them each $d$ times, and runs them on computers with $p$ chance of failing each iteration, for $i$ iterations.
+The probability that this system will fail before reaching the $i$th iteration is:
+
 \begin{align}
 	\nonumber 1-(1-(1-(1-p)^i)^d)^a.
 \end{align}
@@ -69,8 +78,8 @@ This section describes the model, its meaning and formulation.
 The AMPL model is used to compute a cost optimal assignment of actors to processors whilst ensuring that duplicate actors are not assigned to the same processor.
 Though designed for the replication FT mechanism, this model can also be used to assign actors optimally in the recomputation FT mechanism by removing the duplicate constraints (see Section \ref{secModVars}).
 
-An ILP solver (in our case, glpsol) is used in conjunction with the model to generate optimal solutions to the RAAP.
-For simplicity {\em optimal} in relation to the global sum of costs, rather than the more complicated, though useful method, of counting only the cost of the most expensive parallel unit.
+An ILP solver (in our case, the GNU Linear Programming Kit) is used in conjunction with the model to generate optimal solutions to the RAAP.
+For simplicity, {\em optimal} in relation to the global sum of costs, rather than the more complicated, though useful method, of counting only the cost of the most expensive parallel unit.
 Possible future work may include reformulating this problem to minimise parallel makespan, that is, by distributing actors in such a way that no single processor performs a disproportionately large number of computations.
 The optimal solution can be compared with assignments derived from other heuristics for experimental purposes, however due to the intractable nature of the problem only small instances can be compared in this way.
 
