@@ -13,16 +13,17 @@ We understand the expected steady-state execution time of a CR fault tolerant sy
 \begin{itemize}
 	\item The makespan (including the overhead of making checkpoints) of a single successful execution is known statically, we shall call this $m$.
 	\item For the duration of any makespan, the probability of any single processor or communication failure is known statically.
-			Hence the probability that at least one component fails can be worked out, we shall call this $p$.
-	\item The time required to reset the system to the last checkpointed state is known statically, we shall call this $r$.
+			Hence the probability that at least one component fails can be worked out, and we shall call this $p$.
+	\item The time required to reset the system to the last checkpointed state is known statically, and we shall call this $r$.
 \end{itemize}
 
 Since we are only concerned if a single component fails, we can take the generous presumption of failure independence (only the first failure matters).
 This makes calculating the total expected execution time $t$ simple.
-
+We use the notation $t_i$ to mean the expected time of execution given that we have already failed $i$ times during this steady state.
+Hence:
 \begin{align}
 	\nonumber t_i & = (1-p)m + p(m + r + t_{i+1}) \\
-	\nonumber t & = t_0
+	\nonumber t & = t_0.
 \end{align}
 
 \noindent Which can be written as:
@@ -34,10 +35,15 @@ This makes calculating the total expected execution time $t$ simple.
 \end{align}
 
 \section{Task Replication}
+\label{secModRep}
 
 The replication method initiates multiple versions of the same computations and runs them in parallel.
-The schedule is executed as though there were only one version of each actor, however extra communication and computation is taken up by each actor: first to distribute output tokens to all versions of their successor nodes, and second to analyse each input token and choose only those that come from non-faulty predecessors.
-For our implementation, the system only totally fails if all duplicates of one actor reside on faulting processors.
+The schedule is executed as though there were only one version of each actor, however, extra communication and computation is taken up by each actor in two ways:
+\begin{enumerate}
+	\item to distribute output tokens to all versions of their successor nodes
+	\item to analyse each input token and choose only those that come from non-faulty predecessors.
+\end{enumerate}
+\noindent For our implementation, the system only totally fails if all duplicates of one actor reside on faulting processors.
 
 We understand the failure probability of a replication FT system as follows:
 \begin{itemize}
@@ -54,7 +60,7 @@ We understand the failure probability of a replication FT system as follows:
 			This leads to assigning multiple actors to the same processor, again it is a trivial observation.
 \end{itemize}
 
-We are interested with the probability of the system failing completely.
+Let us now consider the probability of the system failing completely.
 Each computer has a small chance of failing per steady-state execution $p$, then the probability that the computer is still running after $i$ iterations is $P = p_i = (1-p)^i$.
 In the case where each processor only executes one node, the system will fail if all duplicates of any one actor fail before $i$ iterations.
 All duplicates of a single actor fail with probability $(1-P)^d$.
@@ -75,7 +81,7 @@ This section describes the model, its meaning and formulation.
 
 \subsection{Description}
 
-The AMPL model is used to compute a cost optimal assignment of actors to processors whilst ensuring that duplicate actors are not assigned to the same processor.
+The AMPL model is used to compute a cost-optimal assignment of actors to processors whilst ensuring that duplicate actors are not assigned to the same processor.
 Though designed for the replication FT mechanism, this model can also be used to assign actors optimally in the recomputation FT mechanism by removing the duplicate constraints (see Section \ref{secModVars}).
 
 An ILP solver (in our case, the GNU Linear Programming Kit) is used in conjunction with the model to generate optimal solutions to the RAAP.
@@ -93,7 +99,7 @@ Intuitively we might say that two actors assigned to the same processor do not i
 
 
 The parameters and variables for this model are explained below.
-Some parameters make use of the \invoke{a}{p} and \commu{a}{b}{p}{q} functions, these are described in Section \ref{secSystemNPM}.
+Some parameters make use of the $\invoke{a}{p}$ and $\commu{a}{b}{p}{q}$ functions, these are described in Section \ref{secSystemNPM}.
 To simplify the notation of matrices we use the notation $\mathbf{A}_{r,c}$ to denote the value in row $r$ and column $c$ of the $\mathbf{A}$ matrix.
 
 \begin{itemize}
@@ -103,14 +109,17 @@ To simplify the notation of matrices we use the notation $\mathbf{A}_{r,c}$ to d
 	\item The set of all processors is represented by $P = [0, 1, ..., p-1]$
 	\item The cost of invoking actor $a$ on processor $p$, is stored in the matrix $\mathbf{I}$, a $n \times p$ matrix where $\mathbf{I}_{a,p} = \invoke{a}{p}$.
 	\item The cost of communication between actors $a$ and $b$ on processors $p$ and $q$ respectively is the matrix $\mathbf{C}$, a $n \times n \times p \times p$ tensor where $\mathbf{C}_{a,b,p,q} = \commu{a}{b}{p}{q}$.
-	\item Which actors are duplicates of which is recorded in the matrix $\mathbf{D}$, a $n \times n$ matrix where $\mathbf{D}_{i,j} = \mbox{$\left\{ 
+	\item Which actors are duplicates of which is recorded in the matrix $\mathbf{D}$, a $n \times n$ matrix where:\\
+		$\mathbf{D}_{i,j} = \mbox{$\left\{ 
 		\begin{array}{l l}
 			1 \quad & \mbox{if $i$ is a duplicate of $j$}\\
-			0 & \mbox{otherwise}\\ \end{array} \right.$}$ \\ Note $\forall i, j \in N : D_{i,j} = D_{j,i}$ 
-	\item The assignment of actors is determined by the solver in the matrix $\mathbf{X}$, a $n \times p$ matrix where $\mathbf{X}_{a,p} = \mbox{$\left\{ 
+			0 & \mbox{otherwise}\\ \end{array} \right.$}$ \\
+		Note $\forall i, j \in N : D_{i,j} = D_{j,i}$ 
+	\item The assignment of actors is determined by the solver in the matrix $\mathbf{X}$, a $n \times p$ matrix where:\\
+	$\mathbf{X}_{a,p} = \mbox{$\left\{ 
 		\begin{array}{l l}
 			1 \quad & \mbox{if $a$ will be run on $p$}\\
-			0 & \mbox{otherwise}\\ \end{array} \right.$}$
+			0 & \mbox{otherwise.}\\ \end{array} \right.$}$
 \end{itemize}
 
 \subsection{ILP Formulation}
@@ -130,8 +139,9 @@ The constraints are, first all actors must be assigned to exactly one processor,
 \subsection{Constraint Linearisation}
 \label{secModLin}
 
-Viewing the model above we immediately see the problem of quadratic terms.
+Viewing the model above we immediately see that there is a quadratic term.
 The minimisation of the objective function is determined by the minimisation of two dependant assignments (for the communication cost part of the sum).
+However normal IP solvers, (such as the Gnu Linear Programming Kit, which we are using) can only solve linear problems.
 In order to solve this problem we must linearise this quadratic term.
 
 We use the standard method for linearising this quantity.

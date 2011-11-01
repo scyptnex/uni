@@ -5,7 +5,7 @@
 
 \subsection{Streaming Systems}
 The entire domain of streaming systems is diverse and loosely defined.
-For convenience streaming programs can be thought of as those which deal with ``flows'' of data rather than the more traditional Von Neumann computational model.
+For convenience, streaming programs can be thought of as those which deal with ``flows'' of data rather than the more traditional Von Neumann computational model, which deals with objects in memory.
 To that end, streaming systems can range from dataflow systems \cite{gur85} to signal processing \cite{sdfBook}.
 
 \begin{figure}
@@ -17,15 +17,14 @@ To that end, streaming systems can range from dataflow systems \cite{gur85} to s
 \end{figure}
 
 Stream programs can be thought of as computational graphs, often visualised as directed graphs, such as the one in Figure \ref{figSimpleDG}.
-In future we shall say that such a graph has $n$ nodes and $m$ arcs.
-In general systems the graphs have some nodes which provide inputs for the system, other nodes which transform data, and finally nodes which publish this data.
+Further, we say that such a graph has $n$ nodes and $m$ arcs.
+In general systems, the graphs have some nodes which provide inputs for the system, other nodes which transform data, and finally nodes which publish this data.
 In such graphs data is not a discrete finite unit but rather a (possibly infinite) stream, where each node in the graph performs an atomic computation, possibly consuming a subsequence of its inputs and possibly producing more data on its outputs.
 In this way the data streams are said to flow along the edges of the graph, these edges are therefore called {\em channels}.
 
 As a rule there are no restrictions applied to such computational graphs.
 However as we shall see there may be some limitations we can apply to these graphs in order to gain desirable properties.
-These restrictions are detailed in section \ref{BACK_SYNC}.
-
+These restrictions are detailed in Section \ref{BACK_SYNC}.
 Stephens has compiled a more complete survey \cite{ste97} on the range of implementations for the varying flavours of stream systems.
 In that work he makes special note of the lack of coherence or similarity between differing implementations or even purposes for stream computation.
 To this end {\em streaming computation} is not a distinct theory for the computer sciences.
@@ -33,8 +32,7 @@ To this end {\em streaming computation} is not a distinct theory for the compute
 \subsection{Synchronous Streaming}
 \label{BACK_SYNC}
 
-Synchronous streaming systems, as the name would suggest, are a subset of all streaming systems.
-Specifically streaming systems where the execution (called {\em invocation}) of the nodes in the computational graph is related to or controlled by the execution of others.
+Synchronous streaming systems are streaming systems where the execution (called {\em invocation}) of the nodes in the computational graph is related to or controlled by the execution of others.
 This necessarily implies some kind of global or local logical discrete clock.
 
 The reason synchronous systems are noteworthy is that they have some useful properties relating to the size of streams, the execution of nodes and the allocation of memory buffers.
@@ -52,23 +50,29 @@ In SDF the computational units (called {\em actors}) have limitations imposed on
 Figure \ref{figSimpleSDF} shows some sample SDF graphs.
 Suppose a channel streams data from actor $a$ to $b$, where one invocation of $a$ produces $i$ data items (called {\em tokens}) and one invocation of $b$ consumes $j$ tokens.
 Then we would annotate the SDF graph by writing $i$ near the $a$ end of the channel, and $j$ near the $b$ end.
-More formally this relation is between $producer$ and $consumer$ actos along a channel.
-If we called that channel $e$ then $prod(e) = a$, $cons(e) = b$, $productions(e, prod(e)) = i$ and $consumptions(e, cons(e)) = j$.
+More formally this relation is between $producer$ and $consumer$ actors along a channel.
+If we called that channel $e$ then $src(e) = a$, $snk(e) = b$, $productions(e) = i$ and $consumptions(e) = j$.
 
 At any given point in time there are some number of tokens in buffers in the system waiting to be consumed by actors.
-Tokens which exist on an actor's input channels before invocation are called $delays$, note that an actor must have sufficient delays on its channel (that is, $>= consumptions(c, cons(c))$) before it can be invoked.
+Tokens which exist on an actor's input channels before invocation are called $delays$
+Note that an actor must have sufficient delays on its channel (at least $consumptions(c)$) before it can be invoked.
 The global configuration of delays on all channels is called the {\em fill state}.
 The first desirable property of SDF is how it maintains the fill state.
 
-Early work by Lee and Messerschmitt details the calculation of a comodity called the {\em repetitions vector} \cite{lee87}.
-To calculate this we first express the SDF graph as a {\em topological matrix}, which is an $n \times m$ matrix $\Gamma$ where $\Gamma_{i,j}$ is $productions(i, j)$ if actor i produces to channel j, $-consumptions(i, j)$ if actor i consumes from channel j, and zero otherwise.
-Importantly if the rank of this matrix is $n-1$ then the repetitions vector can be computed.
+Early work by Lee and Messerschmitt details the calculation of a property called the {\em repetitions vector} \cite{lee87}.
+To calculate this we first express the SDF graph as a {\em topological matrix}, which is an $n \times m$ matrix $\Gamma$ where $\Gamma_{i,j}$ is:
+\begin{itemize}
+	\item $productions(e_{i,j})$ if actor $i$ produces to channel $j$.
+	\item $-consumptions(e_{i,j})$ if actor $i$ consumes from channel $j$.
+	\item zero otherwise.
+\end{itemize}
+\noindent Importantly if the rank of this matrix is $n-1$ then the repetitions vector can be computed.
 Figure \ref{figSimpleTop} shows the topological matrix $\Gamma$ and repetitions vector $r$ for graph b) in figure \ref{figSimpleSDF}.
 For a description of the properties of the repetitions vector and its computation see \cite{sdfBook}.
 Importantly if we invoke each actor exactly the number of times the repetitions vector details, then the fill state of the graph remains unchanged.
 This solves two key problems associated with unrestricted streaming systems.
-Firstly each actor must be invoked at least once, which prevents {\em starvation} of certain channles, leading to deadlocks.
-Secondly each actor is executed a finite number of times, which allows the memory buffers to have bounded size.
+Firstly, the existance of the repetitions vector means that we can prevent $starvation$ where an actor can not fire because there are not enough tokens on its input channels.
+Secondly, each actor is executed a finite number of times, which allows the memory buffers to have bounded size.
 When there are precisely enough tokens in every channel for every actor to execute the number of times required by the repetitions vector, then the channels are said to be {\em saturated}.
 Executing actors according to this vector is called the {\em steady state} schedule.
 
@@ -81,6 +85,7 @@ Executing actors according to this vector is called the {\em steady state} sched
 	2 & 0 & -1 \\
 	2 & 0 & -1
 	\end{bmatrix}
+	\quad
 	r = \begin{bmatrix}
 		1 \\
 		2 \\
@@ -124,12 +129,12 @@ Large systems therefore require stronger guarantees for FT.
 However not all FT mechanisms are the same.
 We shall detail the actual mechanisms in the following sections, but to compare them we must state what the desirable properties of FT are.
 \begin{itemize}
-	\item	The system must be able to recover from arbitrary faults.
+	\item	{\bf The system must be able to recover from arbitrary faults}.
 			Lamport and Smith's early work on {\em byzantine} fault tolerance \cite{lam86} informs our understading here.
 			The intuition is that the systems designer cannot know in advance which nodes are likely to fail or how, and therefore must cope with the worst possible kinds of faults, namely malicious attacks.
 			That work crucially deals with the notion that a fault can come from any source.
 			Systems such as Google's MapReduce \cite{dea08} are able to handle most faults, however are unable to recover from faults in certain key machines.
-	\item	The overhead for FT must be reasonable.
+	\item	{\bf The overhead for FT must be reasonable}.
 			More intuitively it shouldnt cost more to prevent certain kinds of faults than the fault itself costs.
 			Clearly this requirement will vary between situations.
 			It is one of the research goals of this work to examine the tradeoffs necessary for various FT mechanisms, one of which is overhead.
@@ -139,8 +144,9 @@ We shall detail the actual mechanisms in the following sections, but to compare 
 {\em Replication} is a generally applicable way to ensure FT both in computer systems and the real world.
 This mechanism may be alternatively called {\em duplication} or {\em redundancy} with slightly varied flavours of meaning, however the principal is the same.
 
-This mechanism involves providing multiple instances ({\em replicates}) of the same task.
-So long as any one of the replicates succeeds then the computation will succeed, in other words with $r$ replicates, if any one replicate fails with probability $p$ then the entire process fails with probability $p^r$, given naive assumptions about failure independance.
+This mechanism involves providing multiple instances ({\em replicas}) of the same task.
+So long as any one of the replicas succeeds then the computation will succeed, in other words with $r$ replicas, if any one replica fails with probability $p$ then the entire process fails with probability $p^r$, given naive assumptions about failure independence.
+Section \ref{secModRep} goes into detail about the probability of failure with replicas.
 
 This mechanism is particularly useful for large systems and systems with relatively heavyweight components.
 In the case of large systems, the replication is usualy viable given sufficient processors over which to duplicate, and these redundant elements significantly increase the mean time to failure.

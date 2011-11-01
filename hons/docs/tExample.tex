@@ -1,7 +1,7 @@
 \chapter{Working Example}
 \label{chapExample}
 
-To demonstrate the major stages and purpose of the simulator we shall make extensive use of the examples in this chapter.
+To demonstrate the major stages and purpose of the simulator, which we introduce in Chapter \ref{chapSystems} and use to run experiments in Chapter \ref{chapExperiment}, we shall make extensive use of the examples in this chapter.
 For simplicity we have chosen to use Bitonic Sorting.
 
 \section{Bitonic Sorting Overview}
@@ -20,20 +20,21 @@ We choose this method over more well known algorithms (merge, quick, bubble, sel
 In its basic form, a sequence is bitonic if it can be expressed in the form $x_0 \leq x_1 \leq ... \leq x_k \geq x_{k+1} \geq ... \geq x_{n-1}$ for $n$ elements and some $k$.
 
 Figure \ref{figBitonicNormal} shows a bitonic sorting network for sixteen items.
-This is a variation on the more well known bitonic sorting networks which allows us to ignore the up/down sorting complexity.
+This is a variation on the more well known bitonic sorting networks, often called butterfly sorting, which we use to avoid having separate sorting procedures for the forwards and backwards subsorting required by regular bitonic networks.
 In this diagram items cross from left to right in line.
 When two items reach a crossbar they swap location if the lower one has a lesser value than the higher, otherwise they do not swap.
 This figure also shows the major stages of the sorting process.
 Each box (orange, pink and blue) is isolated from crossovers in the same box, in other words, they may be scheduled in parallel.
-At the right edge of each blue box, all the channels are sorted, this demonstrates the divide-and-conquer nature of the network, each box can therefore be though of as distributed merging steps.
+At the right edge of each blue box, all the channels are sorted, this demonstrates the divide-and-conquer nature of the network, each box can therefore be thought of as distributed merging steps.
 
 Bitonic sort was one of the first distributed parallel sorting algorithms known to take $O(\log^2 n)$ time.
 However this bound requires some reasonable and some arguably naive assumptions.
-The time bound arises from the observations that each stage can sort twice as many elements as the last, for one more internal block.
+The time bound arises from the observations that each stage, the outermost boxes in Figure \ref{figBitonicNormal}, can sort twice as many elements as the last, for one more internal block.
+For example the second stage has two internal blocks and sorts four channels, whereas the third stage has three blocks and sorts eight channels.
 Hence at most $\log n$ stages with the largest one having at most $\log n$ blocks are required.
-But this assumes that communication can be dome in unit time, which in practice is not true due to overheads.
+But this assumes that communication can be done in unit time, which in practice is not true due to overheads.
 More specifically for our analysis communication overheads are larger when forming connections, so this sorting network will suffer somewhat from the proposed checkpoint-recovery scheme.
-Further, this time complexity requires $O(n)$ to work in parallel (more accurately, $n/2$).
+Further, the fast sorting time requires that $O(n)$ computers work in parallel (more accurately, $n/2$).
 Indeed the total time complexity (on a single machine) is $O(n \log^2 n)$, in other words $\log n$ times worse than merge sort.
 So in order to sort 64 items quickly, a full 32 machines are required.
 This problem may be exacerbated by the requirement to also duplicate each actor for the replication fault-tolerance scheme.
@@ -50,12 +51,12 @@ This problem may be exacerbated by the requirement to also duplicate each actor 
 
 Figure \ref{figBitonicGraph} shows the bitonic sort for four elements as a SDF graph.
 For clarity the channel cardinalities are omitted, since they all have 1 production and 1 consumption per invocation.
-It should be said that this graph depicts the sort for four items, however in actual tests with the simulator (see Chapter \ref{chapSystems}) the sorting network is dynamically generated to sort $2^n$ items, for some n.
+It should be said that this graph depicts the sort for four items, however in actual tests with the simulator (see Chapter \ref{chapSystems}) the sorting network is dynamically generated to sort $2^k$ items, for some $k$.
 
 The function of each actor (except the input and output nodes) is the same.
 The actor receives inputs in some order, and emits the lesser token on its upper channel, and the other on its lower channel.
-Unfortunately the horizontal channels in Figure \ref{figBitonicNormal} become distorted in this depiction, however in function this graph is identical to the first two blue box stages for the upper four channels in that figure.
-Since it doesn't matter which of the input tokens is greater (only the output ones) the diagram joins the arcs where they enter the nodes, however this is simply for clarity and doesn't affect the computation.
+Unfortunately the horizontal channels in Figure \ref{figBitonicNormal} become distorted in this depiction, however in function this graph is identical to the first two stages for the upper four channels in that figure.
+Since it does not matter which of the input tokens is greater (only the output ones) the diagram joins the arcs where they enter the nodes, however this is simply for clarity and does not affect the computation.
 
 The input and output nodes have basic functionality.
 For convenience's sake we can think of the input node as generating random numbers for each of its channels, and the output node as printing the numbers from top to bottom.
@@ -67,13 +68,13 @@ In a real-world use this graph would be a component of a larger system, and so i
 It may be useful at this point to analyse and consider the possible implications of the working example we have chosen.
 In this way we will be able to compare intuitive notions of the problem with actual results.
 
-Actors in this network are extremely light weight.
+Actors in this bitonic sort are extremely light weight.
 Many SDF implementations, including StreamIt, are designed to allow user-coded actors, and these actors can in practice become quite heavy.
 In contrast the actors in our example do a comparison and then output the tokens immediately.
-This may hide complexities in fault-tolerance, however for now it is sufficient to treat the actors as black boxes regarding fault tolerance.
+For this thesis we treat the actors as black boxes in general.
 
 Similarly, the channels in this network are well ordered, uniform and have no delays.
-Well ordered channels can be given definite precedence, i.e. we can say that tokens passing through parts ``later'' in the graph had to go through ``earlier'' channels.
+Well-ordered channels can be given definite precedence, i.e. we can say that tokens passing through parts ``later'' in the graph had to go through ``earlier'' channels.
 This ordering inherently means that there are no cycles, as this would require certain channels to precede themselves.
 In the case of bitonic sort, the ordering is very apparent (left to right as per Figure \ref{figBitonicGraph}), and allows us to saturate the network with delays easily with little buffering requirements.
 Certain SDF graphs are much harder to saturate than this example, however since scheduling and initialising are not focus areas for this work we can safely marginalise this issue.
@@ -100,20 +101,18 @@ Though these examples will not feature prominently in the remainder of this work
 \end{figure}
 
 Figure \ref{figCardinality} shows an artificial SDF graph with an important property.
-If we calculate the repetitions vector of this graph, as shown in \ref{figCardinalityMaths} we see that the number of times each actor is invoked far exceeds the number needed to fulfil the invocation of any one actor.
+If we calculate the repetitions vector of this graph, as shown in Figure \ref{figCardinalityMaths} we see that the number of tokens prodiced by invoking the left-most actor 35 times far exceeds the number needed to fire the middle actor.
 Indeed the buffer for the left-most channel may require storage for up to 105 tokens if the left actor executes all thirty five times before the middle actor executes at all.
 
 We have contrived this example by chaining channels with prime consumption and production amounts together.
-However this explosion in repetitions can be brought about simply by having monotonically increasing channels.
-For example if each actor requires two tokens from its left neighbour and provides one to its right, then a chain of eight actors will require the left most to execute 256 times.
+However this explosion in repetitions can occur frequently in practice.
+For example, in a string of actors where each actor requires two tokens from its left neighbour and provides one to its right, then a chain of eight actors will require the left most to execute 256 times.
 
-Graphs of this kind are not of much direct interest to our work.
-Admittedly larger invocation vectors cause difficulties in checkpointing due to sheer volume of data, it may be interesting to gauge by how much.
-However graphs with this property are of interest to performance-seeking optimisations, which may indirectly affect fault tolerance.
-
+Admittedly larger invocation vectors cause difficulties in checkpointing due to sheer volume of data, and it may be interesting to gauge by how much.
+Graphs with this property are of interest to performance-seeking optimisations, which may indirectly affect fault tolerance.
 One strategy for dealing with huge invocation amounts is to {\em fiss} the actors.
 Fissing is described by Thies et al and Malke in \cite{thies02, mal08} as splitting stateless actors into multiple versions of themselves.
-This technique would inevitably cause overheads for fault tolerance, checkpointing of fissed actors may require extra detail to account for the split, and since these actors are split for performance reasons, duplicating their computations may be unappealing.
+This technique would inevitably cause overheads for fault tolerance in general, checkpointing of fissed actors may require extra detail to account for the split, and since these actors are split for performance reasons, duplicating their computations may be unappealing.
 
 \begin{figure}
 \begin{center}
@@ -144,9 +143,15 @@ This technique would inevitably cause overheads for fault tolerance, checkpointi
 \end{figure}
 
 Figure \ref{figFibonacci} shows a SDF graph which emits the Fibonacci sequence to the output node.
-The functions of the actors is fairly self explanatory, however we can see cycles (add-dup, add-dup-dup) and delays (in square brackets) in this graph.
-These features are once again important for performance analysis reasons, however we can largely ignore them.
+This graph contains both directed cycles and delays (depicted in square brackets).
+The functions of the actors is as follows:
+\begin{itemize}
+	\item {\bf Dup} Reads one token and produces identical versions of that token on its output channels.
+	\item {\bf Add} Reads one token from two input channels, adds them, and produces the addition to its output channel.
+	\item {\bf Output} Reads one token and prints it to screen.
+\end{itemize}
 
 The main difficulty that feedback introduces is that saturating the network becomes difficult.
-One strategy is to treat the SDF graph as a directed graph aggregate the strongly connected components using Tarjan's algorithm to obtain a directed acyclic graph, however that is outside the scope of this thesis.
-Cycles in the graph do not directly increase the communication requirements or dependencies, so out fault-tolerance mechanisms are unaffected by this property where it exists.
+Channels in a cycle necessarily depend on tokens delayed to channels elsewhere in the cycle, and it is not possible in general to ensure all the channels in the cycle have enough tokens on them to execute.
+One strategy is to treat the SDF graph as a directed graph, then aggregate the strongly connected components using Tarjan's algorithm to obtain a directed acyclic graph, however that is outside the scope of this thesis.
+Cycles in the graph do not directly increase the communication requirements or dependencies, so our fault-tolerance mechanisms are unaffected by this property where it exists.
