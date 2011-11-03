@@ -8,19 +8,19 @@
 The Synchronous Dataflow (SDF) paradigm builds on the more general computation graphs described in \cite{kar66}.
 At the time that model was only a graph-theoretical representation of parallel computation, and was more of an abstraction rather than a paradigm.
 We compare this with the more fleshed-out description of the fundamentals of the language in \cite{sdfBook}.
-Synchronous Dataflow is an amalgamation of previous input on the SDF issue, and is considered the defacto description of the paradigm.
+Synchronous Dataflow is an amalgamation of previous input on the computational graphs issue, and is considered the defacto description of the paradigm.
 We are particularly interested in the calculation of actor repetitions described first in Lee and Messerschmitt's \cite{lee87} and appearing in \cite{sdfBook}.
 This is important because it is the static calculation of demand and supply by actors (called blocks in \cite{lee87}) that allows SDF to be optimized statically, giving it advantages over dynamic systems such as S-Net in \cite{pen09}.
 
 Dynamic dataflow systems like S-Net, are designed for solving certain classes of problems pure SDF cannot.
 This is seen to be one of the major problems with StreaMIT, as stated by Thies, Karczmarek and Amarasinghe \cite{thies02}.
-SDF requires static declaration of actor consumptions and productions on each of its channels, which allows the calculation of Lee's foxed periodic schedule.
+SDF requires static declaration of actor consumptions and productions on each of its channels, which allows the calculation of Lee's fixed periodic schedule.
 Thies and Amarasinghe argued that systems which allow the same level of abstractions without static IO rates are difficult to optimize for multiprocessor environments \cite{thies10}.
-Implementations of S-Net described in \cite{pen09} usually involve a Master-Worker paradigm, which is not sufficiently fault tolerant for our purposes.
+Implementations of S-Net described in \cite{pen09} are not sufficiently fault tolerant for our purposes.
 Without knowing these rates it is unable to assign more duplications of certain actors which are known to be in high demand.
 
-S-Net and StreaMIT are not the only dataflow implementations, as a much earlier work can be found in \cite{cas87}.
-That work presents LUSTRE, which is declarative as opposed to functional (StreaMIT).
+S-Net and StreaMIT are not the only dataflow implementations, as a much earlier work on LUSTRE can be found in \cite{cas87}.
+LUSTRE is declarative as opposed to functional (StreaMIT).
 LUSTRE implements several novel notions of computation (sequence operators, clocking) that normal declarative languages do not deal with, which are required in implementing a streaing paradigm.
 
 The notion of data-dependent clocks is an important one.
@@ -33,7 +33,7 @@ Lamport defines a {\em happened before} relationship among processes, which impo
 Given a partial ordering of data items and processes on distributed systems in general and SDF-like systems specifically, we can exploit the parallelism inherent in SDF.
 A means of doing this is to assign actors to processors, in a similar fashion to \cite{par03}.
 The distributed process networks described in that paper scale well with instance size, given sufficiently good load balancing.
-However the work only deals with worker count, assuming data independance and stateless processes.
+However, that work only deals with worker count, assuming data independence and stateless processes.
 The paper therefore deals more with buffer management and load balancing, in order to achieve {\em embarrasing parallelism}.
 Embarassingly parallel programs are programs with no data interdependencies (i.e. unordered) and no process states (in our case, statless actors).
 This assumption is not allowed in general for SDF programs, whose actors can have arbitary state and whose tokens are necessarily ordered.
@@ -51,12 +51,12 @@ The trend is in data analysis and distributed database applications.
 Olston et al. describe Pig Latin \cite{ols08} which is a declaritive-style language for large-scale distributed database and compiles into execution plans for the open source Map-Reduce implementation {\em hadoop}.
 This is very similar in principle to Sawzall \cite{pik05} by Pike et al. and SPADE \cite{ged08} by Gedik et al., though Sawzall is designed more for automatic analysis whereas SPADE is for more general databasing.
 It is also worthwhile to note that pig and Sawzall are system agnostic whereas SPADE is designed for IBM's System-S.
-For comparison DryadLINQ \cite{yu08} by Yu et al. encorporates features of general purpose languages (Objects, strong typing) as well as highly parallel execution environments (Map-Reduce, Distributed databases).
+For comparison, DryadLINQ \cite{yu08} by Yu et al. incorporates features of general purpose languages (objects, strong typing) as well as highly parallel execution environments (Map-Reduce, distributed databases).
 To an extent these systems attempt to provide farmiliar programming concepts to users along with well-known powerful technologies.
 In contrast the more rigid and limiting StreaMIT is not so extensible, instead focusing more on performance through compiler optimisations \cite{thies01}.
 
 The notion of optimising streaming and peta-scale computations is not new, however, an important means of formalising these notions for compiler validation and optimisation came from Soul{\'e} et al. with their universal calculus \cite{sou10}.
-This allows us to compare the enrality and performance of streaming languages themselves, and that work (besides introducing the calculus {\em Brooklet}) makes a comparison between Sawzall, StreaMIT and CQL, a dialect of StreamSQL.
+This allows us to compare the genrality and performance of streaming languages themselves, and tthe work (besides introducing the calculus {\em Brooklet}) also compares Sawzall, StreaMIT and CQL, a dialect of StreamSQL.
 Understandably then, a large part of these modern streaming systems' focus is on performance optimizations, specifically linear or near-linear scaling improvements (both for the system itself and for the computations).
 To a extent the literature on these systems neglects issues such as faultiness in favour of performance.
 
@@ -70,7 +70,7 @@ They point out that even ``under the generous assumption of fault independence''
 The work demonstrates both software and hardware changes to provide fault-tolerance, specifically dealing with an extension to the MPI framework to allow automatic checkpointing and recovery.
 Though the chance of an individual failure is high, given enough backup processors the time to failure can be made sufficiently long \cite{ree06}.
 Unfortunately this implementation makes extensive use of hardware fault-detection systems, which we presume are unavailable in our context.
-This paper can be seen as presenting the checkpointing method of ensuring fault-tolerance, that is, if a computation fails the computation is backed-up to a checkpoint and re-run, this is one of the fault-tolerance mechanisms we shall be examining.
+This paper can be seen as presenting the checkpointing method of ensuring fault-tolerance, that is, if a computation fails the computation is backed-up to a checkpoint and re-run, which is one of the fault-tolerance mechanisms we shall be examining.
 
 Randell's early work \cite{ran75} focused more on software redundancies in the case of software faults.
 The work did discuss the notion of formal redundancies and checkpointing for fault-tolerance, which are techniques we are employing.
@@ -82,11 +82,11 @@ The paper deals with assuring fault tolerance in the context of distributed cloc
 The important observation is that there may be no more than $n/3 - 1$ faulty for n total.
 Lamport proposes a voting scheme \cite{lam86} to determine correct computations from incorrect ones.
 
-We also intend to examine static fault-tolerance via task replication.
+In this thesis we also examined static fault tolerance via task replication.
 An implementation of such a system for mobile grid computing is presented by Litke et al. in \cite{lit07}.
 The work discusses a technique to determine the number of replicas required in order to assure fault tolerance of a system given a certain probability of failure.
-Litke et al. also provide simulated results (just as we intend to) based on a Knapsack formulation of the scheduling of such fault-tolerant systems.
-This work is very similar to our goal except it does not deal with the problems unique to SDF, namely actor indivisibility, nor the communication costs of the system.
+Similarly to us, Litke et al. provide simulated results based on a Knapsack formulation of the scheduling of such fault-tolerant systems.
+This work is very similar to ours, except it does not deal with the problems unique to SDF, namely actor indivisibility, nor the communication costs of the system.
 
 Few of the implementations we have seen so far deal explicitly with fault-tolerance.
 S-Net makes no mention of fault tolerance or recovery mechanisms in \cite{pen09}.

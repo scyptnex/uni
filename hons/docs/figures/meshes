@@ -1,0 +1,8 @@
+set terminal postscript eps enhanced 
+set xrange [0:1]
+set yrange [0:1]
+set output "quadratic.eps"
+splot x*y
+set output "approx.eps"
+splot x*y, x, y, x+y-1
+quit

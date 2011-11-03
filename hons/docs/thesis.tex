@@ -59,6 +59,15 @@
 \onehalfspace
 %\doublespace
 \pagestyle{fancy}
+\fancyhead{} % clear all header fields
+\fancyhead[RE,LO]{\slshape \leftmark}
+\fancyfoot{} % clear all footer fields
+\fancyfoot[C]{\thepage}
+\renewcommand{\chaptermark}[1]{
+\markboth{\thechapter.\ #1}{}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
 
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 \begin{titlepage}

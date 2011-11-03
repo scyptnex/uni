@@ -9,13 +9,15 @@ First we must show the correct recovery of the system after the occurrence of a 
 These are the most basic kinds of experiments and are very controlled.
 Our simulator uses mostly randomly-generated graphs as problem instances, and we devise a simple deterministic invocation behaviour which allows us to determine if the fault-tolerance is working correctly.
 
-Our simple program works like this:
+Our simple program works as follows:
 \begin{itemize}
 	\item If an actor does not have any input channels it remembers an internal state which begins at 0.
-			These actors write the state as a double object for each token, and increment it after each write.
+			This internal state used to represent some input.
+			These actors write an increasing series of natural numbers to their ourput channels as objects of type double.
 			So an actor with no input channels and two output channels each producing two tokens per invocation, will write $(0,1)$ on the first channel, then $(2,3)$ on the second, on its first invocation, then $(4, 5)$ and $(6, 7)$ on its second.
 	\item Actors with some inputs and some outputs consume all tokens and average them to determine their state.
-			Next they write the state in increasing fashion as described above.
+			As above, the actor then writes these as double objects to each of their output channels in increasing fashion.
+			So an actor with two input channels consuming one token each and one output channel producing three, may read $(3)$ and $(4.5)$ and will produce $(3.75, 4.75, 5.75)$.
 	\item Actors with no outputs print the average of all input tokens to standard output.
 \end{itemize}
 \noindent This arbitrary choice of functionality allows us to observe deterministic outputs from arbitrary graphs.
@@ -58,21 +60,12 @@ The output of this program is shown here:
 \end{tabular}
 \end{center}
 
-\begin{center}
-	\begin{minipage}{0.8\linewidth}
-	%\begin{multicols}{2}
-	\begin{verbatim}
-	\end{verbatim}
-	%\end{multicols}
-	\end{minipage}
-\end{center}
-
 \noindent In each steady state the actor called \verb={2}= is invoked three times, and each time averages the inputs of its tokens to print a result to standard output.
 
-Now we run the simulator on the same graph which is duplicated twice (left) and three times (right) to produce the following:
+Now we run the simulator on the same graph where each actor is replicated twice (left) and three times (right) to produce the following:
 \input{figures/exOutput}
-\noindent Note that the actor formerly called \verb={2}= has been duplicated by the actors \verb={4}= and \verb={5}= in the first case, and \verb={6}=, \verb={7}= and \verb={8}= in the second.
-Since these actors are duplicates, the simulator appends their names with an index numbering their order amongst duplicates.
+\noindent Note that the actor formerly called \verb={2}= has been replicates by the actors \verb={4}= and \verb={5}= in the first case, and \verb={6}=, \verb={7}= and \verb={8}= in the second.
+Since these actors are replicas, the simulator appends their names with an index numbering their order amongst replicas.
 We can see that the duplicated output is identical to the output for single executions.
 The actors execute in parallel using Java Threads, so the order that machines print to standard out varies.
 
@@ -109,11 +102,12 @@ processor 4 is dead
 	\\ \hline
 \end{tabular}
 \end{center}
-\noindent Since the processor where the actor called \verb={4}= has faulted, it does not print output, however the other processor executes its actors, which inform the server that they detect faults while trying to communicate with that processor.
+\noindent By coincidence the actor called \verb={4}= also resides on processor four, which prints "Farewell cruel world!" when it faults.
+Since the processor where \verb={4}= resides has faulted, it does not print output, however the other processor executes its actors, which inform the server that they detect faults while trying to communicate with that processor.
 For this test we simply print the detection message to standard output.
 Note the output is still correct.
 
-Next we use recomputation-based fault-tolerance mechanism on the original (single duplicate) example:
+Next we use recomputation-based fault-tolerance mechanism on the original (un-replicated) example:
 \begin{center}
 \begin{tabular}{ | p{5cm} p{5cm} | }
 	\hline
@@ -161,19 +155,22 @@ We run our SDF programs now under multiple-fault simulations.
 Again these tests are designed to demonstrate the robustness of the FT mechanisms, as such we will for brevity only point out that the simulation goes as expected.
 Since these tests involve failing processors at random, they are run multiple times and the results discussed are for the average case.
 
-The replication FT mechanism is known to fail when all duplicates of any one actor are on machines which fail.
-In experiments we observe that for few duplicates the probability of failure different from what is expected.
+The replication FT mechanism is known to fail when all replicas of any one actor are on machines which fail.
+In experiments we observe that for few replicas, the probability of failure differs from what is expected.
 The estimates presented in Chapter \ref{chapModel} make the assumption that actors are assigned to processors uniformly at random.
 Whilst this simplifies the model, in practice this is seldom true.
 In order to minimise communication costs, processors are typically assigned all actors, or in other words, only as many processors as duplicates are used.
 So long as all the actors are assigned to fewer processors, this affects the probability of failure.
 
-Consider the problem where we duplicate $n$ actors $d$ times and assign them to $p$ processors, such that we must assign $\binom{p}{d}$ nodes (i.e. $n = \binom{p}{d}/d$).
-When the nodes are randomly assigned, we would expect that every combination of $d$ processors is likely to contain a full set of one actor's duplicates, since there are that many actors.
-This means that the failure of any $d$ processors is likely to cause the entire program to fail.
-Howevr in practice only $d$ processors will be utilised (to reduce the communication cost), so exactly those $d$ processors must fail for the entire program to fail.
+Let us suppose that we must assign sufficiently many actors ($n$) replicated sufficiently many times($r$) to a small number of processors($p$).
+When we randomly assign, we choose for each group of replicas, $r$ out of $p$ processors to assign them to.
+This can be done in $\binom{p}{r}$ different ways.
+If any one set of $r$ processors dies, this will fault the system, however there are $n$ randomly chosen sets of processors, any one of which will cause a fault.
+The chances of randomly faulting enough processors to cause this is quite high.
+In contrast the heuristic and optimal solvers tend to assign all the actors to only $r$ of the processors, meaning there is only one combination of processors which must break in order to fault the system.
+The chances of randomly faulting those specific processors is much lower.
 
-The recomputation FT mechanism is guaranteed to terminate correctly no matter how many processors fail.
+The recomputation FT mechanism is guaranteed to terminate correctly for anything less than 100\% failure rate.
 However under tests with multiple failures a weakness was exposed for recurring failures.
 Again this weakness is related to how spread-out the actors are on the processors.
 When a fault is encountered the simulator must rollback to the last successful execution, however occasionally failures would occur again before another steady state had completed.
@@ -185,16 +182,16 @@ Experimentally, executing five steady states on five machines with probability f
 
 \subsection{No-Duplication Assignments}
 
-For these experiments we formulate random problem instances with no duplicates, and use our ILP solver (Chapter \ref{chapModel}) and our Heuristic solver (Chapter \ref{chapAlgos}) to perform the assignment.
+For these experiments we formulate random problem instances with no duplicates, and use an ILP solver, running the model formulated in Chapter \ref{chapModel}, and our Heuristic solver (Chapter \ref{chapAlgos}) to perform the assignment.
 The purpose of these experiments is two-fold:
 \begin{itemize}
-	\item To examine the performance of the heuristic on more general graphs.
+	\item {\bf To examine the performance of the heuristic on more general graphs}.
 			These tests are run on randomly generated graphs, whereas the duplication process produces graphs of a distinct kind.
-			Figure \ref{figDupComppare} shows how the general structure of duplicated graphs compares to the original.
+			Figure \ref{figDupCompare} shows how the general structure of duplicated graphs compares to the original.
 			The graphs produced are more connected, and the requirement that certain nodes be assigned to different processors forces communication, which, as we observed in Section \ref{secExMultiFail}, the heuristic and optimal solvers typically avoid in the un-duplicated case.
-	\item To obtain experimental results on stream graphs with a small number of processors.
-			In practice the processing requirements for instances larger than 15 nodes exceed reasonable running times (roughly 24 hrs on a Quad-Core i7 1.6GHz).
-			When we duplicate nodes we do so uniformly, so even graphs with as few as five nodes can reach the limit of processing time with only three-way duplication.
+	\item {\bf To compare the results for ILP solvers against the Heuristic solver on stream graphs with a small number of processors}.
+			In practice, the processing requirements for instances larger than 15 nodes exceed reasonable running times (roughly 24 hrs on a Quad-Core i7 1.6GHz).
+			Our reason for this is that when we duplicate nodes we do so uniformly, so even graphs with as few as five nodes can reach the limit of processing time with only three-way duplication.
 			Tests on duplicated instances will be presented in the next section but these have typically fewer actors than the no-duplication instances shown here.
 \end{itemize}
 
@@ -214,12 +211,12 @@ The columns of this table show:
 	\item {\bf n}: The number of actors in the problem.
 	\item {\bf c}: The number of instances tested where the random generation produced a graph with $n$ nodes.
 	\item {\bf Div}: The number of times the heuristic did not match the optimal assignment.
-	\item {\bf Avg Opt}: The average cost of optimal assignments.
-	\item {\bf Avg Heu}: The average cost of heuristic assignments.
-	\item {\bf Avg Prop}: The average proportion between heuristic and optimal.
-	\item {\bf Div Opt}: The average cost of optimal assignments where the heuristic assignment was different.
-	\item {\bf Div Heu}: The average cost of heuristic assignments where the optimal assignment was different.
-	\item {\bf Div Prop}: The average proportion between heuristic and optimal where the two assignments did not match.
+	\item {\bf AO}: The average cost of optimal assignments.
+	\item {\bf AH}: The average cost of heuristic assignments.
+	\item {\bf AP}: The average proportion between heuristic and optimal.
+	\item {\bf DO}: The average cost of optimal assignments where the heuristic assignment was different.
+	\item {\bf DH}: The average cost of heuristic assignments where the optimal assignment was different.
+	\item {\bf DP}: The average proportion between heuristic and optimal where the two assignments did not match.
 \end{itemize}
 
 \begin{table}
@@ -247,10 +244,10 @@ These experiments are run on problem instances where invocation cost is modelled
 The experiments in Table \ref{figSTable} have an equal number of both kinds of experiment.
 It is possible to devise pathological cases where the heuristic performs arbitrarily worse than the optimal, however such instances do not capture realistic problems.
 
-\subsection{Multiple Duplicate Assignments}
+\subsection{Multiple Replica Assignments}
 \label{secExMulAssign}
 
-This section analyses how the optimal solver and heuristic perform when their problem's actor-set is duplicated.
+This section analyses how the optimal solver and heuristic perform when their problem's actor-set is replicated.
 We analyse the same problem under various k-way duplications with the same processor description (and therefore invocation times), however, the duplicated instances will require more communication cost in general.
 
 \begin{table}
@@ -265,6 +262,7 @@ These experiments by necessity constituted larger problem sizes.
 As such, certain experiments were not run due to time limitations.
 Optimal assignment formulations which exceed 10 hours in run time were excluded from these tests.
 The number of tests which could be completed in the time limit given the un-duplicated actor size (row) and k-way duplication (column) are shown in Table \ref{figExFreq}.
+Note that the heuristic solver takes under a second for all tests, most of which is file IO.
 
 \begin{table}
 \begin{center}
@@ -279,7 +277,7 @@ Table \ref{figExRamp} shows the average of all optimal assignment costs for the 
 As we would expect, when we look down the columns for the 1 and 2-way duplications, we see linearly increasing costs.
 This is the intuitive result since we have a linearly increasing problem sizes.
 However when we look across the rows we see much faster cost increases.
-According to the Model discussed in Chapter \ref{chapModel}, we would expect to see polynomially increasing costs.
+According to the model discussed in Chapter \ref{chapModel}, we would expect to see polynomially increasing costs.
 Unfortunately only the $n = 3$ and $n = 4$ tests have enough samples to show such an increase, and in those cases we see such an increase.
 
 \begin{table}
@@ -290,18 +288,18 @@ Unfortunately only the $n = 3$ and $n = 4$ tests have enough samples to show suc
 \end{center}
 \end{table}
 
-Now we see if the heuristic's performance degrades as the number of duplicates increases.
+Now we see if the heuristic's performance degrades as the number of replicas increases.
 Table \ref{figExAcc} shows the proportional increase in cost of the heuristic against the optimal solution.
-On examination we see few patterns in the heuristic performance as the number of duplicates increases.
-That is to say that while we see increases in the $n=4, 6$ cases, we see decreases in the $n=3, 5$ cases.
-We also see no uniform increase or decrease in all the k-way duplications of the $n=3$ case.
+On examination we see few patterns in the heuristic performance as the number of replicas increases.
+That is to say that while we see increases in the $n=4, 6$ cases, where $n$ is the number of actors, we see decreases in the $n=3, 5$ cases.
+We also see no uniform increase or decrease in all the k-way replication of the $n=3$ case.
 The lack of a pattern here is surprising, given the results of the experiment in Table \ref{figSTable}.
-In that experiment we saw that the heuristic's performance worsened as the problem size increased, however when we duplicate (and therefore increase the problem size) we do not lose out on the heuristic.
+In that experiment we saw that the heuristic's performance worsened as the problem size increased, however when we replicate (and therefore increase the problem size) we do not lose out on the heuristic.
 
-An explanation for this finding is that the heuristic has less of an ability to err when there are more duplicates.
-In the un-duplicated case, the assignment was essentially to one processor, and so as the problem size increased the chance of assigning to that one correct processor was less.
-However in the duplicate case there are $k$ correct processors, and the heuristic is likely to randomly choose at least some of the correct ones.
-Hence the number of correct processors scales with the number of duplicates, which accounts for the lack of a performance drop-off with problem size in the heuristic.
+An explanation for this finding is that the heuristic has less of an ability to err when there are more replicas.
+In the un-replicated case, the assignment was essentially to one processor, and so as the problem size increased the chance of assigning to that one correct processor was less.
+However, in the replicated case there are $k$ correct processors, and the heuristic is likely to randomly choose at least some of the correct ones.
+Hence the number of correct processors scales with the number of replicas, which accounts for the lack of a performance drop-off with problem size in the heuristic.
 
 \section{Assignment Properties}
 
@@ -329,19 +327,19 @@ This, coupled with increasing the cost of invocation in comparison to communicat
 \end{table}
 
 Table \ref{figExScale} shows the average utilisation of processors with increasing costs of communication.
-These experiments are run to assign eight actors to five processors, where in half the tests the eight actors are all stand-alone, and in the other half they are the 2-way duplication of four stand-alone actors.
+These experiments are run to assign eight actors to five processors, where in half the tests the eight actors are all stand-alone, and in the other half they are the two-way replication of four stand-alone actors.
 We fix the communication costs to a random range for all tests and increase the invocation costs for different tests.
 Utilisation shows the average proportion of the processors that were used.
 The columns of this table show:
 \begin{itemize}
 	\item {\bf Scale}: The ratio of actor invocation costs over communication costs.
-	\item {\bf Range}: The actual range of invocation times for all experiments in this scale.
-	\item {\bf Av Opt}: The average optimal assignment processor utilisation for all experiments in this scale.
-	\item {\bf ND Opt}: As above for only the un-duplicated test cases.
-	\item {\bf Dp Opt}: As above for only the duplicated test cases.
-	\item {\bf Av Heu}: The average heuristic assignment processor utilisation for all experiments in this scale.
-	\item {\bf ND Heu}: As above for only the un-duplicated test cases.
-	\item {\bf Dp Heu}: As above for only the duplicated test cases.
+	\item {\bf Range}: The actual range of invocation times for all actors in all experiments for the given scale.
+	\item {\bf AO}: The average optimal assignment processor utilisation for all experiments in this scale.
+	\item {\bf NDO}: As above for only the un-duplicated test cases.
+	\item {\bf DO}: As above for only the duplicated test cases.
+	\item {\bf AH}: The average heuristic assignment processor utilisation for all experiments in this scale.
+	\item {\bf NDH}: As above for only the un-duplicated test cases.
+	\item {\bf DH}: As above for only the duplicated test cases.
 \end{itemize}
 
 Examining this data we see what we expected.

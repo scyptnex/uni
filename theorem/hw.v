@@ -72,14 +72,27 @@ Lemma problem1: forall P Q R : Prop,
   (Q -> R) -> 
   (P \/ Q) -> R.
 Proof.
-admit.
+intro.
+intro.
+intro.
+intro.
+intro.
+intro.
+destruct H1.
+apply H.
+apply H1.
+apply H0.
+apply H1.
 Qed.
 
 (* 5 points *)
 Lemma problem2: forall P Q : Prop,
   (~ (P \/ Q)) = ((~P) /\ (~Q)).
 Proof.
-admit.
+intro.
+intro.
+apply classical.
+
 Qed.
 
 (* 10 points *)
