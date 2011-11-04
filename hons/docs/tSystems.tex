@@ -107,8 +107,8 @@ This methodology makes the assumption that the faults occur independently of the
 This work will assume that actor code is bug-free, and that actors are able to deal sensibly with bad data.
 
 The frequency of checkpointing facilitates a tradeoff between performance and robustness.
-If we checkpoint frequently we expend alot of computation on the checkpointing itself, however our backups of the system are more up-to-date.
-On the other hand rarer checkpointing saves computation on checkpointing itself but means that in the event of a fault, the system-wide rollback will cause alot of wasted computation.
+If we checkpoint frequently we expend a lot of computation on the checkpointing itself, however our backups of the system are more up-to-date.
+On the other hand rarer checkpointing saves computation on checkpointing itself but means that in the event of a fault, the system-wide rollback will cause a lot of wasted computation.
 The SDFSimulator takes the simple approach to checkpointing and saves state once every steady state execution.
 The expected costs of using checkpointing is calculated in Chapter \ref{chapModel} using the presumption of one checkpoint per steady-state iteration.
 
@@ -260,8 +260,8 @@ To begin assigning actors to processors the simulator creates the costs matrices
 Our example is using a randomly generated cloud machine specification and unit costs for actors and communication, so we would expect to see a reasonably even spread of random values in these matrices.
 
 For a real assignment we would use our AMPL model or a heuristic to determine the assignment.
-To use the GLPK we write these matrices to a .dat file and run glpsol on this data using the model described in Chapter \ref{chapModel}.
-Once solved we read in the assignment from the output of glpsol.
+To use the GLPK we write these matrices to a .dat file and run \verb=glpsol= on this data using the model described in Chapter \ref{chapModel}.
+Once solved we read in the assignment from the output of \verb=glpsol=.
 However, since we know that all actors are the same, and all communicating channels carry the same information, we can simplify the assignment process by spreading actors evenly over the computers.
 Assignment done manually in this way does not affect the later stages of the simulation, however if replication FT is being used then we must ensure the non-overlapping duplicates constraint is upheld.
 
@@ -281,7 +281,7 @@ Not all networks are able to be saturated in this way, however our example is so
 Once saturated, each worker thread can execute its actors in any order with any interleaving, so long as they halt after each steady-state execution.
 The executor gives the instruction for all workers to proceed through a single steady-state.
 To do this, each worker executes its actors in any order, in our case each actor will be executed once.
-For networks which are not amenable to saturation, the execution schedule is based on availability, that is, a node executes if there are enough tokens in its input channels to do so and it hasnt already exceeded the repetition amount.
+For networks which are not amenable to saturation, the execution schedule is based on availability, that is, a node executes if there are enough tokens in its input channels to do so and it has not already exceeded the repetition amount.
 
 The execution of a single actor is based on the code we write for them.
 For the bitonic sort, the input node generates a new set of items to be sorted.

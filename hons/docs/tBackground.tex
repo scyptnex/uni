@@ -5,7 +5,7 @@
 
 \subsection{Streaming Systems}
 The entire domain of streaming systems is diverse and loosely defined.
-For convenience, streaming programs can be thought of as those which deal with ``flows'' of data rather than the more traditional Von Neumann computational model, which deals with objects in memory.
+For convenience, streaming programs can be thought of as those which deal with ``flows'' of data rather than the more traditional Von-Neumann computational model, which deals with objects in memory.
 To that end, streaming systems can range from dataflow systems \cite{gur85} to signal processing \cite{sdfBook}.
 
 \begin{figure}
@@ -71,7 +71,7 @@ Figure \ref{figSimpleTop} shows the topological matrix $\Gamma$ and repetitions 
 For a description of the properties of the repetitions vector and its computation see \cite{sdfBook}.
 Importantly if we invoke each actor exactly the number of times the repetitions vector details, then the fill state of the graph remains unchanged.
 This solves two key problems associated with unrestricted streaming systems.
-Firstly, the existance of the repetitions vector means that we can prevent $starvation$ where an actor can not fire because there are not enough tokens on its input channels.
+Firstly, the existence of the repetitions vector means that we can prevent $starvation$ where an actor can not fire because there are not enough tokens on its input channels.
 Secondly, each actor is executed a finite number of times, which allows the memory buffers to have bounded size.
 When there are precisely enough tokens in every channel for every actor to execute the number of times required by the repetitions vector, then the channels are said to be {\em saturated}.
 Executing actors according to this vector is called the {\em steady state} schedule.
@@ -101,11 +101,11 @@ Executing actors according to this vector is called the {\em steady state} sched
 
 Applications of streaming computations can be as varied as its implementations.
 The original use of streaming systems was for analysing continuous flows of data, such as markets.
-Around the same time work was being done on continuous machines (called dataflow machines) such as the manchester prototype machine \cite{gur85}.
+Around the same time work was being done on continuous machines (called dataflow machines) such as the Manchester prototype machine \cite{gur85}.
 These illustrate the two areas of interest for streaming systems; software and hardware, notably both of which operate on streams of items (data and instructions respectively).
 However the data need not be conceptualised as streams in order for streaming programs to be useful.
 
-More modern applications leverage the inherant parallelism in computational graphs to speed up common applications such as databases and data-mining.
+More modern applications leverage the inherent parallelism in computational graphs to speed up common applications such as databases and data-mining.
 A more complete description of these systems can be found in the Related Works section.
 Streaming solutions lend themselves naturally to the kind of large scale and often distributed databases that companies deal with regularly.
 
@@ -121,21 +121,21 @@ Though this understanding lacks formal grounding, as we shall see it is useful t
 Most computer users will experience faults on a regular basis, ranging from bugs or errors to more serious security flaws and instability.
 Systems which are able to ignore or recover from such problems may be called fault tolerant.
 
-Whilst home systems may benefit from some ammount of FT, this becomes an absolure requirement for large systems.
-To demonstrate this let us treat faults like a random variable, and say that every hour a computer has a small chance of serious fault (CPU error, disk corruption, terminal bugs, power failure etc.) causing the computer to go offline.
-Reed et al observed that even given a reasonably small probability, such that an individual computer fails on average after $10^6$ hours, in large systems composed of 10000 computers, at least one component is likely to fail in hunder 100 hours \cite{ree06}.
+Whilst home systems may benefit from some amount of FT, this becomes an absolute requirement for large systems.
+To demonstrate this let us treat faults like a random variable, and say that every hour a computer has a small chance of serious fault (CPU error, disk corruption, terminal bugs, power failure etc.) causing the computer to go off-line.
+Reed et al observed that even given a reasonably small probability, such that an individual computer fails on average after $10^6$ hours, in large systems composed of 10000 computers, at least one component is likely to fail in under 100 hours \cite{ree06}.
 Large systems therefore require stronger guarantees for FT.
 
 However not all FT mechanisms are the same.
 We shall detail the actual mechanisms in the following sections, but to compare them we must state what the desirable properties of FT are.
 \begin{itemize}
 	\item	{\bf The system must be able to recover from arbitrary faults}.
-			Lamport and Smith's early work on {\em byzantine} fault tolerance \cite{lam86} informs our understading here.
+			Lamport and Smith's early work on {\em Byzantine} fault tolerance \cite{lam86} informs our understanding here.
 			The intuition is that the systems designer cannot know in advance which nodes are likely to fail or how, and therefore must cope with the worst possible kinds of faults, namely malicious attacks.
 			That work crucially deals with the notion that a fault can come from any source.
-			Systems such as Google's MapReduce \cite{dea08} are able to handle most faults, however are unable to recover from faults in certain key machines.
+			Systems such as Google's Map-Reduce \cite{dea08} are able to handle most faults, however are unable to recover from faults in certain key machines.
 	\item	{\bf The overhead for FT must be reasonable}.
-			More intuitively it shouldnt cost more to prevent certain kinds of faults than the fault itself costs.
+			More intuitively it should not cost more to prevent certain kinds of faults than the fault itself costs.
 			Clearly this requirement will vary between situations.
 			It is one of the research goals of this work to examine the tradeoffs necessary for various FT mechanisms, one of which is overhead.
 \end{itemize}
@@ -149,11 +149,11 @@ So long as any one of the replicas succeeds then the computation will succeed, i
 Section \ref{secModRep} goes into detail about the probability of failure with replicas.
 
 This mechanism is particularly useful for large systems and systems with relatively heavyweight components.
-In the case of large systems, the replication is usualy viable given sufficient processors over which to duplicate, and these redundant elements significantly increase the mean time to failure.
-However users are more farmiliar with the concept of redundant heavyweight components, particularly hard disks in RAID.
+In the case of large systems, the replication is usually viable given sufficient processors over which to duplicate, and these redundant elements significantly increase the mean time to failure.
+However users are more familiar with the concept of redundant heavyweight components, particularly hard disks in RAID.
 RAID as the name suggests is a replication strategy providing fault tolerance or performance gains (or both), depending on the configuration.
 
-In this work we examine the FT and overhead of duplicating SDF actors accross multiple processors.
+In this work we examine the FT and overhead of duplicating SDF actors across multiple processors.
 This overhead is compared with another FT mechanism, checkpointing.
 
 \subsection{Checkpointing}
@@ -162,9 +162,9 @@ Though many systems do indeed checkpoint, for our work all systems which recover
 
 In this mechanism, some information about the system's state is stored in a reliable way, so that it can be recovered in the event of a crash.
 One way is to write the node's state to disk before performing a computation, in this way if a node fails during that computation the previous state can be recovered.
-However the recovery information need not be kept or tracked by individual nodes, in the case of Google's MapReduce the state is stored by the master controller, and in the case of a worker fault the master redistributes the task to a different worker \cite{dea08}.
+However the recovery information need not be kept or tracked by individual nodes, in the case of Google's Map-Reduce the state is stored by the master controller, and in the case of a worker fault the master redistributes the task to a different worker \cite{dea08}.
 
 This kind of FT is well researched in the area of databases \cite{dbrec}.
-Modern databases use various checkpointing methodologies (called {\em commiting}) to make guarantees about the system's robustness.
-These mechanisms are interesting, because they must work on standalone machines, and are not specifically designed for parallel problems.
+Modern databases use various checkpointing methodologies (called {\em committing}) to make guarantees about the system's robustness.
+These mechanisms are interesting, because they must work on stand-alone machines, and are not specifically designed for parallel problems.
 Because of this individual computers are able to provide guarantees for robustness, and therefore can be orchestrated to provide robust parallel systems.

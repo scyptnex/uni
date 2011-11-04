@@ -10,18 +10,18 @@ At the time that model was only a graph-theoretical representation of parallel c
 We compare this with the more fleshed-out description of the fundamentals of the language in \cite{sdfBook}.
 Synchronous Dataflow is an amalgamation of previous input on the computational graphs issue, and is considered the defacto description of the paradigm.
 We are particularly interested in the calculation of actor repetitions described first in Lee and Messerschmitt's \cite{lee87} and appearing in \cite{sdfBook}.
-This is important because it is the static calculation of demand and supply by actors (called blocks in \cite{lee87}) that allows SDF to be optimized statically, giving it advantages over dynamic systems such as S-Net in \cite{pen09}.
+This is important because it is the static calculation of demand and supply by actors (called blocks in \cite{lee87}) that allows SDF to be optimised statically, giving it advantages over dynamic systems such as S-Net in \cite{pen09}.
 
 Dynamic dataflow systems like S-Net, are designed for solving certain classes of problems pure SDF cannot.
-This is seen to be one of the major problems with StreaMIT, as stated by Thies, Karczmarek and Amarasinghe \cite{thies02}.
+This is seen to be one of the major problems with StreamIt, as stated by Thies, Karczmarek and Amarasinghe \cite{thies02}.
 SDF requires static declaration of actor consumptions and productions on each of its channels, which allows the calculation of Lee's fixed periodic schedule.
-Thies and Amarasinghe argued that systems which allow the same level of abstractions without static IO rates are difficult to optimize for multiprocessor environments \cite{thies10}.
+Thies and Amarasinghe argued that systems which allow the same level of abstractions without static IO rates are difficult to optimise for multiprocessor environments \cite{thies10}.
 Implementations of S-Net described in \cite{pen09} are not sufficiently fault tolerant for our purposes.
 Without knowing these rates it is unable to assign more duplications of certain actors which are known to be in high demand.
 
-S-Net and StreaMIT are not the only dataflow implementations, as a much earlier work on LUSTRE can be found in \cite{cas87}.
-LUSTRE is declarative as opposed to functional (StreaMIT).
-LUSTRE implements several novel notions of computation (sequence operators, clocking) that normal declarative languages do not deal with, which are required in implementing a streaing paradigm.
+S-Net and StreamIt are not the only dataflow implementations, as a much earlier work on LUSTRE can be found in \cite{cas87}.
+LUSTRE is declarative as opposed to functional (StreamIt).
+LUSTRE implements several novel notions of computation (sequence operators, clocking) that normal declarative languages do not deal with, which are required in implementing a streaming paradigm.
 
 The notion of data-dependent clocks is an important one.
 In LUSTRE data precedence is defined by an incremental counter (called the clock) assigned in a tuple with each data item.
@@ -34,30 +34,30 @@ Given a partial ordering of data items and processes on distributed systems in g
 A means of doing this is to assign actors to processors, in a similar fashion to \cite{par03}.
 The distributed process networks described in that paper scale well with instance size, given sufficiently good load balancing.
 However, that work only deals with worker count, assuming data independence and stateless processes.
-The paper therefore deals more with buffer management and load balancing, in order to achieve {\em embarrasing parallelism}.
-Embarassingly parallel programs are programs with no data interdependencies (i.e. unordered) and no process states (in our case, statless actors).
-This assumption is not allowed in general for SDF programs, whose actors can have arbitary state and whose tokens are necessarily ordered.
-This is not a problem for the most well known massively-parallel paradigm, MapReduce.
-MapReduce \cite{dea08} is a popular tool for large scale data-crunching.
+The paper therefore deals more with buffer management and load balancing, in order to achieve {\em embarrassing parallelism}.
+Embarrassingly parallel programs are programs with no data interdependencies (i.e. unordered) and no process states (in our case, stateless actors).
+This assumption is not allowed in general for SDF programs, whose actors can have arbitrary state and whose tokens are necessarily ordered.
+This is not a problem for the most well known massively-parallel paradigm, Map-Reduce.
+Map-Reduce \cite{dea08} is a popular tool for large scale data-crunching.
 Much of the work goes into distributed-memory grid/cloud systems, however implementations such as PHOENIX \cite{ran07} demonstrate the paradigm's viability for shared-memory multithreaded systems.
 
 \subsection{Modern work}
 
 More modern implementations of streaming systems build on the simpler ideas expressed above.
 These systems are designed in an era dominated by real world peta-scale systems involving thousands of computers, and so can be better tested under those conditions.
-StreaMIT \cite{thies01, thies02, thies10} we saw earlier, but other systems such as pig \cite{ols08}, SPADE \cite{ged08}, Sawzall \cite{pik05} and DryadLINQ \cite{yu08} also exist in this domain.
+StreamIt \cite{thies01, thies02, thies10} we saw earlier, but other systems such as pig \cite{ols08}, SPADE \cite{ged08}, Sawzall \cite{pik05} and DryadLINQ \cite{yu08} also exist in this domain.
 
 The trend is in data analysis and distributed database applications.
-Olston et al. describe Pig Latin \cite{ols08} which is a declaritive-style language for large-scale distributed database and compiles into execution plans for the open source Map-Reduce implementation {\em hadoop}.
+Olston et al. describe Pig Latin \cite{ols08} which is a declarative-style language for large-scale distributed database and compiles into execution plans for the open source Map-Reduce implementation {\em Hadoop}.
 This is very similar in principle to Sawzall \cite{pik05} by Pike et al. and SPADE \cite{ged08} by Gedik et al., though Sawzall is designed more for automatic analysis whereas SPADE is for more general databasing.
 It is also worthwhile to note that pig and Sawzall are system agnostic whereas SPADE is designed for IBM's System-S.
 For comparison, DryadLINQ \cite{yu08} by Yu et al. incorporates features of general purpose languages (objects, strong typing) as well as highly parallel execution environments (Map-Reduce, distributed databases).
-To an extent these systems attempt to provide farmiliar programming concepts to users along with well-known powerful technologies.
-In contrast the more rigid and limiting StreaMIT is not so extensible, instead focusing more on performance through compiler optimisations \cite{thies01}.
+To an extent these systems attempt to provide familiar programming concepts to users along with well-known powerful technologies.
+In contrast the more rigid and limiting StreamIt is not so extensible, instead focusing more on performance through compiler optimisations \cite{thies01}.
 
 The notion of optimising streaming and peta-scale computations is not new, however, an important means of formalising these notions for compiler validation and optimisation came from Soul{\'e} et al. with their universal calculus \cite{sou10}.
-This allows us to compare the genrality and performance of streaming languages themselves, and tthe work (besides introducing the calculus {\em Brooklet}) also compares Sawzall, StreaMIT and CQL, a dialect of StreamSQL.
-Understandably then, a large part of these modern streaming systems' focus is on performance optimizations, specifically linear or near-linear scaling improvements (both for the system itself and for the computations).
+This allows us to compare the generality and performance of streaming languages themselves, and the work (besides introducing the calculus {\em Brooklet}) also compares Sawzall, StreamIt and CQL, a dialect of StreamSQL.
+Understandably then, a large part of these modern streaming systems' focus is on performance optimisations, specifically linear or near-linear scaling improvements (both for the system itself and for the computations).
 To a extent the literature on these systems neglects issues such as faultiness in favour of performance.
 
 \section{Fault Tolerance}
@@ -90,9 +90,9 @@ This work is very similar to ours, except it does not deal with the problems uni
 
 Few of the implementations we have seen so far deal explicitly with fault-tolerance.
 S-Net makes no mention of fault tolerance or recovery mechanisms in \cite{pen09}.
-The MapReduce implementations \cite{dea08, ran07} both state their fault-tolerance mechanisms, namely reassigning jobs if a worker is presumed to have failed.
+The Map-Reduce implementations \cite{dea08, ran07} both state their fault-tolerance mechanisms, namely reassigning jobs if a worker is presumed to have failed.
 Google's implementation discusses the master controller pinging each worker and presuming the worker fails if the ping times out.
-However neither system deals with the posibility (more likely in the case of PHOENIX \cite{ran07}) of master-failure.
-Google's implementation simply aborts the MapReduce computation if the master fails.
+However neither system deals with the possibility (more likely in the case of PHOENIX \cite{ran07}) of master-failure.
+Google's implementation simply aborts the Map-Reduce computation if the master fails.
 Granted master failure is unlikely, however a better fault-tolerance scheme would be more desirable for this feature of robustness.
 Further, none of these systems describe the relationship between faults and makespan in the way of Litke et al. \cite{lit07}.

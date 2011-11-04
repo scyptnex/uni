@@ -13,7 +13,7 @@ Our simple program works as follows:
 \begin{itemize}
 	\item If an actor does not have any input channels it remembers an internal state which begins at 0.
 			This internal state used to represent some input.
-			These actors write an increasing series of natural numbers to their ourput channels as objects of type double.
+			These actors write an increasing series of natural numbers to their output channels as objects of type double.
 			So an actor with no input channels and two output channels each producing two tokens per invocation, will write $(0,1)$ on the first channel, then $(2,3)$ on the second, on its first invocation, then $(4, 5)$ and $(6, 7)$ on its second.
 	\item Actors with some inputs and some outputs consume all tokens and average them to determine their state.
 			As above, the actor then writes these as double objects to each of their output channels in increasing fashion.
@@ -236,7 +236,7 @@ Unsurprisingly then, the heuristic is unlikely to choose this actor when there a
 Thus we see when we look at the Div column in Table \ref{figSTable} that when we only have 5-6 actors, we have suboptimal heuristic assignments 16\%-25\% of the time, but when we have 9-10 actors, we have 37\%-50\% suboptimal heuristic assignments.
 
 This experiment also shows an interesting property in the degree of suboptimality.
-When we look at only suboptimal assignments, although the likelyhood of a suboptimal assignment increases, we see that the optimal to heuristic ratio does not necessarily increase with problem size.
+When we look at only suboptimal assignments, although the likelihood of a suboptimal assignment increases, we see that the optimal to heuristic ratio does not necessarily increase with problem size.
 For these experiment communication costs are both random and semi-random (certain computers are on average better), so we would expect little proportional cost increase with problem size.
 The results bear out this conjecture.
 
@@ -314,7 +314,7 @@ This would encourage a tradeoff which assigns some actors even to bad processors
 
 In practice the only way to encourage processor utilisation with the simplified model is to suppose heterogeneous architectures in the target machine.
 In the real world, certain kinds of processors are more suited to different tasks.
-A GPGPU may be able to perform matrix multiplications quickly, but has much less speedup for sorting tasks, a CPU in contrast is good at sorting and less efficient at the highly parallelisable task of matrix multiplication.
+A GPU may be able to perform matrix multiplications quickly, but has much less speedup for sorting tasks, a CPU in contrast is good at sorting and less efficient at the highly parallelisable task of matrix multiplication.
 To this end we can rely on highly divergent invocation times for the different processors.
 This, coupled with increasing the cost of invocation in comparison to communication, should encourage utilisation of more processors.
 
@@ -345,5 +345,5 @@ The columns of this table show:
 Examining this data we see what we expected.
 The processor utilisation increases as we increase the cost of invocation compared with communication.
 For these experiments the proportion of communication cost remains constant, so eventually the tradeoff to distribute processors becomes viable.
-However, we see no pattern when comparing the heuristic to the optimal utilisations, and heuristic assignments will sporadically use more or less processors than the optimal.
+However, we see no pattern when comparing the heuristic to the optimal utilisation, and heuristic assignments will sporadically use more or less processors than the optimal.
 

@@ -20,7 +20,7 @@ We choose this method over more well known algorithms (merge, quick, bubble, sel
 In its basic form, a sequence is bitonic if it can be expressed in the form $x_0 \leq x_1 \leq ... \leq x_k \geq x_{k+1} \geq ... \geq x_{n-1}$ for $n$ elements and some $k$.
 
 Figure \ref{figBitonicNormal} shows a bitonic sorting network for sixteen items.
-This is a variation on the more well known bitonic sorting networks, often called butterfly sorting, which we use to avoid having separate sorting procedures for the forwards and backwards subsorting required by regular bitonic networks.
+This is a variation on the more well known bitonic sorting networks, often called butterfly sorting, which we use to avoid having separate sorting procedures for the forwards and backwards sub-sorting required by regular bitonic networks.
 In this diagram items cross from left to right in line.
 When two items reach a crossbar they swap location if the lower one has a lesser value than the higher, otherwise they do not swap.
 This figure also shows the major stages of the sorting process.
@@ -101,7 +101,7 @@ Though these examples will not feature prominently in the remainder of this work
 \end{figure}
 
 Figure \ref{figCardinality} shows an artificial SDF graph with an important property.
-If we calculate the repetitions vector of this graph, as shown in Figure \ref{figCardinalityMaths} we see that the number of tokens prodiced by invoking the left-most actor 35 times far exceeds the number needed to fire the middle actor.
+If we calculate the repetitions vector of this graph, as shown in Figure \ref{figCardinalityMaths} we see that the number of tokens produced by invoking the left-most actor 35 times far exceeds the number needed to fire the middle actor.
 Indeed the buffer for the left-most channel may require storage for up to 105 tokens if the left actor executes all thirty five times before the middle actor executes at all.
 
 We have contrived this example by chaining channels with prime consumption and production amounts together.

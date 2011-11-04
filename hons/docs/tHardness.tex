@@ -292,7 +292,7 @@ Note, however, it is possible to assign a vertex to $t_0$ when it is not the cas
 
 \begin{lemma}
 \label{INVERSESUBSET}
-Any edge in the inversion of a feasible solution to a multiterminal cut with endpoints assigned to different processors had to be in the solution.
+Any edge in the inversion of a feasible solution to a multi-terminal cut with endpoints assigned to different processors had to be in the solution.
 
 \begin{align}
 	\nonumber & \langle \forall \mSolution \in \mFeasible : \forall (u, v) \in E' : \inverse(S)(u) \neq \inverse(S)(v) \Rightarrow (u,v) \in S \rangle ,\\
@@ -303,7 +303,7 @@ Any edge in the inversion of a feasible solution to a multiterminal cut with end
 
 \begin{proof}
 To prove this by contradiction we must show that there is no edge with differently assigned endpoints which is not in the solution.
-aThat is, Assume $\langle \exists (u,v) \in E' : \inverse(S)(u) \neq \inverse(S)(v) \wedge (u,v) \not\in S \rangle$.
+That is, Assume $\langle \exists (u,v) \in E' : \inverse(S)(u) \neq \inverse(S)(v) \wedge (u,v) \not\in S \rangle$.
 
 For the above assumption we are concerned with two possible cases, either:
 \begin{enumerate}
@@ -326,7 +326,7 @@ For the above assumption we are concerned with two possible cases, either:
 	\nonumber \mbox{Let: } \inverse(S)(u) = t_0 & \\
 	\nonumber \exists s \in T \setminus \{t_0\} & : \path{E \setminus S}{v}{s} \quad \mbox{from the definition of $\inverse$}\\
 	\nonumber & \Rightarrow \path{E \setminus S}{u}{s} \quad \mbox{from the path predicate}\\
-	\nonumber & \Rightarrow \inverse(S)(u) = s = t_0 \quad \mbox{from Lemman \ref{PATHASSIGN}}
+	\nonumber & \Rightarrow \inverse(S)(u) = s = t_0 \quad \mbox{from Lemma \ref{PATHASSIGN}}
 \end{align}
 But that is a contradiction, since we assumed $v$ was assigned to a different terminal to $t_0$ and therefore $s \neq t_0$.
 
@@ -335,7 +335,7 @@ Hence both cases would lead to contradictions.
 
 \begin{lemma}
 \label{INVERSEFEASIBLE}
-Any feasible solution to a multiterminal cut is also a feasible solution to its inverted mapped instance:
+Any feasible solution to a multi-terminal cut is also a feasible solution to its inverted mapped instance:
 
 \begin{align}
 	\nonumber \forall S \in F : \inverse(S) \in F'.
@@ -362,7 +362,7 @@ This means the assignment portion of the costs must be 0, as per the definitions
 
 \begin{lemma}
 \label{INVERSECOST}
-The inverted solution to a multiterminal cut problem costs the same or less than the cut.
+The inverted solution to a multi-terminal cut problem costs the same or less than the cut.
 
 \begin{align}
 	\nonumber \forall S \in F : C(S) \geq C'(\inverse(S)).
