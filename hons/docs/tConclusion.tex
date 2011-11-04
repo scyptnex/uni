@@ -19,7 +19,8 @@ This is backed up by a formal proof of the problem's hardness in Chapter \ref{ch
 This result allows us to focus our efforts on approximation or heuristic schemes for this problem.
 
 The heuristic algorithm, which is an iterated greedy bin-packing solution as described in Chapter \ref{chapAlgos}, was analysed experimentally in Chapter \ref{chapExperiment}.
-These experiments showed the key weakness in the current formulation of the problem, which does not necessitate parallel computation, that both the heuristic and optimal solvers typically assign most of the actors to few of the processors.
+These experiments showed the key weakness in the current formulation of the problem, which does not necessitate parallel computation.
+Both the heuristic and optimal solvers typically assign most of the actors to few of the processors.
 In practice, on realistic and totally random instances of the assignment problem, the heuristic performs on average no worse than 10\% of the optimal (Table \ref{figSTable}).
 
 We also analysed the costs of ensuring fault tolerance on arbitrary SDF graphs.
@@ -34,7 +35,7 @@ However reducing the costs of communication may make replication a viable strate
 
 One simplification to the model that was made early on was the removal of parallel costs.
 When we consider the running time of a program we only care about how long it takes to finish, rather than the sum of time it takes on every processor.
-This is called the parallel makespan, or paralel cost, and using this instead means only counting the cost of the single processor with the longest steady-state sub-schedule.
+This is called the parallel makespan, or paralel cost, and using this instead means only counting the cost of the single processor which is expected to take the longest to run its subset of the steady-state schedule.
 In the model described in Chapter \ref{chapModel}, the cost of invocation is a total over all actors.
 
 One weakness of such a formulation is its limited application to real-world high performance computing.
@@ -60,7 +61,7 @@ Hybridising the fault tolerance mechanisms is also an option.
 Normally replication, though faster, does not guarantee faultless execution.
 In contrast, recomputation is virtually unbreakable, though may require excessive recomputation under adverse conditions.
 It may be possible to hybridise these techniques and create a mechanism which replicates actors, but also saves its state and recomputes on those processors which fault during execution.
-Further it may be possible to avoid saving state to disk so long as the current state can be derived from those parts of the system which have not faulted, or to only recompute and recover when all duplicates or at least one actor have failed.
+Further it may be possible to avoid saving state to disk so long as the current state can be derived from those parts of the system which have not faulted, or to only recompute and recover when all duplicates of at least one actor have failed.
 
 \subsection{Approximations}
 
