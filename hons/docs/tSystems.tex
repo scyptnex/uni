@@ -162,7 +162,7 @@ Fault detection and recovery is handled very differently with replication-type F
 Namely, detection occurs on a per-actor basis and recovery does not occur at all.
 Each actor can examine the several supposedly identical duplicate tokens handed to it by each duplicate of its predecessor.
 In the event that one of its predecessors stops providing tokens we can conclude that the processor died, however this actor simply continues with the inputs given by the other duplicates.
-Similarly if a processor down the line stops sending acknowledgements, an actor can presume it has faulted and stop trying to send tokens to it.
+Similarly if a processor topologically below this one stops sending acknowledgements, an actor can presume it has faulted and stop trying to send tokens to it.
 This mechanism also allows actors to examine token correctness.
 In the event that the actor receives tokens with differing content from its duplicate predecessors, it can, given enough duplicates, decide to ignore the output from faulting channels.
 This behaviour provides some defence against compromised systems and malicious attack, requiring that all duplicates are compromised in an identical fashion.

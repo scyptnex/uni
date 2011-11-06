@@ -1,0 +1,212 @@
+\documentclass{beamer}
+
+\usepackage[latin1]{inputenc}
+\usepackage{graphicx}
+\usepackage{amssymb,amsmath}
+%\usepackage{pslatex}
+\usepackage{verbatim}
+\usepackage{pst-all}
+\usepackage{algorithmic}
+\usepackage{multicol}
+
+\usetheme{Goettingen}
+\title[SDF]{Fault Tolerance for Cloud-Based Streaming Programs}
+\author{Nic Hollingum}
+\institute{USYD}
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Outline}
+\begin{itemize}
+	\item Background
+	\item Models and Systems
+	\item Experiments
+	\item Contributions and Future Work
+\end{itemize}
+\end{frame}
+
+%-----------------------------------------------------------------------------------
+\section{Background}
+
+\begin{frame}{The Problem}
+\begin{columns}
+\begin{column}{5cm}
+\begin{itemize}
+	\item High performance computing
+	\item Parallelisable paradigms
+		\begin{itemize}
+			\item Synchronous Dataflow (SDF)
+		\end{itemize}
+	\item Need for Fault Tolerance (FT)
+	\item Opportunity for catering FT to SDF
+\end{itemize}
+\end{column}
+\begin{column}{5cm}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Related Work}
+\begin{columns}
+\begin{column}{5cm}
+\end{column}
+\begin{column}{5cm}
+\begin{itemize}
+	\item Streaming Systems
+		\begin{itemize}
+			\item StreamIt \cite{thies10}
+			\item S-Net \cite{pen09}
+			\item InfoSphere, Spade \cite{ged08}
+			\item DryadLinq \cite{yu08}
+		\end{itemize}
+	\item Fault Tolerance
+		\begin{itemize}
+			\item Error Recovery (Databases) \cite{dbrec}
+			\item Task Distribution \cite{lit07}
+			\item Cloud-Recovery \cite{ree06}
+		\end{itemize}
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Research Goals}
+\begin{columns}
+\begin{column}{5cm}
+\begin{itemize}
+	\item How do we provide FT?
+	\item What is the cost of ensuring FT?
+	\item How do we implement the FT mechanisms?
+	\item What guarantees can be made?
+\end{itemize}
+\end{column}
+\begin{column}{5cm}
+\end{column}
+\end{columns}
+\end{frame}
+
+%-----------------------------------------------------------------------------------
+\section{Models and Systems}
+
+\begin{frame}{AMPL Solver}
+\input{txILP}
+\end{frame}
+
+\begin{frame}{Heuristic Solver}
+\begin{columns}
+\begin{column}{5cm}
+\begin{itemize}
+	\item NP-Hardness of problem
+		\begin{itemize}
+			\item Reduction from Multi-Terminal Cut problem
+		\end{itemize}
+	\item Greedy rounds-based algorithm
+	\item Polynomial $O(n^2 p)$
+		\begin{itemize}
+			\item For each unit
+			\item Choose the processor which has least total cost
+			\item repeat
+		\end{itemize}
+\end{itemize}
+\end{column}
+\begin{column}{5cm}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Simulator}
+\begin{columns}
+\begin{column}{5cm}
+\end{column}
+\begin{column}{5cm}
+\begin{itemize}
+	\item SDFSimulator, Java
+	\item Threaded
+	\item Arbitrary SDF graphs
+	\item Actual execution
+	\item Calls to heuristic and optimal solvers
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+%-----------------------------------------------------------------------------------
+\section{Experiments}
+
+\begin{frame}{Fault Tolerance}
+\begin{columns}
+\begin{column}{5cm}
+\begin{itemize}
+	\item Single Failure:
+	\begin{itemize}
+		\item Successful computations
+		\item Replication shows no overhead.
+		\item Recomputation has restarting overhead
+	\end{itemize}
+	\item Multiple failure:
+	\begin{itemize}
+		\item Replication fails after enough processors go offline.
+		\item Recomputation excessively restarts
+	\end{itemize}
+\end{itemize}
+\end{column}
+\begin{column}{5cm}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Optimality}
+\begin{columns}
+\begin{column}{5cm}
+\end{column}
+\begin{column}{5cm}
+\begin{itemize}
+	\item Small instances
+	\item Heuristic assignment vs Optimal assignment
+	\item Heuristic performance stable over replications
+	\item Heuristic performance degrades with larger problem sizes
+	\item On average 10\% more than optimal
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+%-----------------------------------------------------------------------------------
+\section{Contributions and Future Work}
+
+\begin{frame}{Contributions}
+\begin{columns}
+\begin{column}{5cm}
+\begin{itemize}
+	\item test.
+\end{itemize}
+\end{column}
+\begin{column}{5cm}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Future Work}
+\begin{columns}
+\begin{column}{5cm}
+\end{column}
+\begin{column}{5cm}
+\begin{itemize}
+	\item test.
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{References}
+\bibliographystyle{plain}
+\bibliography{biblio}
+\end{frame}
+
+\begin{frame}{Questions?}
+\end{frame}
+
+\end{document}

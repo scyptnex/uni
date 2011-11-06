@@ -141,7 +141,7 @@ The constraints are, first all actors must be assigned to exactly one processor,
 
 Viewing the model above we immediately see that there is a quadratic term.
 The minimisation of the objective function is determined by the minimisation of two dependant assignments (for the communication cost part of the sum).
-However normal IP solvers, (such as the Gnu Linear Programming Kit, which we are using) can only solve linear problems.
+However, normal IP solvers, (such as the Gnu Linear Programming Kit, which we are using) can only solve linear problems.
 In order to solve this problem we must linearise this quadratic term.
 
 We use the standard method for linearising this quantity.
@@ -160,4 +160,4 @@ Hence the modified ILP formulation without quadratic terms is:
 
 \input{txILP}
 
-The AMPL-encoded version of this ILP can be found in Appendix \ref{adxModel}
+The AMPL-encoded version of this ILP can be found in Appendix \ref{adxModel}.

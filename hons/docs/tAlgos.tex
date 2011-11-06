@@ -28,8 +28,7 @@ A clear example of this technique being used to solve a general processor assign
 
 For our specific problem we begin by relaxing our ILP formulation.
 We repeat the integer programme from Section \ref{secModLin} here.
-This programme currently solves the Robust Actor Assignment Problem to optimality.
-To do this it must solve for the quadratic variable $\mathbf{Y}$ as explained in that section.
+In its current form it solves the Robust Actor Assignment Problem optimally, which it does by assigning the quadratic variable $\mathbf{Y}$ as explained in that section.
 We remove the integrality constraints from this programme and treat it as a simple LP.
 
 \input{txILP}
