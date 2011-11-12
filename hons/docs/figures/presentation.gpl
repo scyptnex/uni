@@ -1,0 +1,5 @@
+set xrange [0:1]
+set yrange [0:1]
+set zrange [0:1]
+splot x*y, x, y, x+y-1 lt 5
+

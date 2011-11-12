@@ -1,0 +1,164 @@
+\documentclass{article}
+
+\usepackage{graphicx}
+
+\author{Nic Hollingum - 308193415}
+\title{Algorithmic Game Theory - Assignment 2}
+
+%\addtolength{\oddsidemargin}{-.875in}
+%\addtolength{\evensidemargin}{-.875in}
+%\addtolength{\textwidth}{1.75in}
+%\addtolength{\topmargin}{-0.5in}
+%\addtolength{\textheight}{1.5in}
+
+\begin{document}
+\maketitle
+
+\section {Summaries}
+\subsection{Network Formation Games}
+This talk deals with the application of game theory to the formation or self-optimising networks.
+This problem area has real-world applications to traffic management in urban areas.
+The problem of directing traffic is formalised in a game expressed as follows:
+\begin{itemize}
+	\item $n$ players are given a graph $G = (V, E)$.
+	\item Each edge is given a cost function.
+	\item the players are each given a pair of nodes, so player $i$ recieves $s_i, t_i \in V$, and a traffic ammount $c$.
+	\item the players must now decide how to purchase edges in the graph so as to allow them to route their traffic from $s_i$ to $t_i$.
+\end{itemize}
+
+An interesting observation relating to real-world roads is shown.
+Certain edges in the graph can be ``too tempting'' to the players, and they all purchase this edge, which incurrs a large cost.
+A better social optimum can be achieved by removing this edge for all players, which leads to the unintuitive observation that certain main roads can actually cause more traffic, and removing them is an advantage.
+
+\subsection{War Games}
+
+This talk deals with the so called ``problem of war''.
+It may be of use to exchange war with a civil lawsuit, which has the same game-theoretic properties.
+By necessity the outcome of a war is costly to both sides.
+Both sides compete for some commodity (land, resources, etc) and after the war the commodity is distributed.
+However during the war both sides lose resources and may devalue the commodity which they fight over.
+As such it is always better for one side to propose a surrender which predicts the result of the war before the fact, then the outcome is the same but both sides profit by not wasting resources on a war.
+This would be equivalent to reaching a settlement.
+
+It is observed firstly that both sides have incomplete information about the other.
+This prevents them from agreeing beforehand on what the outcome of the war will be.
+Secondly the outcome is necessarily unknowable, due to essentially random forces that occur during the war.
+
+\subsection{Voting}
+
+This talk presents proofs on the problems involved developing ``fair'' voting schemes.
+There are three properties that a voting scheme must have to be called fair.
+\begin{itemize}
+	\item The social preference must be the global preference
+	\item The social ordering must not be contingent on the ordering of any one individual.
+	\item The global ordering must be agnostic towards so called ``irrelevant alternatives''.
+			That is, when the society orders some (non winning) candidates essentially randomly, the global preference doesnt reflect this.
+\end{itemize}
+
+No voting shceme can have these three properties, as any voting scheme which ignores irrelevant alternatives and values the social preference, must be necessity contain a dictator.
+The proof shows that the dictator is essentially determined by the order in which votes are taken, so then end result is essentially equivalent to choosing a member of the population at random and asking what their preference is.
+
+\subsection{The Secretary Problem}
+
+This talk describes a problem with (ostensibly) real world applications.
+Though surely since this is a game with only one player it should be called an optimization problem rather than a game theoretic problem.
+The secretary problem is described as follows:
+
+``You are a manager in a company, and must hire a new secretary.
+$n$ applicants apply for the job sequentially, you must interview each applicant, then accept or reject them.
+Applicants you reject cannot be rehired later.
+Devise a strategy to choose the best applicant.''
+
+The optimal policy is to reject the first $m$ applicants, note the best candidate, $c_m$ of the $m$ rejects, then accept the first candidate better than $c_m$.
+It turns out it is best when $m$ is $n \over e$, and at this time the probability of selecting the best candidate converges to $1 \over e$.
+
+\subsection{Evolutionary Game Theory}
+
+This talk describes work in attempting to use game theoretic models to chart evolution in organisms.
+Firstly the notion of evolving is fomalised in a game theoretic sense.
+The game features mutated players and nonmutated players.
+At each iteration the game takes the number of unmutated players and their strategies, then the number of mutated players, to determine how many of each kind of player will play the next round.
+The term ``evolutionarily stable strategy'' (ESS) is defined.
+This refers to nash equilibria where the number of nonmutated players remains a fixed proportion or greater than the number of mutated players.
+
+\subsection{Mechanism Design / Auctions}
+
+These talks were very similar so I have grouped them.
+
+These talks presented formalisms and background on the design of auctioning systems that have desirable properties.
+The auctioning schemes are described and formalised for game-theoretic analysis.
+
+Auctioning schemes have real-world applications, especially in business.
+Companies like Google have auctioning systems to determine the price of selling banner ads on certain websites.
+This auctioning system is called a ``one shot'' auction, where players propose a single value that they will spend to purchase the resource.
+Unintuitively, the winner does not pay the ammount that they nominated, but instead the ammount that the second-highest bidder nominated.
+The mathematics shows that this prevents biddders from ``gaming'' the system.
+This strategy is also shown to be preferable to the buyers, whilst other bidding schemes are shown to be preferable to the seller.
+
+\subsection{Reputation Systems}
+
+This talk presented some background and schemes for the provision of reputation systems to online bidding applications such as Ebay.
+Industry standard reputation systems are known to have problems, such a smurfing, whitewashing and misrepresentation.
+Smurfing is where users of the system create secondary accounts to provide falsely positive reviews to their main accoun, usually by buying trivial items from them.
+Whitewashing is where users with bad reputations are able to simply create a new account without the bad reputation.
+misrepresentation deals with the fact that buyers do not always give positive reviews even when they have recieved goods.
+
+A novel reputation system is presented, which requires two purchases from the same seller.
+In this system the confirmation of receipt or object $a$ by buyer $A$ is instead provided by buyer $B$ on receipt of object $b$ and vice versa.
+To an extent this mechanisms solves the problems of misrepresentation and whitewashing.
+However the buyers are still not incentivised to provide truthful feedback since they will never be giving feedback on the item they actually received.
+
+\subsection{Security Games}
+
+This talk presented some of the background information on the application of game theory to security problems.
+First the background on some concepts in security game theory, specifically the formalisms of Stackelberg (leader-follower) and Markovian (probabilistic) games.
+Leader-follower games are those where one player is designated the leader and must play their strategy first, the second player then plays their optimal strategy after completely observing the strategy of the leader.
+These kinds of problems intuitively seem to favour the follower, however it is possible that the game favours neither player (Stackelberg prisoner's dilemma) or the leader(Stackelberg dove and hawk), depending specifically on the kind of game.
+
+Randomness is a key concern in security games.
+Security agents are given paths to patrol, but the paths are determined randomly so as to maximise the coverage of key security areas (vulnerabilities).
+The adversary will necessarily have incomplete information on the future movement of guards, due to the randomness, and must choose their strategy accoringly.
+This principle is exemplified by the Los Angeles International Airport's security system ARMOR.
+ARMOR is an actual implementation of the security game principles.
+This system determines optimal randomised strategies for the patrolls of guards and K9 units.
+
+\subsection{Information Networks}
+
+This talk presents the game-theoretic understanding of information spread.
+It begins by modelling the spread of information as a game for $n$ players, so as to understand the causes of ``information cascade''.
+The game is described as follows:
+\begin{itemize}
+	\item A bag contains 3 marbles, either 2 red and 1 blue, or 2 blue and 1 red
+	\item Each player goes to the bag, chooses a marble, looks at it, and replaces the marble
+	\item Now the players must use the knowledge they have (previous announcements if any, and the colour they saw) to nominate the majority colour.
+\end{itemize}
+
+Information cascade is observed to occur as soon as one marble-colour gains a majority by a fixed ammount, 2 announcements.
+As soon as that happens the information is said to cascade, and all players will disregard the colour of the marble they draw and continually vote for the colour in the majority.
+In the above game there is a $1 \over 9$ chance that the first two players draw the marble in the minority, and so cause the information to cascade in the wrong direction.
+
+\newpage
+
+\section{Questions}
+
+\subsection{crowds ch07ex02}
+\begin{itemize}
+	\item A plays y and B pays y only. Any player that plays x has incentive to deviate to y.
+	\item y is the only evolutionarily stable strategy. Organisms playing a expect to receive less payoff than those playing y no matter how few organisms play y.
+			i.e. if $Y$ is the proportion of the population playing y and $(1-Y)$ plays x, then the expected payoffs are $5Y + 5(1-Y) = 5$ for those who play y, and $3Y + 4(1-Y)$ for those who play x.
+			Hence those who play x expect to make less always.
+	\item Dominating strategies are always evolutionarily stable strategies, hence the answer to b would have to cintain the pure nash equilibrium with dominant strategy in a.
+			However (though not in this example) An ESS may not be a nash equilibrium, when one strategy is not dominating.
+\end{itemize}
+
+\subsection{crowds ch07ex03}
+\begin{itemize}
+	\item X, X is the only pure strategy nash equilibrium.
+			Any player playing Y has incentive to deviate.
+	\item X, X is the only Evolutionarily stable strategy.
+			The expected payoffs of organisms playing y when proportion $p$ play x is $cp + d(1-p)$ which is strictly less than $ap + b(1-p)$.
+	\item When $b=d$, Y Y is a pure strategy nash equilibrium, since no player has incentive to deviate to the $b$ payoff from the $d$ payoff.
+			However Y Y is still not an evolutionarily stable strategy since $cp + d(1-p) < ap + b(1-p)$ when $p$ proportion of the population plays X.
+\end{itemize}
+
+\end{document}
