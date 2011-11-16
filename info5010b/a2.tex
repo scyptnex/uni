@@ -161,4 +161,113 @@ In the above game there is a $1 \over 9$ chance that the first two players draw 
 			However Y Y is still not an evolutionarily stable strategy since $cp + d(1-p) < ap + b(1-p)$ when $p$ proportion of the population plays X.
 \end{itemize}
 
+\subsection{crowds ch07ex04}
+\begin{itemize}
+	\item Equilibria are written in the form (Player A, Player B), ESS simply states the stable strategy.
+			$x=0$ equilibria: (X, X), (Y,Y)\\
+			$x=1$ equilibria: (X, X), (Y,Y)\\
+			$x=2$ equilibria: (Y, Y)\\
+			$x=0$ ESS: X, Y\\
+			$x=1$ ESS: Y\\
+			$x=2$ ESS: Y\\
+		Note when $x=1$, X is only evolutionarily stable when the invasion threshold is large.
+	\item First, since X is weakly dominated: $b > a$.
+			Second, since (X, X) is equilibrium, $c = a$.
+			Now let us determine if the X strategy is evolutionarily stable:
+			
+			$u_X = ap + b(1-p)$, $u_Y = cp + d(1-p)$. \\
+			Hence, the expected utility of the X strategy is only greater if $d$ is less than $b$.
+\end{itemize}
+
+\subsection{crowds ch09ex02}
+\begin{itemize}
+	\item The bidder expects to recieve the second highest bid in the four possible bidding events: (1, 1) (1, 3) (3, 1), (3, 3) \\
+			$c = 0.25(1) + 0.25(1) + 0.25(1) + 0.25(3)$ \\
+			$c = 1.5$
+	\item Now there are  8 expected bidding events: (1, 1, 1) (1, 1, 3) (1, 3, 1), (1, 3, 3), (3, 1, 1), (3, 1, 3) (3, 3, 1), (3, 3, 3).
+			in half of these the second highest bid is 3, in the other half the second highest is 1. \\
+			$c = 0.5 + 0.5(3)$ \\
+			$c = 2$
+	\item With more bidders bidding in this fashion we essentially add another person to bump up the second highest bid.
+			With many bidders it becomes statisitically improbable that all (or all but one) will bid low.
+\end{itemize}
+
+\subsection{crowds ch09ex04}
+\begin{itemize}
+	\item Yes, assuming bidder a still expects to win the bid with probability 3/8.
+			The only way this changes the game is that occasionally player b will win bids he didnt expect to.
+	\item $c = 0(1/8) + 0(3/8) + 0(1/8) + 1(3/8) = {3 \over 8}$
+\end{itemize}
+
+\subsection{crowds ch09ex06}
+\begin{itemize}
+	\item With two bidders, we maximise the total utility by maximising the one who values the item more.
+			The optimal bids are $(>0, 0)$, assuming the first bidder has the higher value.
+			Then that bidder pays 0, earns his value (lets call it $v$), and the other earns 0.
+	\item Yes.
+			The colluders cannot guarantee that zero is the second highest bid, or that the one with the higher evaluation wins the bid.
+			In order to maximise the probability of winning the bid, the higher evaluant must bid his value $v$.
+			Hence the best colluding bid is $(v, 0)$ assuming the first bidder has the higher evaluation.
+			Then either the third party will win, or will ave the second-highest bid (lets call it $u$).
+			Then the payoff is $max(v-u, 0)$.
+\end{itemize}
+
+
+\subsection{crowds ch09ex08}
+\begin{itemize}
+	\item The bidder with the highest value wins and pays the price of the bidder with the second highest value.
+	\item Bidder 3 bids in the range $[1/2, 1]$, bidders who evaluate the item less than a half can never win.
+			The other bidders cannot deviate towards bidding above their values ($v_1, v_2$) as this carries the risk of negative utility.
+			However they may choose to bid 0 if they value the item under $1/2$ since they cant win anyway.
+	\item This behaviour lowers bidder 1's expected payoff.
+			Either he looses more frequently, since bidder 3 has a disproportionately high bid.
+			Or he expects to pay a higher second-price, for the same reason, hence his payoff is less.
+\end{itemize}
+
+\subsection{crowds ch09ex09}
+\begin{itemize}
+	\item There are 4 possible bids: (1, 1), (1, 2), (2, 1), (2, 2).  Each bid is equally likely, the total sold ammount is $1 + 1+1+2=5$ hence the expeccted ammount is $5 \over 4$.
+	\item Using the above bidding patterns we get: ${0 + r + r + 2 \over 4} = {r+1 \over 2}$.
+	\item When $r \leq 1$ we have the first case, and the item is always sold, the seller expects $5 \over 4$.
+			Therefore we choose $r$ so that ${r+1 \over 2} \geq {5 \over 4}$
+			Hence $r \geq {3 \over 2}$
+\end{itemize}
+
+\subsection{crowds ch15ex02}
+\begin{itemize}
+	\item The social optimal is simply to greedily assign the most clickthroughs to the highest evaluation $a-x, b-y, c-z$, the total valuation is 35.
+	\item VCG prices aare set by determining how much each buyer costs the others by being present.
+			If x were absent, then $a-y, b-z$ which is worth 17, instead $b-y, c-z$ which is worth 11, hence x pays $17-11 = 6$.
+			With similar logic y pays 4 and z pays 0.
+\end{itemize}
+
+\subsection{crowds ch15ex05}
+\begin{itemize}
+	\item $x$ buys $a$ for 28, $y$ buys $b$ for 0.
+	\item $x$ bids 60 and wins, paying $48$, $y$ bids 48.
+	\item The secondmethod earns 20 more for the seller.
+	\item Yes.
+			With the vickery auction $x$ pays for the damage to $y$, who pays 0, hence the search engine makes $r_a v_y - r_b v_y$.
+			However in the sealed second price, $x$ wins outright, paying $y$'s evaluation $r_a v_y$.
+			Since $r_b v_y > 0$, $r_a v_y > r_a v_y - r_b v_y$.
+			It is always more prefotable for the search engine to only sell the one slot in this case.
+\end{itemize}
+
+\subsection{crowds ch23ex01}
+\begin{itemize}
+	\item Yes: (1): C v D, (2): 1 v B, (3): 2 v A.
+			Where the numbers represent rounds.
+			Here the winner of 1 will be C, then in C v B, B wins, then in B v A, A wins, hence A wins overall.
+	\item Now it is not possible.
+			A can only win against B, so the last round must pit B against A, however B cannot eliminate either C or D, since it would loose to both.
+			Therefore any voting agenda must pit A against C or D, which it will loose to.
+\end{itemize}
+
+\subsection{crowds ch23ex02}
+\begin{itemize}
+	\item It is not possible.
+		Currently D has 6 points, and i can raise A to at most 5 (by giving it highest preference) while burying D (giving it lowest preference). So D will still win.
+	\item Yes, by raising A and burying B and D with the following: $a > c > b > d$ will cast my votes for the alternative which already looses (c), in the end the alternatives $(a, b, c, d)$ will have points: $(6, 5, 3, 5)$ and a wins
+\end{itemize}
+
 \end{document}

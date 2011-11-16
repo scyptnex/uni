@@ -1,0 +1,187 @@
+\documentclass{article}
+
+\usepackage{graphicx}
+\usepackage{amssymb,amsmath}
+
+\author{Nic Hollingum - 308193415}
+\title{Security and Game Theory}
+
+%\addtolength{\oddsidemargin}{-.875in}
+%\addtolength{\evensidemargin}{-.875in}
+%\addtolength{\textwidth}{1.75in}
+%\addtolength{\topmargin}{-0.5in}
+%\addtolength{\textheight}{1.5in}
+
+\begin{document}
+\maketitle
+
+This report surveys the historic and current developments in the application of game theory to questions concerning security.
+We do not limit the scope of the term {\em security}, and this applies to areas from real-world physical security to the development of secure policies for network management.
+By necessity we limit those security applications to ones where a game-theoretic modelling of the problem or a game-theoretic understanding of the solution is applicable.
+
+\section{Problem Formulations}
+
+\subsection{Stochastic Games}
+\label{secStoch}
+
+Stochastic games are games centered around state-transition.
+In general terms, both players have a predefined network of states with possible state-transitions marked as edges.
+The players each have a utility function that determines how much it is worth for them to keep the game in a given state for some duration, and cost functions which determine how much utility a player looses trying to force a state transition.
+State transitions typically occur probabilistically, where the probability of a state transition depends on the strategies of the players in the current state, and the desired transitions which those players make.
+
+Formal definitions of these stochastic games can be found in \cite{network}.
+We refer to the game with the tuple $(S, A^1, A^2, Q, R^1, R^2, \beta)$, where:
+\begin{itemize}
+	\item $S$: The set of possible states: ${s_1, ..., s_n}$
+	\item $A^1$: The action set for player 1.
+			Action sets list the possible moves for this player at each state, and the actions a player can take at a given state $A^1_{s_i} \subseteq A^1$.
+			The union of all possible moves over all states is the action set.			
+	\item $A^2$: As above for player 2.
+	\item $Q$: The state transition function, which assigns probabilities of state transitions occuring given the actions of both players, the current state and the target state.
+				Hence $Q: S \times A^1 \times A^2 \times S \rightarrow [0, 1]$.
+	\item $R^1$: The reward function, which determines the utility of player 1 making a state transition given the current state and the action of player 2.
+				Hence $R^1: S \times A^1 \times A^2 \rightarrow \mathbb{R}$
+	\item $R^2$: As above for player 2.
+	\item $\beta$: A discount factor for discounting future rewards.
+			This quantity is used to more accurately model security problems, which occur infinitely.
+			This would make it always preferable to ruthlessly seek the most profitable state no matter how unlikely that is to occur.
+			In reality security adversaries tend to greedily seek the easiest profitable state, in otherwords they discount future gain for present reward.
+			$\beta$ is in the range $]0, 1]$ for stackelberg games.
+\end{itemize}
+
+These models are applicable to certain kinds of security situations, particularly attack patterns on web servers.
+\cite{network} adapts these kinds of general games to the game between an administrator and an attacker.
+This paper uses reasonable probability estimates based on ``intuition and experience'', to determine the likelyhood of state transitions, as well as hard numbers on the profitability of attacks to determine reward functions.
+Using these estimates the paper discovers the most optimal attack patterns, and therefore the most effective maves for the defender (administrator, player 2 in the paper).
+More generally this method is used to determine the optimal assignment of security resources.
+
+\subsection{Stackelberg Games}
+
+Stackelberg games are two player games with a so-called {\em leader and follower} structure.
+These kinds of games are more generally applicable, in the sense that any formal two player game can be a stacelberg game by adding the constraint that one player plays first and the other follows that player.
+Stackelberg-type games are important in the security context as they more accurately model the kinds of games seen here.
+In reality, attackers have ample time to observe the strategy played by the security agents, and it is a reasoable abstraction to assume that they follow the leader in that sense.
+
+As an example of how stackelberg games affect normal games we look at a stackelberg formulation of the hawk and dove game.
+Normally, the nash equilibria are (hawk, dove) and (dove, hawk), where both players play at the same time.
+A stackelberg formulation requires one player to play first, in effect that player is able to choose which of the two equilibria will occur, so it is beneficial to always choose hawk, thus forcing the rational follower to play dove.
+Similarly in the battle of the sexes game, when one player chooses first this communicates to the other and allows them to coordinate on their chosen destination.
+
+However, stackelberg games do not necessarily favour the leader.
+In the case of games with dominating strategies, such as the prisoners dilemma, knowing in advance by observing the other players move is no better than knowing in advance by reasoning that they will play the dominating strategy (provided they are rational).
+
+In the case of security games, the stackelberg formulation typically favours the follower instead of the leader.
+\cite{stackelberg} presents the intuitive understanding for why this is the case.
+Realistically the job of security agents is to proactively prevent attacks from occuring, and react to attacks when they do occur.
+The notion of leading the game means they play a strategy which minimises the chance of an attack occuring or forces only certain kinds of attacks to be viable, however they must then wait for that attack.
+The attacker on the other hand can simply choose the most effective attack available to them and the optimal time to perform it, which is a considerable advantage.
+It is usually not possible for security agents to guard against all attacks, due to the large number of possible attacks that can occur at any one time.
+
+
+\subsection{Roaming Guards}
+
+Continuing in the theme of developing models for security games we have those simulating the patrolling of guards.
+These games are again concerned with optimally allocating resources (guards) to maximise utility (defence).
+Specifically, these games provide abstractions for physical locations and are therefore used to determine optimal patrolling routes.
+
+Games of this kind have a generalisation which is intuitively related to the problem.
+\begin{itemize}
+	\item this is a stackelberg game of two players, called the guard and the robber.
+	\item There are $n$ houses, which the guard must defend, and the robber must rob.
+	\item The robber has some utility for robbing each house, and a duration of the robbery.
+	\item The guard moves between houses, paying some time to move between two houses, he spends 0 time at each house.
+	\item If the robber is robbing a house when the guard moves there, the guard wins the game outright.
+	\item We must formulate a patrol route for the guard so as to minimise the expected utility of the robber, and preferably make it 0.
+	\item Both the guard and the robber may use mixed strategies.
+\end{itemize}
+
+We can view this generalisation graphically, in which case we see that there is a complete graph $k_n$.
+We allow the guard to move between any two houses, however we may refine this problem to only allow the guard to move between certain houses.
+This can be done without loss of generality by simply increasing the travel-time between houses to a large number.
+Other variations call for multiple guards and multiple robbers.
+One example of these variations is the ARMOR security system in Los Angeles International Airport, which will be discussed in Section \ref{secARMOR}.
+The description of this variation can be found in \cite{random}.
+
+Of particular interest here is the use of mixed strategies, which will be discussed further in Section \ref{secRandom}.
+Strategy randomisation in these games is of intuitive importance here.
+The game is typically modeled to have large negative cost to the robber if he is caught.
+When the guard's patrol policy is not random (fixed strategy), the robber is able to observe this and plan the robberies accordingly, thereby guaranteeing a successful robbery.
+When the guard's patrol policy is a mixed strategy, the robber can only know the probability of the guard patrolling each house, but never exactly when this happens.
+This has the effect of making ``no robbery'' a desirable option for a rational robber.
+
+\subsection{Markovian Decision Processes}
+
+These problems are of particular importance to practical uses of game-theory in security.
+Markovian decision processes, or problems, are not game theoretic themselves, in the sense that they do not have two players.
+Instead they provide a one-player perspective of the kinds of Stackelberg games described in Section \ref{secStoch}.
+They can be seen to simplify the stochastic games above in the following way:
+\begin{itemize}
+	\item The $A^2$ and $R^2$ sets are removed.
+	\item The $\beta$ property is removed.
+		This simplification occurs because markovian decision processes are only concerned with immediate payoffs, so discounting future payoffs which the $\beta$ is used for is an irrelevant concept.
+	\item all other parts of the tuple are the same.
+\end{itemize}
+
+The way these problems relate to game-theory in security is that they allow us to play the stochastic games above without having any information about the attacker.
+As was mentioned in \cite{network}, the probabilities and payoffs for both the administrator and the attacker were estimated by people close to the project.
+However, whilst this knowledge may be available to webmasters who are the subject of numerous attacks each day, physical security applications are attacked much less frequently, and so-called ``expert'' appraisal is a less useful tool for them.
+The markovian decision processes allow security applications to model the security problem without prior-knowledge of the attacker, then gradually build up a model of the attacked during operation.
+Paruchuri et al demonstrate the effectiveness of this notion in \cite{random}.
+In this case study the processes model the actions of the security agents so as to minimise the ammount of information that attackers can gain about them.
+The processes are used in place of a game theoretic (stackelberg) model until sufficient information about the possible attack patterns and vulnerabilities is determined.
+
+\newpage
+
+\section{Strategies}
+
+\subsection{Coalitional Security}
+
+The development of optimal strategies for security problems cannot simply be abstracted by game solutions alone.
+In practical applications several challenges above simply playing the security game must first be dealt with.
+The first challenge recognised in the literature is the need for coordination and cooperation.
+Research in this area seeks to formalise the strengths and weaknesses of employing cooperative strategies amongst security agents with similar goals.
+
+The first consideration is for shared resources.
+Organisations with multiple security divisions (say, guards for each site as well as admins for each server) by necessity overprovide security resources so as to ensure a minimal degree of protection.
+Intuitively it is tempting to pool resources and meet this challenge.
+Formulations for security games factor in advantages for coordinating amongst independent units to the utility functions of their agents moves.
+This typically involves extending the normal stochastic game formulations to account for the multiple combined actions of all the security agents.
+
+Similar to the shared benefits notion is the idea of shared vulnerabilities.
+Security agents typically try to protect a place or system, and it is again intuitive that combining their efforts can provide better protection.
+Whereas sharing resources prevents the excessive provision of security, when vulnerabilities are shared this maximisesthe security coverage of vulnerable parts of the system.
+Considering the patrolling of guards, it may be beneficial to have agents from one division cover the vulnerabilities in another division, and vice versa, depending on the expertise of the agents in question and their locality to the vulnerability.
+
+One issue with shared resources that was recognised early on and is integrated into game-theoretic models, is the notion of emergent vulnerabilities.
+This idea captures the notion that combinations of certain security agents causes overheads or friction which detracts from the total effectiness of the coalition.
+Consider the difficulties involved in having guards who use different communication protocols, different radio frequencies, different patrol sizes and timings and, realistically, different pay-grades, work together.
+Firstly the overheads of facilitating this cooperation can be extreme, to the point that cooperation may be undesirable.
+Also important is that the cooperation itself becomes an attack vector for the opposition, and so an entirely new vulnerability is created.
+Again the general stochastic model must be modified to reflect these issues.
+
+Much of the work on coalitional game-theory is summarised by Saad et al in \cite{coalition}.
+This paper allows players in a multiagent stochastic game to form {\em coalitions} of agents which share utility and act jointly.
+The emergent vulnerabilities are represented by a so-called {\em friction graph}, which changes the total effective utility in the problem depending on the coalitions form.
+The goal of the game becomes to determine the {\em ideal cooperation protocol}, or which coalitions benefit the security agents most.
+
+\subsection{Communication}
+
+
+\subsection{Policy vs Optimality}
+
+\subsection{Randomness}
+\label{secRandom}
+
+\section{Application}
+
+\subsection{Networks and Mobile}
+
+\subsection{ARMOR}
+\label{secARMOR}
+
+\newpage
+
+\bibliographystyle{plain}
+\bibliography{biblio}
+
+\end{document}
