@@ -164,13 +164,94 @@ This paper allows players in a multiagent stochastic game to form {\em coalition
 The emergent vulnerabilities are represented by a so-called {\em friction graph}, which changes the total effective utility in the problem depending on the coalitions form.
 The goal of the game becomes to determine the {\em ideal cooperation protocol}, or which coalitions benefit the security agents most.
 
+\subsection{Randomness}
+\label{secRandom}
+
+One reason why game theory is particularly applicable to security goals is the inbuilt notion of randomised strategies, called mixed strategies.
+Whereas pure strategies for games are useful in most situations, namely situations where one move is clearly the best, in security applications this is not always the case.
+Even having a single good strategy is itself a security risk, to the extent that it allows the opponent player to choose the best counter for this strategy.
+Consider the stackelberg matching pennies game, wherein one player announces heads or tails and the follower then chooses heads or tails as per the rules of the game.
+Clearly this game favours the follower, who can simply choose so as to win.
+This situation is analogous to security problems, where it is inadvisable to allow your adversary to know your pure strategy.
+A mixed strategy on the other hand describes a probability distribution over all strategies, preferably so that no strategy has probability 1.
+As with the matching pennies game, it does your opponent to good if they know you will play heads with 50\% probability and tails with 50% probability.
+
+In security applications randomness may refer to the following things:
+\begin{itemize}
+	\item Devising solutions which are mixed strategies, then selecting a play which performs those mixed strategies
+	\item Randomisation in the objectives (goals) of the game
+	\item Minor randomisation in the utility function of various aspects of the game
+	\item Randomisation in the strategies available to the adversaries and security agents
+	\item Randomisation in the structure of the game
+	\item Dealing with unknowns (incomplete information) for all of the above
+\end{itemize}
+
+Paruchuri et al discuss implementation details and experimental results using randomised strategies in \cite{xrandom}.
+That paper recognises the need for randomness to ``deteriorate an adversary's capability to predict and expoint [a security agent's] actions''.
+The paper develops algorithms to determine optimal policies in both single-agent and multiagent settings.
+Interestingly the paper does not use game-theoretic models to predict the actions of the adversary, but instead uses modified markovian decision processes to model the adversaries.
+The procedure outlined fixes the maximum ammount of information which adversaries can gain by observing the agents (called entropy) and develops randomised solutions to the devision process.
+The paper presents three algorithms which solve the problem, their running time is analysed and found to be fast (under 10 seconds) for realistic problem sizes.
+
+
 \subsection{Communication}
+
+Related to the need for coordination and cooperation amongst autonomous divisions of a security group, is the need for communication.
+Communication is typically an important security goal, both in terms of coordinating agents as well as preventing information from falling into the hands of the adversaries.
+Game theory can in this instance be used to formulate optimal strategies for communicating to minimise miscoordination and the information which adversaries can gain.
+
+It is important again to consider the effects of policy randomisation on the security game here:
+\begin{itemize}
+	\item Randomised patrol routes must be kept secret from other agents (to minimise the ammount of information potential adversaries can gain), however to guard effectively, agents are allowed to know about current and historic movements of the other agents.
+			To communicate this information can become problematic under realistic problem sizes, since the historic movement of one guard is pertinent information to all guards.
+	\item Communicating new information gained as the result of random events (late aeroplanes, lost luggage, etc.) is necessary to continually evolve optimal strategy.
+			Since the occurance of these events is not sensibly bounded, the communication requirements for the new information may similarly be unbounded.
+\end{itemize}
+\noindent In this way the use of randomised strategies makes understanding the communication requirements of certain security games more important.
+
+Coordinating autonomous agents also necessarily entails communication.
+Communication itself may be considered a shared or emergent vulnerability under models of coalitional security.
+Saad et al do not deal with the necessity for communication in \cite{coalition}, as this is outside the scope of their work.
+However the effectiveness or ineffectiveness of communication systems can necessitate certain joint actions that paper describes, which would not be necessary when communication is abstracted out.
+For example, two sets of guards patrolling a structure must either both survey the entire structure, assume that the other's patroll went well, or communicate with each other when the patrol goes well.
+Only in the later model can both sets of guards know the structure is secured without wasting resources.
+
+Paruchuri et al deal with both the notion of coordinating agents and communicating in a randomised setting in \cite{random}.
+This paper views communication as a finite resource in these security games and analyses whether it is possible to bound the communication requirements for randomised agents.
+This paper builds on the work for developing random strategies in \cite{xrandom}.
+The important obserrvation is that not all communication is necessary in order to keep all agents up to date with the movements of the other agents.
+Since the agents know each others' mixed strategy, they can determine (probabilistically) the possible future routes of the other agents.
+Updating all agents with the current state of each agent at fixed intervals allows them to refine this probabilistic estimate, and work out the historic movement of the other agents.
+The paper presumes that some communication is allowed and that the adversaries cannot eavesdrop on the communication channel, hence the fixed update intervals prevent the adversary from using traffic analysis to determine some useful information about the guards strategies.
 
 
 \subsection{Policy vs Optimality}
 
-\subsection{Randomness}
-\label{secRandom}
+One important consideration in security applications is the modified understanding of ``optimality'' in thsi context.
+Traditional gams and game formulations of other problems are able to seek optimality presuming the rationality of the opponent.
+However security applications cannot in general assume the rationality of their adversaries.
+This is not merely best practice by security firms, but is actually necessitated by the variations amongst possible threats.
+
+Stochastic games are the main cause of this modification.
+In simpler games the actions of the opponent can be rationally predicted, which determines the best strategy we can play.
+However in stackelberg games the difference between an optimal and a suboptimal opponent may cause a very different traversal of the state network.
+Indeed the actions of a rational opponent in a security context may always be ``give up'', yet still suboptimal adversaries are able to achieve positive utility by not following this strategy, even if the expected utility of these adversaries may be zero or less.
+
+Since the actions chosen by the adversaries are also used to determine utility and future state in stochastic games, it is also important to predict suboptimality in order to maximise the utility of the security agents themselves.
+In a real-world application this equates to security agents playing slightly suboptimally themselves so as to do things like, monitor unimportant targets more or less than their utility would necessitate.
+Again this is intuitively related to the way stackelberg games work, and in effect handicaps the security agents so as to provide more complete defence.
+
+The understanding of adversarial optimality is dealt with in varying ways in the literature:
+\begin{itemize}
+	\item Lye and Wing ignore this problem in \cite{network} and presume that the opposition (attacker) plays optimally, as does the administrator.
+			This paper does recognise that modelling the actions of the attacker is difficult in practice, though they do not discuss the notion of suboptimal attackers.
+	\item Paruchuri et al deal explicitly with the problems caused by suboptimal attackers in \cite{random, xrandom, stackelberg}.
+			They describe a probability distribution over possible attacker types, where an attacker type is a theoretically optimal attacker with randomly skewed utilities.
+			Skewing the utilities and then having the attacker play optimally is effectively like having a suboptimal attacker who favours certain attack patterns.
+			The probability distributions are encorporated into this work by modifying both the markovian decision processes and stackelberg formulations into the POMDP and Bayesian stackelberg game formulations.
+			These formulations require explicit knowledge of possible attacker types and their utilities.
+			The paper does not discuss the difficulties involved in guessing in what way the opposition may be suboptimal.
+\end{itemize}
 
 \section{Application}
 
